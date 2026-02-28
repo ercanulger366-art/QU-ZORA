@@ -1384,9 +1384,11 @@ let G = {
 };
 
 function getGameQuestions() {
-  let all = (window._cachedQuestions && window._cachedQuestions.length > 0)
-    ? window._cachedQuestions
-    : DEFAULT_QUESTIONS;
+  // Her zaman DEFAULT_QUESTIONS + Firebase sorularını birleştir
+  const firebaseQs = (window._cachedQuestions && window._cachedQuestions.length > 0)
+    ? window._cachedQuestions.filter(q => q.q && q.a && q.a.length === 4 && typeof q.correct === 'number' && q.diff)
+    : [];
+  const all = [...DEFAULT_QUESTIONS, ...firebaseQs];
 
   const easy = shuffle(all.filter(q=>q.diff==='easy'));
   const medium = shuffle(all.filter(q=>q.diff==='medium'));
@@ -1394,6 +1396,7 @@ function getGameQuestions() {
   const result = [...easy.slice(0,5),...medium.slice(0,5),...hard.slice(0,5)];
   while (result.length < 15) {
     const pool = [...easy,...medium,...hard];
+    if(pool.length===0) break;
     result.push(pool[result.length % pool.length]);
   }
   return result.slice(0,15).map(q=>{
