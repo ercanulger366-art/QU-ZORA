@@ -1,0 +1,2 @@
+# QU-ZORA
+Bilgi Yarışması 
