@@ -458,19 +458,35 @@ body{
 </div>
 
 <div class="modal-overlay hidden" id="modal-admin">
-  <div class="modal" style="max-width:520px">
+  <div class="modal" style="max-width:560px">
     <div class="modal-title" style="color:var(--blue)">⚙️ ADMİN PANELİ</div>
-    <div class="modal-sub">Soru Yönetimi</div>
-    <div class="admin-form">
-      <div class="form-group"><label class="form-label">Soru Metni</label><textarea class="form-input" id="adm-q" placeholder="Soru metni..." style="min-height:60px;resize:vertical"></textarea></div>
-      <div class="form-group"><label class="form-label">A Şıkkı (Doğru cevap)</label><input class="form-input" id="adm-a" placeholder="Doğru cevap"></div>
-      <div class="form-group"><label class="form-label">B Şıkkı</label><input class="form-input" id="adm-b" placeholder="Yanlış şık"></div>
-      <div class="form-group"><label class="form-label">C Şıkkı</label><input class="form-input" id="adm-c" placeholder="Yanlış şık"></div>
-      <div class="form-group"><label class="form-label">D Şıkkı</label><input class="form-input" id="adm-d" placeholder="Yanlış şık"></div>
-      <div class="form-group"><label class="form-label">Zorluk</label><select class="form-input" id="adm-diff"><option value="easy">Kolay (1-5)</option><option value="medium">Orta (6-10)</option><option value="hard">Zor (11-15)</option></select></div>
-      <button class="btn-auth" onclick="adminAddQ()">SORU EKLE</button>
+    <div class="auth-tabs" style="margin-bottom:20px">
+      <button class="auth-tab active" id="adm-tab-coins" onclick="adminTab('coins')">💰 KULLANICI</button>
+      <button class="auth-tab" id="adm-tab-questions" onclick="adminTab('questions')">❓ SORULAR</button>
     </div>
-    <div class="admin-q-list" id="adm-q-list"></div>
+
+    <!-- COIN YÖNETİMİ -->
+    <div id="adm-panel-coins">
+      <div class="section-title">Kullanıcı Yönetimi</div>
+      <div id="adm-user-list" style="max-height:420px;overflow-y:auto;">
+        <div style="text-align:center;color:var(--text2);padding:20px">Yükleniyor...</div>
+      </div>
+    </div>
+
+    <!-- SORU YÖNETİMİ -->
+    <div id="adm-panel-questions" class="hidden">
+      <div class="admin-form">
+        <div class="form-group"><label class="form-label">Soru Metni</label><textarea class="form-input" id="adm-q" placeholder="Soru metni..." style="min-height:60px;resize:vertical"></textarea></div>
+        <div class="form-group"><label class="form-label">A Şıkkı (Doğru cevap)</label><input class="form-input" id="adm-a" placeholder="Doğru cevap"></div>
+        <div class="form-group"><label class="form-label">B Şıkkı</label><input class="form-input" id="adm-b" placeholder="Yanlış şık"></div>
+        <div class="form-group"><label class="form-label">C Şıkkı</label><input class="form-input" id="adm-c" placeholder="Yanlış şık"></div>
+        <div class="form-group"><label class="form-label">D Şıkkı</label><input class="form-input" id="adm-d" placeholder="Yanlış şık"></div>
+        <div class="form-group"><label class="form-label">Zorluk</label><select class="form-input" id="adm-diff"><option value="easy">Kolay (1-5)</option><option value="medium">Orta (6-10)</option><option value="hard">Zor (11-15)</option></select></div>
+        <button class="btn-auth" onclick="adminAddQ()">SORU EKLE</button>
+      </div>
+      <div class="admin-q-list" id="adm-q-list"></div>
+    </div>
+
     <button class="btn-modal-full" onclick="closeModal('modal-admin')">KAPAT</button>
   </div>
 </div>
@@ -499,16 +515,36 @@ const db = getFirestore(app);
 window._FB = { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, browserSessionPersistence, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit, onSnapshot, addDoc, deleteDoc, serverTimestamp };
 
 // ─── Auth state değişince ───
+let _userDocUnsub = null;
+
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     window._currentUID = user.uid;
-    // Kullanıcı verisini yükle
     await window._loadUserData(user.uid);
     document.getElementById('loading-screen').classList.add('hidden');
     enterLobby();
+
+    // Kullanıcı belgesini gerçek zamanlı dinle (coin/xp anında yansısın)
+    if (_userDocUnsub) _userDocUnsub();
+    _userDocUnsub = onSnapshot(doc(db, 'users', user.uid), (snap) => {
+      if (snap.exists()) {
+        const prev = window._userData ? window._userData.coins : 0;
+        window._userData = snap.data();
+        const curr = window._userData.coins || 0;
+        // Admin coin eklediyse bildirim göster
+        if (prev !== undefined && curr > prev) {
+          const diff = curr - prev;
+          if (typeof toast !== 'undefined') {
+            toast(`🎁 Hesabına ${diff.toLocaleString()} coin eklendi!`, 'gold');
+          }
+        }
+        if (typeof updateLobbyUI !== 'undefined') updateLobbyUI();
+      }
+    });
   } else {
     window._currentUID = null;
     window._userData = null;
+    if (_userDocUnsub) { _userDocUnsub(); _userDocUnsub = null; }
     document.getElementById('loading-screen').classList.add('hidden');
     showScreen('auth');
   }
@@ -730,6 +766,303 @@ const DEFAULT_QUESTIONS = [
 {q:"Hangi ülkenin başkenti Amsterdam'dır?",a:["Belçika","Hollanda","Danimarka","Norveç"],correct:1,diff:"easy"},
 {q:"Hangi meyve suyu sarı renklidir?",a:["Domates","Üzüm","Portakal","Karpuz"],correct:2,diff:"easy"},
 {q:"Hangi sporda 'halter' kullanılır?",a:["Futbol","Tenis","Halter/Ağırlık Kaldırma","Basketbol"],correct:2,diff:"easy"},
+
+
+// ══════════ KOLAY EK (150) ══════════
+{q:"Hangi ülkenin başkenti Brüksel'dir?",a:["Hollanda","Lüksemburg","Fransa","Belçika"],correct:3,diff:"easy"},
+{q:"Hangi deniz Türkiye'nin kuzeyinde yer alır?",a:["Ege","Akdeniz","Marmara","Karadeniz"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'vuruş' anlamına gelen 'stroke' terimi kullanılır?",a:["Futbol","Yüzme","Basketbol","Voleybol"],correct:1,diff:"easy"},
+{q:"Güneş'ten ısı ve ışık almamıza rağmen uzay neden soğuktur?",a:["Güneş uzaktır","Uzayda iletim yoktur","Atmosfer ısıyı yansıtır","Uzay oksijensizdir"],correct:1,diff:"easy"},
+{q:"Hangi ülke dünyanın en kalabalık ülkesidir?",a:["Hindistan","Çin","ABD","Endonezya"],correct:0,diff:"easy"},
+{q:"Hangi sporda 'pota' kullanılır?",a:["Futbol","Voleybol","Basketbol","Tenis"],correct:2,diff:"easy"},
+{q:"Hangi element oda sıcaklığında sıvıdır?",a:["Demir","Altın","Cıva","Bakır"],correct:2,diff:"easy"},
+{q:"Hangi ülkede Sagrada Familia kilisesi bulunur?",a:["Portekiz","İtalya","Fransa","İspanya"],correct:3,diff:"easy"},
+{q:"Hangi hayvan hem karada hem suda yaşayabilir?",a:["Balık","Kertenkele","Kurbağa","Yılan"],correct:2,diff:"easy"},
+{q:"Hangi gezegen Dünya'ya en yakın komşudur?",a:["Mars","Merkür","Jüpiter","Venüs"],correct:3,diff:"easy"},
+{q:"Hangi ülkede Louvre Müzesi bulunur?",a:["İtalya","Almanya","Fransa","İngiltere"],correct:2,diff:"easy"},
+{q:"Hangi meyve tropikal bir meyve değildir?",a:["Mango","Ananas","Papaya","Elma"],correct:3,diff:"easy"},
+{q:"Hangi organ vücutta en fazla kan depolar?",a:["Kalp","Böbrek","Karaciğer","Dalak"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Varşova'dır?",a:["Ukrayna","Çek Cumhuriyeti","Slovakya","Polonya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'raund' kavramı kullanılır?",a:["Futbol","Boks","Basketbol","Tenis"],correct:1,diff:"easy"},
+{q:"Hangi ülke en fazla altın üretir?",a:["Rusya","Avustralya","ABD","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan en uzun süre uyku uyur?",a:["Aslan","Koala","Kedi","Yarasa"],correct:1,diff:"easy"},
+{q:"Hangi ülkenin başkenti Kopenhag'dır?",a:["Norveç","İsveç","Finlandiya","Danimarka"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'yarım saha' kavramı kullanılır?",a:["Tenis","Futbol","Basketbol","Voleybol"],correct:1,diff:"easy"},
+{q:"Hangi ülke petrol rezervleri açısından dünyada ilk sıradadır?",a:["Suudi Arabistan","Rusya","İran","Venezuela"],correct:3,diff:"easy"},
+{q:"Hangi hayvan yumurtlayan memeliler arasındadır?",a:["Yarasa","Balina","Ornitorenk","Koala"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Stockholm'dür?",a:["Norveç","Danimarka","Finlandiya","İsveç"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'kürek' yarışması yapılır?",a:["Yüzme","Kano/Kürek","Yelken","Sörf"],correct:1,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla çay üretir?",a:["Hindistan","Sri Lanka","Japonya","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan kabuğundan çıkamayan tek memeledir?",a:["Kirpi","Porsuk","Armadillo","Kaplumbağa"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Helsinki'dir?",a:["Norveç","İsveç","Estonya","Finlandiya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'paralel barlar' kullanılır?",a:["Atletizm","Jimnastik","Akrobasi","Dans"],correct:1,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla buğday üretir?",a:["ABD","Rusya","Hindistan","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan günde 20 saat uyur?",a:["Aslan","Ayı","Koala","Tembel Hayvan"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Oslo'dur?",a:["İsveç","Danimarka","Finlandiya","Norveç"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'kozalak' kullanılır?",a:["Tenis","Voleybol","Bowling","Basketbol"],correct:2,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla pamuk üretir?",a:["Hindistan","ABD","Pakistan","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan mağarada yaşar ve geceleri aktiftir?",a:["Kartal","Yarasa","Baykuş","Porsuk"],correct:1,diff:"easy"},
+{q:"Hangi ülkenin başkenti Budapeşte'dir?",a:["Romanya","Avusturya","Çek Cumhuriyeti","Macaristan"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'yüzük' içinde müsabaka yapılır?",a:["Güreş","Boks","Sumo","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla pirinç üretir?",a:["Hindistan","Vietnam","Tayland","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en zehirli yılanıdır?",a:["Kobra","Mamba","İç Taipan","Boa"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Prag'dır?",a:["Slovakya","Avusturya","Polonya","Çek Cumhuriyeti"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'disk' fırlatılır?",a:["Cirit","Gülle","Çekiç","Disk"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla muz üretir?",a:["Kolombiya","Ekvador","Filipinler","Hindistan"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük kuşudur?",a:["Emu","Kasuvar","Albatros","Devekuşu"],correct:3,diff:"easy"},
+{q:"Hangi ülkenin başkenti Bratislava'dır?",a:["Çek Cumhuriyeti","Macaristan","Avusturya","Slovakya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'kale çizgisi' kullanılır?",a:["Basketbol","Tenis","Futbol","Voleybol"],correct:2,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla kahve üretir?",a:["Kolombiya","Vietnam","Etiyopya","Brezilya"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en küçük memelisidir?",a:["Cüce fare","Bumblebee Yarasa","Cüce köpekbalığı","Pigmi fare"],correct:1,diff:"easy"},
+{q:"Hangi ülkenin başkenti Bükreş'tir?",a:["Bulgaristan","Moldova","Sırbistan","Romanya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'yüzme, bisiklet, koşu' yapılır?",a:["Decathlon","Triathlon","Biathlon","Pentatlon"],correct:1,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla elma üretir?",a:["ABD","Türkiye","Polonya","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en hızlı kuşudur?",a:["Kartal","Şahin","Akbaba","Gökdoğan (Peregrine)"],correct:3,diff:"easy"},
+{q:"Hangi ülkenin başkenti Sofya'dır?",a:["Sırbistan","Romanya","Yunanistan","Bulgaristan"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'eşleşme' (seeding) sistemi kullanılır?",a:["Futbol","Tenis","Basketbol","Yüzme"],correct:1,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla şeker üretir?",a:["Hindistan","Çin","Tayland","Brezilya"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en uzun ömürlüsüdür?",a:["Fil","Kaplumbağa","Balina","İnsan"],correct:1,diff:"easy"},
+{q:"Hangi ülkenin başkenti Zagreb'dir?",a:["Slovenya","Bosna","Sırbistan","Hırvatistan"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'çift" oynayan çiftlere 'çiftler' denir?",a:["Basketbol","Voleybol","Tenis","Futbol"],correct:2,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla çikolata tüketir?",a:["Almanya","Belçika","İsviçre","İngiltere"],correct:2,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük kemirgenidir?",a:["Beaver (Kunduz)","Kapibara","Porcupine","Marmot"],correct:1,diff:"easy"},
+{q:"Hangi ülkenin başkenti Tiran'dır?",a:["Kosovo","Makedonya","Bosna","Arnavutluk"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'tur" tamamlama kavramı vardır?",a:["Yüzme","Atletizm","Bisiklet","Golf"],correct:2,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla portakal üretir?",a:["ABD","Meksika","İspanya","Brezilya"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük deniz canlısıdır?",a:["Büyük Beyaz Köpekbalığı","Mavi Balina","Dev Kalamar","Fok"],correct:1,diff:"easy"},
+{q:"Hangi ülkenin başkenti Skopye'dir?",a:["Kosova","Arnavutluk","Sırbistan","Kuzey Makedonya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'kürek çekme' hareketi yapılır?",a:["Kürek (Rowing)","Kano","Rafting","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla domates üretir?",a:["ABD","Türkiye","Hindistan","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük primatıdır?",a:["Şempanze","Orangutan","Goril","Bonobo"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Saraybosna'dır?",a:["Sırbistan","Hırvatistan","Karadağ","Bosna-Hersek"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'rekor' kırmak en önemli hedeftir?",a:["Futbol","Atletizm","Basketbol","Voleybol"],correct:1,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla üzüm üretir?",a:["Fransa","İtalya","İspanya","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en zehirli ahtapotudur?",a:["Koyu renkli ahtapot","Mavi halkılı ahtapot","Dev Pasifik ahtapotu","Gece ahtapotu"],correct:1,diff:"easy"},
+{q:"Hangi ülkenin başkenti Podgorica'dır?",a:["Hırvatistan","Sırbistan","Bosna","Karadağ"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'frikik' verilir?",a:["Basketbol","Voleybol","Tenis","Futbol"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla çelik üretir?",a:["Japonya","ABD","Hindistan","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan en hızlı büyüyen kemirgendir?",a:["Sıçan","Cerbua","Fare","Kapibara"],correct:0,diff:"easy"},
+{q:"Hangi ülkenin başkenti Priştine'dir?",a:["Makedonya","Arnavutluk","Sırbistan","Kosova"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'süper ağır siklet' kategorisi vardır?",a:["Güreş","Boks","Judo","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla alüminyum üretir?",a:["Rusya","ABD","Hindistan","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en uzun boyunlu deniz canlısıdır?",a:["Dev Kalamar","Uzun Boyunlu Ahtapot","Oarfish","Yılan balığı"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Minsk'tir?",a:["Ukrayna","Moldova","Litvanya","Belarus"],correct:3,diff:"easy"},
+{q:"Hangi sporda '10 pin' devirmek hedeflenir?",a:["Bowling","Curling","Dart","Bilardo"],correct:0,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla turist ağırlar?",a:["İspanya","ABD","Çin","Fransa"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en ağır böceğidir?",a:["Goliath Böceği","Atlas Güvesi","Weta","Rhino Beetle"],correct:0,diff:"easy"},
+{q:"Hangi ülkenin başkenti Kiev'dir?",a:["Moldova","Belarus","Gürcistan","Ukrayna"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'masa" üzerinde oynanır?",a:["Satranç","Masa Tenisi","Tavla","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla otomobil üretir?",a:["Japonya","ABD","Almanya","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en güçlü ısırığına sahiptir?",a:["Aslan","Nil Timsahı","Beyaz Köpekbalığı","Hipopotam"],correct:1,diff:"easy"},
+{q:"Hangi ülkenin başkenti Tiflis'tir?",a:["Ermenistan","Azerbaycan","Kazakistan","Gürcistan"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'çevirme hareketi' (spin) önemlidir?",a:["Tenis","Masa Tenisi","Badminton","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla gemi üretir?",a:["Japonya","Çin","Güney Kore","Almanya"],correct:1,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük kelebektir?",a:["Monarş","Atlas Güvesi","Kraliçe Aleksandra","Makao"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Yerevan'dır?",a:["Azerbaycan","Gürcistan","Kazakistan","Ermenistan"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'ağ" (net) altından top geçirilemez?",a:["Voleybol","Tenis","Basketbol","Masa Tenisi"],correct:1,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla elektronik cihaz üretir?",a:["Japonya","Güney Kore","ABD","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en küçük kuşudur?",a:["Finch","Wren","Kolibri","Serçe"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Bakü'dür?",a:["Gürcistan","Ermenistan","Türkmenistan","Azerbaycan"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'pedal" çevrilir?",a:["Kayak","Bisiklet","Paten","Sörf"],correct:1,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla balık avlar?",a:["Japonya","Norveç","Peru","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en uzun yaşayan böceğidir?",a:["Ağustos Böceği","Termit","Kızıl Karınca","Bal Arısı"],correct:0,diff:"easy"},
+{q:"Hangi ülkenin başkenti Nur-Sultan (Astana)'dır?",a:["Özbekistan","Türkmenistan","Kırgızistan","Kazakistan"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'güreş" pozisyonu alınır?",a:["Judo","Güreş","Sumo","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla kömür üretir?",a:["ABD","Avustralya","Hindistan","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük sincabıdır?",a:["Uçan Sincap","Kuzey Amerika Sincabı","Hindistan Dev Sincabı","Ağaç Sincabı"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Taşkent'tir?",a:["Kazakistan","Türkmenistan","Tacikistan","Özbekistan"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'hedef" (target) vurulur?",a:["Okçuluk","Atış","Biatlon","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla gaz üretir?",a:["Rusya","İran","Katar","ABD"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük akrepdir?",a:["Kaya Akrebi","Orman Akrebi","Kızıl Akrep","Dev Orman Akrebi"],correct:3,diff:"easy"},
+{q:"Hangi ülkenin başkenti Aşkabat'tır?",a:["Kazakistan","Özbekistan","Tacikistan","Türkmenistan"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'ceza sahası' vardır?",a:["Basketbol","Voleybol","Tenis","Futbol"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla elmas çıkarır?",a:["Güney Afrika","Zimbabve","Botsvana","Rusya"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük böceğidir (ağırlıkça)?",a:["Goliath Böceği","Atlas Güvesi","Weta","Dev Çekirge"],correct:0,diff:"easy"},
+{q:"Hangi ülkenin başkenti Duşanbe'dir?",a:["Kazakistan","Kırgızistan","Özbekistan","Tacikistan"],correct:3,diff:"easy"},
+{q:"Hangi sporda '3 sayı" atılır?",a:["Voleybol","Futbol","Basketbol","El Topu"],correct:2,diff:"easy"},
+{q:"Hangi ülke dünyada en büyük ülkedir (yüzölçümü)?",a:["Kanada","Çin","ABD","Rusya"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük balığıdır?",a:["Mavi Balina","Büyük Beyaz Köpekbalığı","Balina Köpekbalığı","Dev Manta"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Bişkek'tir?",a:["Kazakistan","Tacikistan","Özbekistan","Kırgızistan"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'ralli' yarışması yapılır?",a:["Motosiklet","Formula 1","Otomobil","Bisiklet"],correct:2,diff:"easy"},
+{q:"Hangi ülke dünyada en küçük ülkedir?",a:["Monako","San Marino","Liechtenstein","Vatikan"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en uzun deniz canlısıdır?",a:["Mavi Balina","Dev Kalamar","Oarfish","Sperm Balinası"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Ulanbatur'dur?",a:["Kazakistan","Çin","Rusya","Moğolistan"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'set" kazanmak gerekir?",a:["Basketbol","Futbol","Tenis","Voleybol"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla nükleer enerji üretir?",a:["Rusya","Fransa","Japonya","ABD"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük örümceğidir?",a:["Black Widow","Tarantula","Goliath Kuş Yiyen","Avcı Örümcek"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Seul'dür?",a:["Kuzey Kore","Çin","Japonya","Güney Kore"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'koşu pistti' kullanılır?",a:["Bisiklet","Motosiklet","Atlı Yarış","Atletizm"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla güneş enerjisi üretir?",a:["ABD","Almanya","Japonya","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük karayılanıdır?",a:["Kobra","Anaconda","Piton","King Kobra"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Pyongyang'dır?",a:["Güney Kore","Vietnam","Çin","Kuzey Kore"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'slalom" kursu bulunur?",a:["Kano","Bisiklet","Kayak","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla rüzgar enerjisi üretir?",a:["ABD","Almanya","Hindistan","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en zehirli kurbağasıdır?",a:["Ağaç Kurbağası","Zehirli Ok Kurbağası","Bullfrog","Dev Kurbağa"],correct:1,diff:"easy"},
+{q:"Hangi ülkenin başkenti Bangkok'tur?",a:["Vietnam","Kamboçya","Malezya","Tayland"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'ippon" puanı kazanılır?",a:["Boks","Güreş","Sumo","Judo"],correct:3,diff:"easy"},
+{q:"Hangi ülke dünyada en fazla hidroelektrik enerji üretir?",a:["Brezilya","Rusya","ABD","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük sürüngendir?",a:["Nil Timsahı","Komodo Ejderi","Tuzlu Su Timsahı","Boa"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Kuala Lumpur'dur?",a:["Singapur","Endonezya","Tayland","Malezya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'penaltı' atışı yapılır?",a:["Basketbol","Voleybol","Tenis","Futbol"],correct:3,diff:"easy"},
+
+
+// ══════════ KOLAY EK 2 (150) ══════════
+{q:"Türkiye'de hangi şehir 'İpek Yolu'nun önemli bir durağıydı?",a:["Ankara","Bursa","Konya","Trabzon"],correct:1,diff:"easy"},
+{q:"Hangi spor dalında 'set kazanmak' için 25 sayı gerekir?",a:["Tenis","Badminton","Voleybol","Masa Tenisi"],correct:2,diff:"easy"},
+{q:"Hangi ülke hem Asya hem Avrupa kıtasında yer alır?",a:["Mısır","Rusya","Türkiye","Kazakistan"],correct:2,diff:"easy"},
+{q:"Hangi element en iyi elektrik iletkeni metaldir?",a:["Altın","Bakır","Alüminyum","Gümüş"],correct:3,diff:"easy"},
+{q:"Hangi okyanusta Bermuda Şeytan Üçgeni bulunur?",a:["Pasifik","Hint","Kuzey Buz","Atlantik"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Flamenco' dansı ortaya çıkmıştır?",a:["Portekiz","Arjantin","İtalya","İspanya"],correct:3,diff:"easy"},
+{q:"Hangi kimyasal sembol karbonu temsil eder?",a:["Ca","Co","Cr","C"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Tango' dansı ortaya çıkmıştır?",a:["Brezilya","Uruguay","Şili","Arjantin"],correct:3,diff:"easy"},
+{q:"Dünyanın en derin gölü hangisidir?",a:["Hazar","Süperior","Titicaca","Baykal"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Baguette' ekmeği icat edilmiştir?",a:["Belçika","İsviçre","İtalya","Fransa"],correct:3,diff:"easy"},
+{q:"Hangi gezegende bir gün bir yıldan uzundur?",a:["Mars","Jüpiter","Satürn","Venüs"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Sushi' yemeği ortaya çıkmıştır?",a:["Çin","Kore","Vietnam","Japonya"],correct:3,diff:"easy"},
+{q:"Hangi kemik kulağın içinde bulunur?",a:["Kürek kemiği","Bilek kemiği","Kaval kemiği","Üzengi kemiği"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Pizza' yemeği icat edilmiştir?",a:["Yunanistan","İspanya","Fransa","İtalya"],correct:3,diff:"easy"},
+{q:"Hangi gezegen en fazla uyduya sahiptir?",a:["Satürn","Uranüs","Neptün","Jüpiter"],correct:0,diff:"easy"},
+{q:"Hangi ülkede 'Pasta' (makarna) yemeği ortaya çıkmıştır?",a:["Yunanistan","İspanya","Fransa","İtalya"],correct:3,diff:"easy"},
+{q:"Hangi vitamin güneş ışığıyla vücutta üretilir?",a:["A vitamini","B12 vitamini","C vitamini","D vitamini"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Hamburger' yemeği popülerleşmiştir?",a:["Kanada","İngiltere","Almanya","ABD"],correct:3,diff:"easy"},
+{q:"Hangi nehir Türkiye'nin en uzun nehridir?",a:["Fırat","Dicle","Sakarya","Kızılırmak"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Çikolata' ilk kez üretilmiştir?",a:["Belçika","İsviçre","Fransa","İtalya"],correct:1,diff:"easy"},
+{q:"Hangi gaz karbondioksit formülüyle gösterilir?",a:["CO","CO2","O2","NO2"],correct:1,diff:"easy"},
+{q:"Hangi ülkede 'Tulip' (Lale) çiçeği sembol olmuştur?",a:["Belçika","Danimarka","İsveç","Hollanda"],correct:3,diff:"easy"},
+{q:"İnsan vücudunun yüzde kaçı su içerir?",a:["40-50%","50-55%","55-65%","60-70%"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Bira' ilk kez üretilmiştir?",a:["Almanya","İngiltere","Belçika","Mezopotamya (Irak)"],correct:3,diff:"easy"},
+{q:"Hangi kasılma türü kalp kası için karakteristiktir?",a:["İstemli","İstemsiz","Her ikisi","Hiçbiri"],correct:1,diff:"easy"},
+{q:"Hangi ülkede 'Sake' içeceği üretilir?",a:["Çin","Kore","Vietnam","Japonya"],correct:3,diff:"easy"},
+{q:"Hangi gezegen Güneş etrafında en yavaş döner?",a:["Satürn","Uranüs","Jüpiter","Venüs"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Vodka' içeceği icat edilmiştir?",a:["Polonya","Ukrayna","Belarus","Rusya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'dekatlon' 10 farklı branşı kapsar?",a:["Yüzme","Cimnastik","Güreş","Atletizm"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Viski' içeceği icat edilmiştir?",a:["İrlanda","İskoçya","İngiltere","Galler"],correct:1,diff:"easy"},
+{q:"Hangi ülke kırmızı, beyaz ve mavi renkli bayrak kullanır?",a:["Almanya","İtalya","Fransa","Hollanda"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Yoga' pratiği ortaya çıkmıştır?",a:["Sri Lanka","Nepal","Pakistan","Hindistan"],correct:3,diff:"easy"},
+{q:"Hangi gaz yanmayı destekler?",a:["Azot","Karbondioksit","Helyum","Oksijen"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Akupunktur' tedavisi ortaya çıkmıştır?",a:["Japonya","Kore","Vietnam","Çin"],correct:3,diff:"easy"},
+{q:"Hangi organ alyuvar üretir?",a:["Karaciğer","Dalak","Böbrek","Kemik İliği"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Bonsai' sanatı ortaya çıkmıştır?",a:["Kore","Vietnam","Japonya","Çin"],correct:3,diff:"easy"},
+{q:"Hangi element altın ile gümüş arasında değer bakımındadır?",a:["Bakır","Titan","Platin","Paladyum"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Origami' sanatı ortaya çıkmıştır?",a:["Çin","Kore","Vietnam","Japonya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'kroket' oynarsınız?",a:["Bahçe topu oyunu","Su topu","Kış sporu","Dövüş sporu"],correct:0,diff:"easy"},
+{q:"Hangi ülkede 'Çay töreni' geleneği ortaya çıkmıştır?",a:["Çin","Kore","Vietnam","Japonya"],correct:3,diff:"easy"},
+{q:"Hangi hayvan gözlerini kapatamaz?",a:["Yılan","Balık","Kertenkele","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Manga' çizgi romanlar ortaya çıkmıştır?",a:["Çin","Kore","Vietnam","Japonya"],correct:3,diff:"easy"},
+{q:"Hangi renk karışımı mor rengi verir?",a:["Kırmızı + Sarı","Mavi + Sarı","Kırmızı + Mavi","Yeşil + Kırmızı"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Anime' animasyon tarzı ortaya çıkmıştır?",a:["Çin","Kore","Vietnam","Japonya"],correct:3,diff:"easy"},
+{q:"Hangi element paslanmaz çeliğin ana bileşenidir?",a:["Nikel","Titanyum","Krom","Molibden"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'K-Pop' müzik tarzı ortaya çıkmıştır?",a:["Japonya","Çin","Vietnam","Güney Kore"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'süslü jimnastik' denir?",a:["Tramplen","Ritmik Jimnastik","Artistik Jimnastik","Akrobatik"],correct:1,diff:"easy"},
+{q:"Hangi ülkede 'Taekwondo' dövüş sanatı ortaya çıkmıştır?",a:["Japonya","Çin","Tayvan","Güney Kore"],correct:3,diff:"easy"},
+{q:"Hangi gezegende atmosfer yoktur?",a:["Mars","Merkür","Venüs","Jüpiter"],correct:1,diff:"easy"},
+{q:"Hangi ülkede 'Karate' dövüş sanatı ortaya çıkmıştır?",a:["Çin","Kore","Tayland","Japonya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'flörde', 'kılıçta' ve 'epeede' branşlar vardır?",a:["Okçuluk","Eskrim","Güreş","Boks"],correct:1,diff:"easy"},
+{q:"Hangi ülkede 'Muay Thai' dövüş sanatı ortaya çıkmıştır?",a:["Vietnam","Kamboçya","Endonezya","Tayland"],correct:3,diff:"easy"},
+{q:"Hangi element kurşun kalemde kullanılır?",a:["Kurşun","Grafit","Kömür","Karbon"],correct:1,diff:"easy"},
+{q:"Hangi ülkede 'Sumo' güreşi ortaya çıkmıştır?",a:["Çin","Moğolistan","Kore","Japonya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'par' terimi kullanılır?",a:["Tenis","Badminton","Golf","Squash"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Capoeira' dövüş sanatı ortaya çıkmıştır?",a:["Arjantin","Kolombiya","Küba","Brezilya"],correct:3,diff:"easy"},
+{q:"Hangi ülke hem kuzey hem güney yarımkürede yer alır?",a:["Brezilya","Meksika","Kolombiya","Ekvador"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Salsa' dansı ortaya çıkmıştır?",a:["Porto Riko","Kolombiya","Küba","Meksika"],correct:2,diff:"easy"},
+{q:"Hangi metal en az yoğundur?",a:["Alüminyum","Titanyum","Magnezyum","Lityum"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Samba' dansı ortaya çıkmıştır?",a:["Arjantin","Kolombiya","Uruguay","Brezilya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'güreş minderi' kullanılır?",a:["Judo","Güreş","Sumo","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Merengue' dansı ortaya çıkmıştır?",a:["Küba","Brezilya","Haiti","Dominik Cumhuriyeti"],correct:3,diff:"easy"},
+{q:"Hangi gaz uçaklarda balonları şişirmek için kullanılır?",a:["Oksijen","Azot","Hidrojen","Helyum"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Bachata' dansı ortaya çıkmıştır?",a:["Puerto Riko","Küba","Haiti","Dominik Cumhuriyeti"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'ağırlık sınıfları' kullanılır?",a:["Futbol","Tenis","Basketbol","Boks"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Mariachi' müziği ortaya çıkmıştır?",a:["Arjantin","Kolombiya","İspanya","Meksika"],correct:3,diff:"easy"},
+{q:"Hangi element balonları uçurmak için güvenli kullanılır?",a:["Hidrojen","Oksijen","Neon","Helyum"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Fado' müziği ortaya çıkmıştır?",a:["İspanya","Brezilya","İtalya","Portekiz"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'çubuk atlama' yapılır?",a:["Uzun Atlama","Yüksek Atlama","Sırıkla Atlama","Üç Adım Atlama"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Reggae' müziği ortaya çıkmıştır?",a:["Trinidad","Haiti","Barbados","Jamaika"],correct:3,diff:"easy"},
+{q:"Hangi ülke G7 ülkeleri arasında değildir?",a:["Japonya","Fransa","Çin","Almanya"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Jazz' müziği ortaya çıkmıştır?",a:["İngiltere","Fransa","Küba","ABD"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'kürek kayığı' kullanılır?",a:["Kano","Yelken","Rowing","Hepsi"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Blues' müziği ortaya çıkmıştır?",a:["İngiltere","Fransa","Küba","ABD"],correct:3,diff:"easy"},
+{q:"Hangi metal altından daha değerlidir?",a:["Gümüş","Bakır","Paladyum","Platin"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Rock and Roll' müziği ortaya çıkmıştır?",a:["İngiltere","Avustralya","Kanada","ABD"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'büyük helm' (grand slam) kavramı vardır?",a:["Futbol","Basketbol","Tenis","Voleybol"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Hip-Hop' müzik tarzı ortaya çıkmıştır?",a:["İngiltere","Kanada","Jamaica","ABD"],correct:3,diff:"easy"},
+{q:"Hangi element demir cevherinin ana bileşenidir?",a:["Demir oksit","Demir klorür","Demir sülfür","Saf demir"],correct:0,diff:"easy"},
+{q:"Hangi ülkede 'Opera' sanatı doğmuştur?",a:["Almanya","Fransa","Avusturya","İtalya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'çapraz vuruş' (cross) yapılır?",a:["Güreş","Boks","Judo","Karate"],correct:1,diff:"easy"},
+{q:"Hangi ülkede 'Bale' sanatı gelişmiştir?",a:["İtalya","Almanya","İngiltere","Fransa"],correct:3,diff:"easy"},
+{q:"Hangi gezegenin en belirgin özelliği Büyük Kırmızı Leke'dir?",a:["Satürn","Mars","Neptün","Jüpiter"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Senfoni orkestrası' geleneği doğmuştur?",a:["İtalya","Fransa","Almanya","Avusturya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'halı saha' kullanılır?",a:["Futbol","Basketbol","Voleybol","Tenis"],correct:0,diff:"easy"},
+{q:"Hangi ülkede 'Flüt' çalgısı geliştirilmiştir?",a:["İtalya","Almanya","Fransa","Avusturya"],correct:1,diff:"easy"},
+{q:"Hangi hayvan kutup bölgelerinde yaşar ve beyaz tüylüdür?",a:["Panda","Kutup Tilkisi","Kutup Ayısı","İkisi de"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Piyano' çalgısı icat edilmiştir?",a:["Almanya","Fransa","Avusturya","İtalya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'güreş halısı' kullanılır?",a:["Judo","Güreş","Sumo","Hepsi"],correct:1,diff:"easy"},
+{q:"Hangi ülkede 'Keman' çalgısı geliştirilmiştir?",a:["Almanya","Fransa","Avusturya","İtalya"],correct:3,diff:"easy"},
+{q:"Hangi hayvan yılda bir kez tüylerini değiştirir?",a:["Kanarya","Papağan","Martı","Kartal"],correct:0,diff:"easy"},
+{q:"Hangi ülkede 'Gitar' çalgısı ortaya çıkmıştır?",a:["Portekiz","İtalya","Fransa","İspanya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'tekne yarışı' yapılır?",a:["Yelken","Kürek","Motor Sporları","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Akordeon' çalgısı icat edilmiştir?",a:["Fransa","Avusturya","Almanya","İtalya"],correct:2,diff:"easy"},
+{q:"Hangi element fotoğraf filmlerinde kullanılır?",a:["Çinko","Bakır","Gümüş","Altın"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Trompet' çalgısı geliştirilmiştir?",a:["Fransa","İtalya","Avusturya","Almanya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'salon' ve 'plaj' versiyonu vardır?",a:["Tenis","Basketbol","Voleybol","Futbol"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Saksafon' çalgısı icat edilmiştir?",a:["Fransa","Hollanda","Almanya","Belçika"],correct:3,diff:"easy"},
+{q:"Hangi hayvan süt veren tek yumurtlayan memelidir?",a:["Koala","Keseli Sıçan","Ornitorenk","Echidna"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Davul' çalgısı ilk kullanılmıştır?",a:["Mısır","Yunanistan","Çin","Mezopotamya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'nokavt' ile galibiyet kazanılır?",a:["Güreş","Judo","Boks","Karate"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Harmonika' çalgısı icat edilmiştir?",a:["Fransa","Avusturya","Almanya","İsviçre"],correct:2,diff:"easy"},
+{q:"Hangi element elektrik ampullerinde kullanılır?",a:["Tungsten","Nikel","Krom","Bakır"],correct:0,diff:"easy"},
+{q:"Hangi ülkede 'Bağlama' çalgısı gelenekseldir?",a:["Azerbaycan","İran","Yunanistan","Türkiye"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'katana' kullanılır?",a:["Kendo","Karate","Aikido","Judo"],correct:0,diff:"easy"},
+{q:"Hangi ülkede 'Ud' çalgısı kullanılır?",a:["Yunanistan","İran","Türkiye","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük gagasına sahiptir?",a:["Papağan","Kel Kartal","Toucan","Pelikân"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Ney' çalgısı gelenekseldir?",a:["Yunanistan","İran","Türkiye","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'şut, pas ve dribbling' temel hareketlerdir?",a:["Basketbol","Voleybol","Tenis","Futbol"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Koto' çalgısı gelenekseldir?",a:["Çin","Kore","Vietnam","Japonya"],correct:3,diff:"easy"},
+{q:"Hangi element deniz suyunda en çok bulunan metaldir?",a:["Potasyum","Kalsiyum","Magnezyum","Sodyum"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Erhu' çalgısı gelenekseldir?",a:["Japonya","Kore","Vietnam","Çin"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'paralel güzergah' yarışı yapılır?",a:["Bisiklet","Kayak","Atletizm","Yüzme"],correct:1,diff:"easy"},
+{q:"Hangi ülkede 'Gayda' (Bagpipe) çalgısı sembolik öneme sahiptir?",a:["İrlanda","Galler","İngiltere","İskoçya"],correct:3,diff:"easy"},
+{q:"Hangi hayvan 'şükran günü' yemeğiyle sembolik ilişkisi olan hayvandır?",a:["Tavuk","Kaz","Hindi","Ördek"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Kanun' çalgısı gelenekseldir?",a:["İran","Yunanistan","Türkiye","Mısır"],correct:2,diff:"easy"},
+{q:"Hangi sporda 'smaç' vuruşu yapılır?",a:["Tenis","Voleybol","Masa Tenisi","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Sitar' çalgısı gelenekseldir?",a:["Pakistan","Bangladeş","Nepal","Hindistan"],correct:3,diff:"easy"},
+{q:"Hangi element en ucuz metaldir?",a:["Bakır","Alüminyum","Demir","Çinko"],correct:1,diff:"easy"},
+{q:"Hangi ülkede 'Tabla' davulu gelenekseldir?",a:["Pakistan","Bangladeş","Sri Lanka","Hindistan"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'teknik iptal' kavramı kullanılır?",a:["Güreş","Sumo","Boks","Judo"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Didgeridoo' çalgısı gelenekseldir?",a:["Yeni Zelanda","Fiji","Papua Yeni Gine","Avustralya"],correct:3,diff:"easy"},
+{q:"Hangi hayvan Türkiye'nin sembol hayvanıdır?",a:["Aslan","Kartal","Kurt","Boğa"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Steel drum' çalgısı gelenekseldir?",a:["Jamaika","Küba","Barbados","Trinidad ve Tobago"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'korner atışı' yapılır?",a:["Basketbol","El Topu","Voleybol","Futbol"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Marakas' çalgısı gelenekseldir?",a:["Brezilya","Arjantin","Kolombiya","Küba"],correct:3,diff:"easy"},
+{q:"Hangi element paslanmaya en dayanıklı metaldir?",a:["Krom","Titanyum","Altın","Platin"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Kastanyet' çalgısı gelenekseldir?",a:["Portekiz","Fransa","İtalya","İspanya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'taç atışı' kullanılır?",a:["Basketbol","El Topu","Futbol","Rugby"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Bozouk' çalgısı gelenekseldir?",a:["Arnavutluk","Bulgaristan","Türkiye","Yunanistan"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en büyük kara hayvanıdır?",a:["Gergedan","Hipopotam","Zürafa","Afrika Fili"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Balalayka' çalgısı gelenekseldir?",a:["Ukrayna","Belarus","Polonya","Rusya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'atlet' koşarken engel aşar?",a:["Marathon","Sprint","Engelli Koşu","Bayrak Koşusu"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Bandoneón' çalgısı gelenekseldir?",a:["Brezilya","Uruguay","Şili","Arjantin"],correct:3,diff:"easy"},
+{q:"Hangi element mermi üretiminde kullanılır?",a:["Bakır","Çinko","Demir","Kurşun"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Taiko' davulu gelenekseldir?",a:["Çin","Kore","Vietnam","Japonya"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'aut çizgisi' kavramı vardır?",a:["Basketbol","Voleybol","Futbol","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Djembe' davulu gelenekseldir?",a:["Nijerya","Etiyopya","Mısır","Batı Afrika"],correct:3,diff:"easy"},
+{q:"Hangi hayvan Afrika'nın en hızlı kara hayvanıdır?",a:["Aslan","Leopar","Gepard","Impala"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Pankreas' ilk kez tanımlanmıştır?",a:["Roma","Mısır","Yunanistan","Babil"],correct:2,diff:"easy"},
+{q:"Hangi sporda 'toplam süre' esas alınır?",a:["Futbol","Tenis","Bisiklet Turu","Maraton"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Şişe' cam üretimi icat edilmiştir?",a:["Mısır","Yunanistan","Suriye","Fenikya"],correct:3,diff:"easy"},
+{q:"Hangi element parlak mor alevle yanar?",a:["Sodyum","Potasyum","Lityum","Kalsiyum"],correct:1,diff:"easy"},
+{q:"Hangi ülkede 'Kağıt' icat edilmiştir?",a:["Japonya","Mısır","Hindistan","Çin"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'sprint" ve 'etap' kavramları kullanılır?",a:["Yüzme","Atletizm","Bisiklet","Kürek"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Pusula' icat edilmiştir?",a:["Japonya","Hindistan","Arap dünyası","Çin"],correct:3,diff:"easy"},
+{q:"Hangi hayvan dünyanın en güçlü hayvanıdır (vücut ağırlığına göre)?",a:["Fil","Karınca","Goril","Gergedan"],correct:1,diff:"easy"},
+{q:"Hangi ülkede 'Barut' icat edilmiştir?",a:["Japonya","Hindistan","Arap dünyası","Çin"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'atak' ve 'savunma' pozisyonları vardır?",a:["Tenis","Futbol","Basketbol","Hepsi"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Matbaa' icat edilmiştir?",a:["Japonya","Kore","Almanya","Çin"],correct:2,diff:"easy"},
+{q:"Hangi element yanınızda taşınan mıknatısları etkiler?",a:["Bakır","Nikel","Alüminyum","Demir"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Teleskop' icat edilmiştir?",a:["İtalya","İngiltere","Almanya","Hollanda"],correct:3,diff:"easy"},
+{q:"Hangi sporda 'smaç blokajı' yapılır?",a:["Tenis","Futbol","Masa Tenisi","Voleybol"],correct:3,diff:"easy"},
+{q:"Hangi ülkede 'Mikroskop' icat edilmiştir?",a:["İtalya","Almanya","İngiltere","Hollanda"],correct:3,diff:"easy"},
+{q:"Hangi hayvan en fazla ses çıkarır?",a:["Aslan","Fil","Mavi Balina","Sperm Balinası"],correct:2,diff:"easy"},
+{q:"Hangi ülkede 'Radyo' icat edilmiştir?",a:["Almanya","Fransa","İtalya","ABD"],correct:2,diff:"easy"},
 
 // ══════════ ORTA (150) ══════════
 {q:"Hangi element periyodik tabloda 'Au' sembolü ile gösterilir?",a:["Gümüş","Demir","Altın","Bakır"],correct:2,diff:"medium"},
@@ -1320,14 +1653,86 @@ function openProfile() {
 
 // ─── Admin (Firestore'da questions koleksiyonu) ───
 function openAdmin() {
-  renderAdminList();
+  adminTab('coins');
   openModal('modal-admin');
+  renderAdminUsers();
 }
 
-async function renderAdminList() {
-  const { db, collection, getDocs, query, orderBy } = window._FB;
-  let qs = window._cachedQuestions || DEFAULT_QUESTIONS;
+function adminTab(tab) {
+  document.getElementById('adm-panel-coins').classList.toggle('hidden', tab !== 'coins');
+  document.getElementById('adm-panel-questions').classList.toggle('hidden', tab !== 'questions');
+  document.getElementById('adm-tab-coins').classList.toggle('active', tab === 'coins');
+  document.getElementById('adm-tab-questions').classList.toggle('active', tab === 'questions');
+  if (tab === 'questions') renderAdminList();
+  if (tab === 'coins') renderAdminUsers();
+}
 
+// ─── Kullanıcı listesi + coin ekleme ───
+let _adminUserUnsub = null;
+
+async function renderAdminUsers() {
+  const { db, collection, query, orderBy, onSnapshot } = window._FB;
+  const el = document.getElementById('adm-user-list');
+  el.innerHTML = '<div style="text-align:center;color:var(--text2);padding:20px">Yükleniyor...</div>';
+
+  if (_adminUserUnsub) { _adminUserUnsub(); _adminUserUnsub = null; }
+
+  const q = query(collection(db, 'users'), orderBy('xp', 'desc'));
+  _adminUserUnsub = onSnapshot(q, (snap) => {
+    if (snap.empty) { el.innerHTML = '<div style="text-align:center;color:var(--text2);padding:20px">Henüz kullanıcı yok.</div>'; return; }
+    const myUid = window._currentUID;
+    el.innerHTML = snap.docs.map(d => {
+      const u = d.data();
+      const uid = d.id;
+      const isMe = uid === myUid;
+      return `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--glass);border:1px solid ${isMe?'rgba(0,195,255,0.3)':'var(--border)'};border-radius:12px;margin-bottom:8px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;">${(u.username||'?')[0].toUpperCase()}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:0.88rem;color:${isMe?'var(--blue)':'var(--text)'};">${u.username||'?'}${isMe?' (sen)':''}</div>
+          <div style="font-size:0.72rem;color:var(--text2);">💰 ${(u.coins||0).toLocaleString()} coin &nbsp;·&nbsp; ⭐ ${(u.xp||0).toLocaleString()} XP &nbsp;·&nbsp; 🎮 ${u.games||0} oyun</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+          <input type="number" id="coin-input-${uid}" placeholder="Miktar" min="1" style="width:80px;padding:6px 8px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.82rem;outline:none;">
+          <button onclick="adminAddCoin('${uid}','${u.username||''}','${u.coins||0}')" style="padding:6px 12px;background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;border-radius:8px;color:#000;font-weight:700;font-size:0.78rem;cursor:pointer;white-space:nowrap;">+ COIN</button>
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
+
+async function adminAddCoin(uid, username, currentCoins) {
+  const input = document.getElementById('coin-input-' + uid);
+  const amount = parseInt(input?.value);
+  if (!amount || amount <= 0) return toast('Geçerli bir miktar girin!', 'error');
+
+  const { db, doc, updateDoc } = window._FB;
+  try {
+    const newCoins = parseInt(currentCoins) + amount;
+    await updateDoc(doc(db, 'users', uid), { coins: newCoins });
+
+    // Eğer bu kendi hesabımızsa local state güncelle
+    if (uid === window._currentUID && window._userData) {
+      window._userData.coins = newCoins;
+      updateLobbyUI();
+    }
+
+    if (input) input.value = '';
+    toast(`✅ ${username} hesabına ${amount.toLocaleString()} coin eklendi!`, 'gold');
+  } catch(e) {
+    toast('Hata: ' + e.message, 'error');
+  }
+}
+
+// Modal kapanınca unsub
+document.getElementById('modal-admin').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) {
+    if (_adminUserUnsub) { _adminUserUnsub(); _adminUserUnsub = null; }
+    closeModal('modal-admin');
+  }
+});
+
+async function renderAdminList() {
+  let qs = window._cachedQuestions || DEFAULT_QUESTIONS;
   const el = document.getElementById('adm-q-list');
   el.innerHTML = `<div class="section-title">Mevcut Sorular (${qs.length})</div>` +
     [...qs].reverse().slice(0,10).map(q => `
