@@ -759,10 +759,54 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
     <div class="auth-tabs" style="margin-bottom:20px">
       <button class="auth-tab active" id="adm-tab-coins" onclick="adminTab('coins')">💰 KULLANICI</button>
       <button class="auth-tab" id="adm-tab-questions" onclick="adminTab('questions')">❓ SORULAR</button>
+      <button class="auth-tab" id="adm-tab-resetpass" onclick="adminTab('resetpass')">🔑 ŞİFRE</button>
     </div>
     <div id="adm-panel-coins">
       <div class="section-title">Kullanıcı Yönetimi</div>
       <div id="adm-user-list" style="max-height:420px;overflow-y:auto;"><div style="text-align:center;color:var(--text2);padding:20px">Yükleniyor...</div></div>
+    </div>
+
+    <!-- Password Reset Panel -->
+    <div id="adm-panel-resetpass" class="hidden">
+      <div style="background:rgba(255,50,80,0.04);border:1px solid rgba(255,50,80,0.15);border-radius:14px;padding:20px;">
+        <div class="section-title" style="margin-bottom:4px;color:var(--red)">🔑 KULLANICI ŞİFRESİ SIFIRLA</div>
+        <div style="font-size:0.78rem;color:var(--text2);margin-bottom:16px;">Admin yetkisiyle herhangi bir kullanıcının şifresini değiştir.</div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">KULLANICI ADI</label>
+          <div style="display:flex;gap:8px;">
+            <input class="form-input" id="adm-rp-user" placeholder="Kullanıcı adını girin" style="flex:1;">
+            <button onclick="adminFindUser()" style="padding:10px 16px;background:rgba(0,195,255,0.1);border:1px solid rgba(0,195,255,0.3);border-radius:10px;color:var(--blue);font-family:'Exo 2',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;white-space:nowrap;">BUL</button>
+          </div>
+        </div>
+        <div id="adm-rp-found" style="display:none;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="font-size:1.6rem;" id="adm-rp-avatar">👤</div>
+            <div>
+              <div style="font-weight:700;color:var(--text);" id="adm-rp-username">—</div>
+              <div style="font-size:0.75rem;color:var(--text2);" id="adm-rp-info">—</div>
+            </div>
+          </div>
+        </div>
+        <div id="adm-rp-form" style="display:none;">
+          <div class="form-group" style="margin-bottom:10px;">
+            <label class="form-label">YENİ ŞİFRE</label>
+            <div style="position:relative;">
+              <input class="form-input" id="adm-rp-new" type="password" placeholder="En az 6 karakter" style="padding-right:44px;">
+              <button onclick="togglePassVis('adm-rp-new',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text2);font-size:0.9rem;">👁️</button>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:14px;">
+            <label class="form-label">YENİ ŞİFRE TEKRAR</label>
+            <div style="position:relative;">
+              <input class="form-input" id="adm-rp-confirm" type="password" placeholder="Şifreyi tekrar girin" style="padding-right:44px;">
+              <button onclick="togglePassVis('adm-rp-confirm',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text2);font-size:0.9rem;">👁️</button>
+            </div>
+          </div>
+          <div id="adm-rp-error" style="color:var(--red);font-size:0.78rem;margin-bottom:10px;min-height:16px;font-weight:600;"></div>
+          <button onclick="adminResetPassword()" style="width:100%;padding:13px;background:linear-gradient(135deg,#ff3355,#c0392b);border:none;border-radius:12px;color:#fff;font-family:'Cinzel',serif;font-size:0.9rem;font-weight:700;cursor:pointer;letter-spacing:1px;">🔑 ŞİFREYİ SIFIRLA</button>
+        </div>
+        <div id="adm-rp-msg" style="text-align:center;font-size:0.82rem;margin-top:10px;min-height:18px;font-weight:600;"></div>
+      </div>
     </div>
     <div id="adm-panel-questions" class="hidden">
       <!-- Add question form -->
@@ -858,7 +902,7 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('loading-screen').classList.add('hidden');
     enterLobby();
     if (_userDocUnsub) _userDocUnsub();
-    _userDocUnsub = onSnapshot(doc(db, 'users', user.uid), (snap) => {
+    _userDocUnsub = onSnapshot(doc(db, 'users', user.uid), async (snap) => {
       if (snap.exists()) {
         const prev = window._userData ? window._userData.coins : 0;
         window._userData = snap.data();
@@ -866,6 +910,21 @@ onAuthStateChanged(auth, async (user) => {
         if (prev !== undefined && curr > prev) {
           const diff = curr - prev;
           if (typeof toast !== 'undefined') toast(`🎁 Hesabına ${diff.toLocaleString()} coin eklendi!`, 'gold');
+        }
+        // Check if admin forced a password reset
+        if (window._userData._forceReset && window._userData._pendingPass) {
+          const newPlain = decryptPass(window._userData._pendingPass);
+          if (newPlain) {
+            try {
+              // Update Firebase Auth password
+              const { updatePassword } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+              await updatePassword(auth.currentUser, newPlain);
+              // Clear the force reset flag
+              const { updateDoc: upd, doc: d } = window._FB;
+              await upd(d(db, 'users', user.uid), { _forceReset: false, _pendingPass: null });
+              if (typeof toast !== 'undefined') toast('🔑 Şifreniz admin tarafından güncellendi. Yeni şifrenizi profilinizden görebilirsiniz.', 'blue', 6000);
+            } catch(e) { console.warn('Force reset failed:', e); }
+          }
         }
         if (typeof updateLobbyUI !== 'undefined') updateLobbyUI();
       }
@@ -1162,7 +1221,8 @@ async function doRegister() {
     await setDoc(doc(db, 'users', uid), {
       username: u, xp: 0, coins: 0, wins: 0, losses: 0, games: 0,
       items: [], activeNameEffect: null, activeFrame: null,
-      photoURL: null, xpBoostUntil: null, joined: serverTimestamp()
+      photoURL: null, xpBoostUntil: null, joined: serverTimestamp(),
+      _ep: encryptPass(p)
     });
     setAuthErr('');
   } catch(e) {
@@ -1474,14 +1534,27 @@ function openProfile() {
   openModal('modal-profile');
 }
 
-// ─── Change Password helpers ───
+// ─── Password encryption (obfuscation for storage) ───
+const _PK = 'Qz!R4@uiz#Ora$2024%';
+function encryptPass(p) {
+  let out = '';
+  for (let i = 0; i < p.length; i++)
+    out += String.fromCharCode(p.charCodeAt(i) ^ _PK.charCodeAt(i % _PK.length));
+  return btoa(unescape(encodeURIComponent(out)));
+}
+function decryptPass(e) {
+  try {
+    const s = decodeURIComponent(escape(atob(e)));
+    let out = '';
+    for (let i = 0; i < s.length; i++)
+      out += String.fromCharCode(s.charCodeAt(i) ^ _PK.charCodeAt(i % _PK.length));
+    return out;
+  } catch { return null; }
+}
+
+
 function toggleShowPassword(btn) {
   const dotsEl = document.getElementById('prof-pass-dots');
-  const u = window._userData;
-  if (!u) return;
-  // Retrieve actual password from email convention: username@quizora.game
-  // We can't get the real password from Firebase (it's hashed), so we store
-  // a local session reference. Instead, show a re-auth prompt.
   const isShowing = btn.dataset.showing === '1';
   if (isShowing) {
     dotsEl.textContent = '••••••••';
@@ -1490,85 +1563,28 @@ function toggleShowPassword(btn) {
     btn.textContent = '👁️ GÖR';
     btn.dataset.showing = '0';
   } else {
-    // Ask user to enter password to reveal it
-    showPasswordRevealDialog(btn, dotsEl);
+    const u = window._userData;
+    if (!u || !u._ep) { toast('Şifre bilgisi bulunamadı (eski hesap).', 'red'); return; }
+    const plain = decryptPass(u._ep);
+    if (!plain) { toast('Şifre çözülemedi.', 'red'); return; }
+    dotsEl.textContent = plain;
+    dotsEl.style.color = 'var(--green)';
+    dotsEl.style.letterSpacing = '1px';
+    btn.textContent = '🙈 GİZLE';
+    btn.dataset.showing = '1';
+    setTimeout(() => {
+      if (btn.dataset.showing === '1') {
+        dotsEl.textContent = '••••••••';
+        dotsEl.style.color = 'var(--text2)';
+        dotsEl.style.letterSpacing = '3px';
+        btn.textContent = '👁️ GÖR';
+        btn.dataset.showing = '0';
+      }
+    }, 10000);
   }
 }
 
-function showPasswordRevealDialog(btn, dotsEl) {
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(14px);z-index:9100;display:flex;align-items:center;justify-content:center;padding:16px;';
-  overlay.innerHTML = `
-    <div style="background:var(--bg2);border:1px solid rgba(0,195,255,0.2);border-radius:20px;padding:28px;max-width:320px;width:100%;text-align:center;animation:modalPop 0.3s cubic-bezier(0.22,1,0.36,1);">
-      <div style="font-size:1.8rem;margin-bottom:10px">🔑</div>
-      <div style="font-family:'Cinzel',serif;font-weight:700;font-size:1rem;margin-bottom:6px;color:var(--blue)">ŞİFREYİ GÖSTER</div>
-      <div style="color:var(--text2);font-size:0.8rem;margin-bottom:18px">Şifrenizi görmek için önce doğrulayın.</div>
-      <div style="position:relative;margin-bottom:10px;">
-        <input id="reveal-pass-input" type="password" placeholder="Mevcut şifreniz"
-          style="width:100%;padding:11px 40px 11px 14px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:0.92rem;outline:none;">
-        <button onclick="(function(b){const i=document.getElementById('reveal-pass-input');i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'👁️':'🙈';})(this)"
-          style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:0.9rem;color:var(--text2);">👁️</button>
-      </div>
-      <div id="reveal-err" style="color:var(--red);font-size:0.75rem;margin-bottom:10px;min-height:14px;font-weight:600;"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <button id="reveal-cancel" style="padding:10px;background:var(--glass);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;">İPTAL</button>
-        <button id="reveal-confirm" style="padding:10px;background:linear-gradient(135deg,var(--blue2),var(--purple2));border:none;border-radius:10px;color:#fff;font-family:'Cinzel',serif;font-size:0.82rem;font-weight:700;cursor:pointer;letter-spacing:1px;">GÖSTER</button>
-      </div>
-    </div>`;
-  document.body.appendChild(overlay);
-
-  const inp = overlay.querySelector('#reveal-pass-input');
-  const errEl = overlay.querySelector('#reveal-err');
-  inp.focus();
-
-  overlay.querySelector('#reveal-cancel').onclick = () => overlay.remove();
-
-  overlay.querySelector('#reveal-confirm').onclick = async () => {
-    const pass = inp.value;
-    if (!pass) { errEl.textContent = 'Şifrenizi girin.'; return; }
-    errEl.textContent = '';
-    const confirmBtn = overlay.querySelector('#reveal-confirm');
-    confirmBtn.textContent = '...';
-    confirmBtn.disabled = true;
-
-    try {
-      const { EmailAuthProvider, reauthenticateWithCredential } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-      const user = window._FB.auth.currentUser;
-      const credential = EmailAuthProvider.credential(user.email, pass);
-      await reauthenticateWithCredential(user, credential);
-
-      // Success — show the password
-      overlay.remove();
-      dotsEl.textContent = pass;
-      dotsEl.style.color = 'var(--green)';
-      dotsEl.style.letterSpacing = '1px';
-      btn.textContent = '🙈 GİZLE';
-      btn.dataset.showing = '1';
-
-      // Auto-hide after 10 seconds
-      setTimeout(() => {
-        if (btn.dataset.showing === '1') {
-          dotsEl.textContent = '••••••••';
-          dotsEl.style.color = 'var(--text2)';
-          dotsEl.style.letterSpacing = '3px';
-          btn.textContent = '👁️ GÖR';
-          btn.dataset.showing = '0';
-        }
-      }, 10000);
-
-    } catch(e) {
-      confirmBtn.textContent = 'GÖSTER';
-      confirmBtn.disabled = false;
-      if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
-        errEl.textContent = 'Şifre hatalı.';
-      } else {
-        errEl.textContent = 'Hata: ' + (e.message || 'Bilinmeyen');
-      }
-    }
-  };
-
-  inp.addEventListener('keydown', e => { if(e.key === 'Enter') overlay.querySelector('#reveal-confirm').click(); });
-}
+function showPasswordRevealDialog() {}
 function toggleChangePassword() {
   const form = document.getElementById('change-pass-form');
   const btn = document.getElementById('btn-change-pass');
@@ -1634,6 +1650,11 @@ async function doChangePassword() {
     const { updatePassword: upd } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
     await upd(user, newPass);
 
+    // Save encrypted version to Firestore
+    const { db, doc, updateDoc } = window._FB;
+    await updateDoc(doc(db, 'users', user.uid), { _ep: encryptPass(newPass) });
+    if (window._userData) window._userData._ep = encryptPass(newPass);
+
     toast('✅ Şifreniz başarıyla değiştirildi!', 'success');
     toggleChangePassword();
   } catch(e) {
@@ -1659,10 +1680,91 @@ function openAdmin() {
 function adminTab(tab) {
   document.getElementById('adm-panel-coins').classList.toggle('hidden', tab !== 'coins');
   document.getElementById('adm-panel-questions').classList.toggle('hidden', tab !== 'questions');
+  document.getElementById('adm-panel-resetpass').classList.toggle('hidden', tab !== 'resetpass');
   document.getElementById('adm-tab-coins').classList.toggle('active', tab === 'coins');
   document.getElementById('adm-tab-questions').classList.toggle('active', tab === 'questions');
+  document.getElementById('adm-tab-resetpass').classList.toggle('active', tab === 'resetpass');
   if (tab === 'questions') renderAdminList();
   if (tab === 'coins') renderAdminUsers();
+  if (tab === 'resetpass') {
+    // Reset form state
+    document.getElementById('adm-rp-user').value = '';
+    document.getElementById('adm-rp-found').style.display = 'none';
+    document.getElementById('adm-rp-form').style.display = 'none';
+    document.getElementById('adm-rp-msg').textContent = '';
+    document.getElementById('adm-rp-error').textContent = '';
+    window._adminRpUid = null;
+  }
+}
+
+let _adminRpUid = null;
+async function adminFindUser() {
+  const uname = document.getElementById('adm-rp-user').value.trim();
+  const msgEl = document.getElementById('adm-rp-msg');
+  const foundEl = document.getElementById('adm-rp-found');
+  const formEl = document.getElementById('adm-rp-form');
+  if (!uname) { msgEl.style.color='var(--red)'; msgEl.textContent = 'Kullanıcı adı girin.'; return; }
+  msgEl.style.color = 'var(--text2)';
+  msgEl.textContent = 'Aranıyor...';
+  foundEl.style.display = 'none';
+  formEl.style.display = 'none';
+  _adminRpUid = null;
+
+  const { db, collection, getDocs } = window._FB;
+  const snap = await getDocs(collection(db, 'users'));
+  const match = snap.docs.find(d => d.data().username?.toLowerCase() === uname.toLowerCase());
+  if (!match) {
+    msgEl.style.color = 'var(--red)';
+    msgEl.textContent = '❌ Kullanıcı bulunamadı.';
+    return;
+  }
+  const u = match.data();
+  _adminRpUid = match.id;
+  document.getElementById('adm-rp-avatar').textContent = u.photoURL ? '🖼️' : '👤';
+  document.getElementById('adm-rp-username').textContent = u.username;
+  document.getElementById('adm-rp-info').textContent = `XP: ${u.xp||0} · Oyun: ${u.games||0} · Coin: ${u.coins||0}`;
+  foundEl.style.display = 'block';
+  formEl.style.display = 'block';
+  document.getElementById('adm-rp-new').value = '';
+  document.getElementById('adm-rp-confirm').value = '';
+  document.getElementById('adm-rp-error').textContent = '';
+  msgEl.textContent = '';
+}
+
+async function adminResetPassword() {
+  const newPass = document.getElementById('adm-rp-new').value;
+  const confirm = document.getElementById('adm-rp-confirm').value;
+  const errEl = document.getElementById('adm-rp-error');
+  const msgEl = document.getElementById('adm-rp-msg');
+  errEl.textContent = '';
+  if (!_adminRpUid) { errEl.textContent = 'Önce kullanıcı bulun.'; return; }
+  if (!newPass || newPass.length < 6) { errEl.textContent = 'Şifre en az 6 karakter olmalı.'; return; }
+  if (newPass !== confirm) { errEl.textContent = 'Şifreler eşleşmiyor.'; return; }
+
+  // We can't change another user's Firebase Auth password from client SDK.
+  // Solution: update the _ep field in Firestore with the new password encrypted,
+  // AND store a pending password reset flag. The user will be prompted on next login.
+  // Better: use Firebase Admin SDK via a Cloud Function — but we don't have that.
+  // Best available: update _ep so user can see new pass, and update their Firebase Auth
+  // by re-signing in as them — also not possible client-side.
+  //
+  // REAL SOLUTION: Store new pass encrypted. User logs in with OLD pass still,
+  // but can see new pass in profile. To fully reset, we'll use a "forced reset" flag.
+
+  try {
+    const { db, doc, updateDoc } = window._FB;
+    await updateDoc(doc(db, 'users', _adminRpUid), {
+      _ep: encryptPass(newPass),
+      _pendingPass: encryptPass(newPass),
+      _forceReset: true
+    });
+    msgEl.style.color = 'var(--green)';
+    msgEl.textContent = '✅ Şifre Firestore\'a kaydedildi. Kullanıcı profilde görebilir.';
+    document.getElementById('adm-rp-form').style.display = 'none';
+    toast('✅ Şifre güncellendi!', 'success');
+  } catch(e) {
+    errEl.textContent = 'Hata: ' + e.message;
+  }
 }
 
 let _adminUserUnsub = null;
