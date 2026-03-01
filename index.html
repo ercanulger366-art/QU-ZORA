@@ -714,6 +714,7 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
         <div style="font-size:0.75rem;color:var(--text2);letter-spacing:1px;">ŞİFRE</div>
         <div style="display:flex;align-items:center;gap:8px;">
           <div style="font-weight:700;color:var(--text2);font-size:0.9rem;letter-spacing:3px;" id="prof-pass-dots">••••••••</div>
+          <button onclick="toggleShowPassword(this)" style="padding:4px 10px;background:rgba(0,195,255,0.08);border:1px solid rgba(0,195,255,0.2);border-radius:8px;color:var(--blue);font-size:0.72rem;font-weight:700;cursor:pointer;transition:all 0.2s;" id="btn-show-pass">👁️ GÖR</button>
           <button onclick="toggleChangePassword()" style="padding:4px 10px;background:rgba(155,89,255,0.1);border:1px solid rgba(155,89,255,0.3);border-radius:8px;color:var(--purple);font-size:0.72rem;font-weight:700;cursor:pointer;transition:all 0.2s;" id="btn-change-pass">DEĞİŞTİR</button>
         </div>
       </div>
@@ -1474,6 +1475,100 @@ function openProfile() {
 }
 
 // ─── Change Password helpers ───
+function toggleShowPassword(btn) {
+  const dotsEl = document.getElementById('prof-pass-dots');
+  const u = window._userData;
+  if (!u) return;
+  // Retrieve actual password from email convention: username@quizora.game
+  // We can't get the real password from Firebase (it's hashed), so we store
+  // a local session reference. Instead, show a re-auth prompt.
+  const isShowing = btn.dataset.showing === '1';
+  if (isShowing) {
+    dotsEl.textContent = '••••••••';
+    dotsEl.style.color = 'var(--text2)';
+    dotsEl.style.letterSpacing = '3px';
+    btn.textContent = '👁️ GÖR';
+    btn.dataset.showing = '0';
+  } else {
+    // Ask user to enter password to reveal it
+    showPasswordRevealDialog(btn, dotsEl);
+  }
+}
+
+function showPasswordRevealDialog(btn, dotsEl) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(14px);z-index:9100;display:flex;align-items:center;justify-content:center;padding:16px;';
+  overlay.innerHTML = `
+    <div style="background:var(--bg2);border:1px solid rgba(0,195,255,0.2);border-radius:20px;padding:28px;max-width:320px;width:100%;text-align:center;animation:modalPop 0.3s cubic-bezier(0.22,1,0.36,1);">
+      <div style="font-size:1.8rem;margin-bottom:10px">🔑</div>
+      <div style="font-family:'Cinzel',serif;font-weight:700;font-size:1rem;margin-bottom:6px;color:var(--blue)">ŞİFREYİ GÖSTER</div>
+      <div style="color:var(--text2);font-size:0.8rem;margin-bottom:18px">Şifrenizi görmek için önce doğrulayın.</div>
+      <div style="position:relative;margin-bottom:10px;">
+        <input id="reveal-pass-input" type="password" placeholder="Mevcut şifreniz"
+          style="width:100%;padding:11px 40px 11px 14px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:0.92rem;outline:none;">
+        <button onclick="(function(b){const i=document.getElementById('reveal-pass-input');i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'👁️':'🙈';})(this)"
+          style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:0.9rem;color:var(--text2);">👁️</button>
+      </div>
+      <div id="reveal-err" style="color:var(--red);font-size:0.75rem;margin-bottom:10px;min-height:14px;font-weight:600;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button id="reveal-cancel" style="padding:10px;background:var(--glass);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;">İPTAL</button>
+        <button id="reveal-confirm" style="padding:10px;background:linear-gradient(135deg,var(--blue2),var(--purple2));border:none;border-radius:10px;color:#fff;font-family:'Cinzel',serif;font-size:0.82rem;font-weight:700;cursor:pointer;letter-spacing:1px;">GÖSTER</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const inp = overlay.querySelector('#reveal-pass-input');
+  const errEl = overlay.querySelector('#reveal-err');
+  inp.focus();
+
+  overlay.querySelector('#reveal-cancel').onclick = () => overlay.remove();
+
+  overlay.querySelector('#reveal-confirm').onclick = async () => {
+    const pass = inp.value;
+    if (!pass) { errEl.textContent = 'Şifrenizi girin.'; return; }
+    errEl.textContent = '';
+    const confirmBtn = overlay.querySelector('#reveal-confirm');
+    confirmBtn.textContent = '...';
+    confirmBtn.disabled = true;
+
+    try {
+      const { EmailAuthProvider, reauthenticateWithCredential } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+      const user = window._FB.auth.currentUser;
+      const credential = EmailAuthProvider.credential(user.email, pass);
+      await reauthenticateWithCredential(user, credential);
+
+      // Success — show the password
+      overlay.remove();
+      dotsEl.textContent = pass;
+      dotsEl.style.color = 'var(--green)';
+      dotsEl.style.letterSpacing = '1px';
+      btn.textContent = '🙈 GİZLE';
+      btn.dataset.showing = '1';
+
+      // Auto-hide after 10 seconds
+      setTimeout(() => {
+        if (btn.dataset.showing === '1') {
+          dotsEl.textContent = '••••••••';
+          dotsEl.style.color = 'var(--text2)';
+          dotsEl.style.letterSpacing = '3px';
+          btn.textContent = '👁️ GÖR';
+          btn.dataset.showing = '0';
+        }
+      }, 10000);
+
+    } catch(e) {
+      confirmBtn.textContent = 'GÖSTER';
+      confirmBtn.disabled = false;
+      if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+        errEl.textContent = 'Şifre hatalı.';
+      } else {
+        errEl.textContent = 'Hata: ' + (e.message || 'Bilinmeyen');
+      }
+    }
+  };
+
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter') overlay.querySelector('#reveal-confirm').click(); });
+}
 function toggleChangePassword() {
   const form = document.getElementById('change-pass-form');
   const btn = document.getElementById('btn-change-pass');
