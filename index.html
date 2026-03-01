@@ -997,15 +997,77 @@ async function uploadProfilePhoto(input) {
   toast('📷 Fotoğraf yükleniyor...', 'info');
   try {
     const { storage, ref, uploadBytes, getDownloadURL } = window._FB;
+
+    // Dosyayı önce canvas üzerinden işle — CORS sorununu önler
+    const resized = await resizeImageToBlob(file, 256, 256);
+
     const storageRef = ref(storage, `avatars/${window._currentUID}`);
-    await uploadBytes(storageRef, file);
+    const metadata = { contentType: 'image/jpeg', cacheControl: 'public,max-age=3600' };
+    await uploadBytes(storageRef, resized, metadata);
+
+    // Token olmadan URL al (public erişim için)
     const downloadURL = await getDownloadURL(storageRef);
-    await window._saveUserData({ photoURL: downloadURL });
+    // Cache-bust ekle — tarayıcı eski versiyonu göstermesini önler
+    const bustURL = downloadURL.includes('?') 
+      ? downloadURL + '&t=' + Date.now() 
+      : downloadURL + '?t=' + Date.now();
+
+    // Firestore'a kaydet
+    await window._saveUserData({ photoURL: bustURL });
+
+    // UI'ı zorla güncelle
+    forceAvatarUpdate(bustURL);
+
     toast('✅ Fotoğraf güncellendi!', 'success');
-    openProfile(); // Refresh profile
-    updateLobbyUI();
+    // input'u resetle (aynı dosya tekrar seçilebilsin)
+    input.value = '';
   } catch(e) {
-    toast('Hata: ' + (e.message || 'Fotoğraf yüklenemedi'), 'error');
+    console.error('Photo upload error:', e);
+    if (e.code === 'storage/unauthorized') {
+      toast('❌ Storage izin hatası! Firebase Console → Storage → Rules\'u güncelleyin.', 'error');
+      setTimeout(() => toast('📋 Rules: allow read, write: if request.auth != null;', 'info'), 2000);
+    } else {
+      toast('Hata: ' + (e.message || 'Fotoğraf yüklenemedi'), 'error');
+    }
+  }
+}
+
+// Resmi canvas'ta yeniden boyutlandır — CORS sorununu önler, boyutu küçültür
+function resizeImageToBlob(file, maxW, maxH) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      const ratio = Math.min(maxW / w, maxH / h);
+      if (ratio < 1) { w = Math.round(w * ratio); h = Math.round(h * ratio); }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      // Dairesel kırpma
+      ctx.beginPath();
+      ctx.arc(w/2, h/2, Math.min(w,h)/2, 0, Math.PI*2);
+      ctx.clip();
+      ctx.drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas toBlob failed')), 'image/jpeg', 0.88);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image load failed')); };
+    img.src = url;
+  });
+}
+
+// Tüm avatar elementlerini anında güncelle (Firestore snapshot beklemeden)
+function forceAvatarUpdate(photoURL) {
+  // Header avatar
+  const avatarInner = document.getElementById('hdr-avatar');
+  if (avatarInner) {
+    avatarInner.innerHTML = `<img src="${photoURL}" alt="avatar" crossorigin="anonymous" onerror="this.parentElement.textContent=window._userData?.username?.[0]?.toUpperCase()||'?'">`;
+  }
+  // Profile modal avatar
+  const profInner = document.getElementById('prof-avatar');
+  if (profInner) {
+    profInner.innerHTML = `<img src="${photoURL}" alt="avatar" crossorigin="anonymous" onerror="this.parentElement.textContent=window._userData?.username?.[0]?.toUpperCase()||'?'">`;
   }
 }
 
@@ -1026,7 +1088,7 @@ function updateLobbyUI() {
   const avatarContainer = document.getElementById('hdr-avatar-container');
   const avatarInner = document.getElementById('hdr-avatar');
   if (u.photoURL) {
-    avatarInner.innerHTML = `<img src="${u.photoURL}" alt="avatar">`;
+    avatarInner.innerHTML = `<img src="${u.photoURL}" alt="avatar" crossorigin="anonymous" onerror="this.parentElement.textContent='${u.username[0].toUpperCase()}'">`;
   } else {
     avatarInner.textContent = u.username[0].toUpperCase();
   }
@@ -1092,7 +1154,7 @@ function openLeaderboard() {
 
           // Avatar content
           const avContent = u.photoURL
-            ? `<img src="${u.photoURL}" alt="avatar">`
+            ? `<img src="${u.photoURL}" alt="avatar" crossorigin="anonymous" onerror="this.style.display='none';this.parentElement.textContent='${(u.username||'?')[0].toUpperCase()}'">` 
             : (u.username||'?')[0].toUpperCase();
 
           return `<div class="lb-row ${cls} ${iMe?'me':''}">
@@ -1300,7 +1362,7 @@ function openProfile() {
   const container = document.getElementById('prof-avatar-container');
   const inner = document.getElementById('prof-avatar');
   if (u.photoURL) {
-    inner.innerHTML = `<img src="${u.photoURL}" alt="avatar">`;
+    inner.innerHTML = `<img src="${u.photoURL}" alt="avatar" crossorigin="anonymous" onerror="this.parentElement.textContent='${u.username[0].toUpperCase()}'">`;
   } else {
     inner.textContent = u.username[0].toUpperCase();
   }
@@ -1357,7 +1419,7 @@ async function renderAdminUsers() {
       const u = d.data(); const uid = d.id; const isMe = uid === myUid;
       return `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--glass);border:1px solid ${isMe?'rgba(0,195,255,0.3)':'var(--border)'};border-radius:12px;margin-bottom:8px;">
         <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;overflow:hidden;">
-          ${u.photoURL ? `<img src="${u.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : (u.username||'?')[0].toUpperCase()}
+          ${u.photoURL ? `<img src="${u.photoURL}" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.style.display='none'">` : (u.username||'?')[0].toUpperCase()}
         </div>
         <div style="flex:1;min-width:0;">
           <div style="font-weight:700;font-size:0.88rem;color:${isMe?'var(--blue)':'var(--text)'};">${u.username||'?'}${isMe?' (sen)':''}</div>
