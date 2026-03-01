@@ -31,11 +31,7 @@
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{
-  background:var(--bg);color:var(--text);
-  font-family:'Exo 2',sans-serif;
-  min-height:100vh;overflow-x:hidden;line-height:1.6;
-}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-height:100vh;overflow-x:hidden;line-height:1.6;}
 .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(0,195,255,0.06) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(155,89,255,0.05) 0%,transparent 60%);}
 .bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(0,195,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,195,255,0.025) 1px,transparent 1px);background-size:60px 60px;}
 .bg-stars{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
@@ -45,6 +41,55 @@ body{
 .screen{position:relative;z-index:1;}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:var(--purple2);border-radius:4px;}
+
+/* ══════════ NAME EFFECTS ══════════ */
+.ne-gradient{background:linear-gradient(90deg,#ff6b6b,#ffd700,#00ff88,#00c3ff,#9b59ff);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:300% 100%;animation:gradientShift 3s linear infinite;}
+@keyframes gradientShift{0%{background-position:0% 50%;}100%{background-position:300% 50%;}}
+.ne-neon{color:#00ff88;text-shadow:0 0 7px #00ff88,0 0 14px #00ff88,0 0 21px #00ff88;}
+.ne-blink{animation:nameBlink 1s step-end infinite;}
+@keyframes nameBlink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.ne-fire{background:linear-gradient(180deg,#fff700,#ff8c00,#ff3300,#cc0000);-webkit-background-clip:text;background-clip:text;color:transparent;animation:fireFlicker 0.5s ease-in-out infinite alternate;}
+@keyframes fireFlicker{0%{filter:brightness(1);}100%{filter:brightness(1.3);}}
+.ne-shine{position:relative;color:var(--gold);overflow:hidden;}
+.ne-shine::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.6),transparent);animation:nameShine 2s infinite;}
+@keyframes nameShine{0%{left:-100%;}100%{left:200%;}}
+.ne-rainbow{background:linear-gradient(90deg,#ff0000,#ff7700,#ffff00,#00ff00,#0000ff,#8b00ff);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:600% 100%;animation:rainbowShift 2s linear infinite;}
+@keyframes rainbowShift{0%{background-position:0%;}100%{background-position:600%;}}
+.ne-ice{color:#a0f0ff;text-shadow:0 0 10px #00c3ff,0 0 20px #00c3ff,0 0 40px rgba(0,195,255,0.5);}
+.ne-gold{background:linear-gradient(135deg,#ffd700,#ffaa00,#ff8c00,#ffd700);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% 100%;animation:goldShimmer 2s ease-in-out infinite;}
+@keyframes goldShimmer{0%{background-position:0%;}100%{background-position:200%;}}
+
+/* ══════════ PROFILE FRAMES ══════════ */
+.frame-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;}
+.pf-gold .frame-wrap::before,.frame-gold::before{content:'';position:absolute;inset:-3px;border-radius:50%;background:conic-gradient(#ffd700,#ffaa00,#ff8c00,#ffd700,#ffaa00,#ffd700);animation:spinFrame 3s linear infinite;z-index:-1;}
+.pf-neon .frame-wrap::before,.frame-neon::before{content:'';position:absolute;inset:-3px;border-radius:50%;background:conic-gradient(#00ff88,#00c3ff,#9b59ff,#00ff88);animation:spinFrame 2s linear infinite;z-index:-1;filter:blur(2px);}
+.pf-fire .frame-wrap::before,.frame-fire::before{content:'';position:absolute;inset:-4px;border-radius:50%;background:conic-gradient(#ff0000,#ff8c00,#ffff00,#ff8c00,#ff0000);animation:spinFrame 1.5s linear infinite;z-index:-1;filter:blur(1px);}
+.pf-spin .frame-wrap::before,.frame-spin::before{content:'';position:absolute;inset:-3px;border-radius:50%;border:3px solid transparent;border-top-color:#00c3ff;border-right-color:#9b59ff;border-bottom-color:#ffd700;animation:spinFrame 1s linear infinite;z-index:-1;}
+.pf-diamond .frame-wrap::before,.frame-diamond::before{content:'';position:absolute;inset:-4px;border-radius:50%;background:conic-gradient(#a8edea,#fed6e3,#a8edea,#d4fc79,#a8edea);animation:spinFrame 4s linear infinite;z-index:-1;}
+@keyframes spinFrame{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+/* Avatar with frame */
+.avatar-container{position:relative;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;}
+.avatar-container.has-frame::before{content:'';position:absolute;inset:-4px;border-radius:50%;z-index:0;}
+.avatar-container.frame-gold::before{background:conic-gradient(#ffd700,#ffaa00,#ff8c00,#ffd700);animation:spinFrame 3s linear infinite;}
+.avatar-container.frame-neon::before{background:conic-gradient(#00ff88,#00c3ff,#9b59ff,#00ff88);animation:spinFrame 2s linear infinite;filter:blur(1px);}
+.avatar-container.frame-fire::before{background:conic-gradient(#ff0000,#ff8c00,#ffff00,#ff8c00,#ff0000);animation:spinFrame 1.5s linear infinite;}
+.avatar-container.frame-spin::before{border:3px solid transparent;border-top-color:#00c3ff;border-right-color:#9b59ff;border-bottom-color:#ffd700;animation:spinFrame 1s linear infinite;background:transparent;}
+.avatar-container.frame-diamond::before{background:conic-gradient(#a8edea,#fed6e3,#a8edea,#d4fc79,#a8edea);animation:spinFrame 4s linear infinite;}
+.avatar-inner{position:relative;z-index:1;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple2));display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:700;font-size:1rem;overflow:hidden;}
+.avatar-inner img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+
+/* Big avatar (profile modal) */
+.avatar-big-container{position:relative;display:inline-flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.avatar-big-container.has-frame::before{content:'';position:absolute;inset:-6px;border-radius:50%;z-index:0;}
+.avatar-big-container.frame-gold::before{background:conic-gradient(#ffd700,#ffaa00,#ff8c00,#ffd700);animation:spinFrame 3s linear infinite;}
+.avatar-big-container.frame-neon::before{background:conic-gradient(#00ff88,#00c3ff,#9b59ff,#00ff88);animation:spinFrame 2s linear infinite;filter:blur(2px);}
+.avatar-big-container.frame-fire::before{background:conic-gradient(#ff0000,#ff8c00,#ffff00,#ff8c00,#ff0000);animation:spinFrame 1.5s linear infinite;}
+.avatar-big-container.frame-spin::before{border:4px solid transparent;border-top-color:#00c3ff;border-right-color:#9b59ff;border-bottom-color:#ffd700;animation:spinFrame 1s linear infinite;background:transparent;}
+.avatar-big-container.frame-diamond::before{background:conic-gradient(#a8edea,#fed6e3,#a8edea,#d4fc79,#a8edea);animation:spinFrame 4s linear infinite;}
+.avatar-big-inner{position:relative;z-index:1;width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple2));display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:700;font-size:2rem;border:3px solid rgba(255,255,255,0.1);overflow:hidden;cursor:pointer;}
+.avatar-big-inner img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.avatar-upload-hint{position:absolute;bottom:0;right:0;z-index:2;background:var(--blue2);border:2px solid var(--bg);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:0.7rem;cursor:pointer;}
 
 /* AUTH */
 #auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -78,10 +123,11 @@ body{
 .lobby-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--glass);border:1px solid var(--border);border-radius:16px;margin-bottom:20px;backdrop-filter:blur(20px);}
 .lobby-logo-text{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:900;letter-spacing:3px;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent;}
 .hdr-user{display:flex;align-items:center;gap:12px;}
-.hdr-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple2));display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:700;font-size:1rem;box-shadow:var(--shadow-purple);cursor:pointer;}
 .hdr-name{font-weight:700;font-size:0.95rem;}
 .hdr-level{font-size:0.75rem;color:var(--blue);}
 .hdr-wallet{display:flex;align-items:center;gap:6px;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:20px;padding:5px 12px;font-weight:700;color:var(--gold);font-size:0.85rem;}
+.hdr-xpboost{display:flex;align-items:center;gap:6px;background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.3);border-radius:20px;padding:5px 12px;font-weight:700;color:var(--green);font-size:0.78rem;animation:boostPulse 2s ease-in-out infinite;}
+@keyframes boostPulse{0%,100%{box-shadow:none;}50%{box-shadow:0 0 12px rgba(0,255,136,0.4);}}
 .btn-logout{padding:7px 14px;background:transparent;border:1px solid rgba(255,51,85,0.3);border-radius:8px;color:var(--red);font-family:'Exo 2',sans-serif;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.3s;letter-spacing:1px;}
 .btn-logout:hover{background:rgba(255,51,85,0.1);}
 .lobby-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:20px;}
@@ -157,6 +203,9 @@ body{
 .answer-btn.wrong{border-color:var(--red)!important;background:rgba(255,51,85,0.1)!important;animation:wrongShake 0.5s ease;}
 .answer-btn.wrong .answer-letter{background:var(--red);color:white;}
 .answer-btn.hidden-joker{opacity:0.2;pointer-events:none;}
+/* Double answer joker selected state */
+.answer-btn.double-selected{border-color:var(--gold)!important;background:rgba(255,215,0,0.08)!important;}
+.answer-btn.double-selected .answer-letter{background:var(--gold);color:#000;}
 @keyframes correctFlash{0%{box-shadow:none;}50%{box-shadow:0 0 40px rgba(0,255,136,0.6);}100%{box-shadow:none;}}
 @keyframes wrongShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
 .jokers-bar{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;}
@@ -180,7 +229,16 @@ body{
 .lb-row.top3{background:rgba(205,127,50,0.05);border-color:rgba(205,127,50,0.15);}
 .lb-row.me{border-color:rgba(0,195,255,0.4);box-shadow:0 0 15px rgba(0,195,255,0.1);}
 .lb-rank{font-family:'Cinzel',serif;font-weight:700;min-width:36px;text-align:center;font-size:1rem;}
-.lb-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple2));display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:700;font-size:0.85rem;flex-shrink:0;}
+.lb-av-wrap{width:36px;height:36px;position:relative;flex-shrink:0;}
+.lb-av-container{position:relative;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;}
+.lb-av-container.has-frame::before{content:'';position:absolute;inset:-3px;border-radius:50%;z-index:0;}
+.lb-av-container.frame-gold::before{background:conic-gradient(#ffd700,#ffaa00,#ff8c00,#ffd700);animation:spinFrame 3s linear infinite;}
+.lb-av-container.frame-neon::before{background:conic-gradient(#00ff88,#00c3ff,#9b59ff,#00ff88);animation:spinFrame 2s linear infinite;filter:blur(1px);}
+.lb-av-container.frame-fire::before{background:conic-gradient(#ff0000,#ff8c00,#ffff00,#ff8c00,#ff0000);animation:spinFrame 1.5s linear infinite;}
+.lb-av-container.frame-spin::before{border:2px solid transparent;border-top-color:#00c3ff;border-right-color:#9b59ff;border-bottom-color:#ffd700;animation:spinFrame 1s linear infinite;background:transparent;}
+.lb-av-container.frame-diamond::before{background:conic-gradient(#a8edea,#fed6e3,#a8edea,#d4fc79,#a8edea);animation:spinFrame 4s linear infinite;}
+.lb-av-inner{position:relative;z-index:1;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple2));display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:700;font-size:0.85rem;overflow:hidden;}
+.lb-av-inner img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 .lb-name{flex:1;font-weight:700;font-size:0.9rem;}
 .lb-xp{font-family:'Cinzel',serif;color:var(--blue);font-weight:700;}
 .lb-wr{font-size:0.72rem;color:var(--text2);}
@@ -208,16 +266,40 @@ body{
 .btn-modal-secondary:hover{border-color:rgba(255,255,255,0.2);}
 .btn-modal-full{padding:13px;width:100%;background:var(--glass);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.3s;margin-top:10px;}
 .btn-modal-full:hover{border-color:rgba(255,255,255,0.2);}
+
+/* SHOP */
+.shop-tabs{display:flex;gap:4px;background:rgba(0,0,0,0.4);padding:4px;border-radius:12px;margin-bottom:20px;}
+.shop-tab{flex:1;padding:8px;border:none;background:transparent;color:var(--text2);font-family:'Exo 2',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:9px;transition:all 0.3s;}
+.shop-tab.active{background:linear-gradient(135deg,var(--blue2),var(--purple2));color:white;}
 .shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 @media(max-width:400px){.shop-grid{grid-template-columns:1fr;}}
 .shop-item{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;transition:all 0.3s;cursor:pointer;}
 .shop-item:hover{border-color:var(--border2);transform:translateY(-2px);}
-.shop-item.owned{border-color:rgba(0,255,136,0.3);opacity:0.7;}
+.shop-item.owned{border-color:rgba(0,255,136,0.3);}
+.shop-item.active-effect{border-color:var(--gold);box-shadow:0 0 15px rgba(255,215,0,0.3);}
 .shop-icon{font-size:1.8rem;margin-bottom:8px;}
 .shop-name{font-weight:700;font-size:0.85rem;margin-bottom:4px;}
 .shop-desc{font-size:0.72rem;color:var(--text2);margin-bottom:10px;}
 .shop-price{display:inline-flex;align-items:center;gap:4px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.2);border-radius:20px;padding:4px 10px;color:var(--gold);font-weight:700;font-size:0.82rem;}
 .shop-owned{color:var(--green);font-size:0.78rem;font-weight:700;letter-spacing:1px;}
+.shop-active-badge{color:var(--gold);font-size:0.78rem;font-weight:700;letter-spacing:1px;border:1px solid rgba(255,215,0,0.3);border-radius:20px;padding:2px 8px;}
+.shop-btn-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px;}
+.shop-btn-activate{padding:4px 10px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:20px;color:var(--gold);font-size:0.75rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.shop-btn-activate:hover{background:rgba(255,215,0,0.2);}
+.shop-btn-deactivate{padding:4px 10px;background:rgba(255,51,85,0.1);border:1px solid rgba(255,51,85,0.3);border-radius:20px;color:var(--red);font-size:0.75rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+
+/* Frame preview */
+.frame-preview{width:48px;height:48px;position:relative;display:inline-flex;align-items:center;justify-content:center;margin:0 auto 8px;}
+.frame-preview.has-frame::before{content:'';position:absolute;inset:-4px;border-radius:50%;}
+.frame-preview.frame-gold::before{background:conic-gradient(#ffd700,#ffaa00,#ff8c00,#ffd700);animation:spinFrame 3s linear infinite;}
+.frame-preview.frame-neon::before{background:conic-gradient(#00ff88,#00c3ff,#9b59ff,#00ff88);animation:spinFrame 2s linear infinite;filter:blur(1px);}
+.frame-preview.frame-fire::before{background:conic-gradient(#ff0000,#ff8c00,#ffff00,#ff8c00,#ff0000);animation:spinFrame 1.5s linear infinite;}
+.frame-preview.frame-spin::before{border:3px solid transparent;border-top-color:#00c3ff;border-right-color:#9b59ff;border-bottom-color:#ffd700;animation:spinFrame 1s linear infinite;background:transparent;}
+.frame-preview.frame-diamond::before{background:conic-gradient(#a8edea,#fed6e3,#a8edea,#d4fc79,#a8edea);animation:spinFrame 4s linear infinite;}
+.frame-preview-inner{position:relative;z-index:1;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple2));display:flex;align-items:center;justify-content:center;font-size:1.4rem;}
+
+/* Name effect preview */
+.name-effect-preview{font-family:'Cinzel',serif;font-weight:700;font-size:1rem;margin-bottom:6px;display:inline-block;}
 
 /* TOAST */
 .toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
@@ -228,7 +310,7 @@ body{
 .toast.gold{background:rgba(255,215,0,0.12);border-color:rgba(255,215,0,0.25);color:var(--gold);}
 @keyframes toastIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
 
-/* EFFECT */
+/* EFFECT OVERLAY */
 .effect-overlay{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;pointer-events:none;}
 .effect-text{font-family:'Cinzel',serif;font-weight:900;font-size:3.5rem;text-align:center;animation:effectPop 1.6s cubic-bezier(0.22,1,0.36,1) forwards;opacity:0;}
 @keyframes effectPop{0%{opacity:0;transform:scale(0.5);}20%{opacity:1;transform:scale(1.2);}60%{opacity:1;transform:scale(1);}100%{opacity:0;transform:scale(0.9) translateY(-30px);}}
@@ -236,7 +318,6 @@ body{
 .effect-text.wrong-color{color:var(--red);filter:drop-shadow(0 0 20px rgba(255,51,85,0.6));}
 
 /* PROFILE */
-.profile-avatar-big{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple2));display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:700;font-size:2rem;margin:0 auto 16px;box-shadow:var(--shadow-purple);border:3px solid rgba(255,255,255,0.1);}
 .profile-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
 .profile-stat{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
 .profile-stat-v{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;color:var(--blue);}
@@ -267,6 +348,9 @@ body{
 .loading-status{font-size:0.8rem;color:var(--text2);letter-spacing:3px;}
 .section-title{font-family:'Cinzel',serif;font-size:0.85rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--text2);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
 @media(max-width:480px){.game-top{flex-wrap:wrap;gap:8px;}.barriers{display:none;}.q-text{font-size:1rem;}.modal{padding:22px 16px;}.modal-title{font-size:1.2rem;}}
+
+/* XP Boost indicator in game */
+.xpboost-indicator{display:inline-flex;align-items:center;gap:4px;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);border-radius:20px;padding:3px 10px;color:var(--green);font-size:0.72rem;font-weight:700;animation:boostPulse 2s ease-in-out infinite;}
 </style>
 </head>
 <body>
@@ -297,9 +381,6 @@ body{
         <circle cx="28" cy="30" r="12" stroke="url(#lg1)" stroke-width="1.5" fill="none" opacity="0.4"/>
         <line x1="36" y1="42" x2="44" y2="52" stroke="url(#lg1)" stroke-width="3" stroke-linecap="round"/>
         <text x="56" y="38" font-family="Cinzel, serif" font-size="22" font-weight="900" fill="url(#lg1)" filter="url(#glow)">QUIZORA</text>
-        <circle cx="56" cy="10" r="2" fill="#00c3ff" opacity="0.6"/>
-        <circle cx="62" cy="7" r="1.5" fill="#9b59ff" opacity="0.5"/>
-        <circle cx="68" cy="10" r="1" fill="#00c3ff" opacity="0.4"/>
       </svg>
       <div class="logo-tagline">Bilgi Yarışması Platformu</div>
     </div>
@@ -330,8 +411,12 @@ body{
   <div class="lobby-header">
     <div class="lobby-logo-text">QUIZORA</div>
     <div class="hdr-user">
+      <div id="hdr-xpboost" class="hdr-xpboost hidden">⚡ 2x XP <span id="hdr-boost-timer"></span></div>
       <div class="hdr-wallet">💰 <span id="hdr-wallet">0</span></div>
-      <div class="hdr-avatar" id="hdr-avatar" onclick="openProfile()">?</div>
+      <!-- Avatar with frame -->
+      <div class="avatar-container" id="hdr-avatar-container" onclick="openProfile()">
+        <div class="avatar-inner" id="hdr-avatar">?</div>
+      </div>
       <div><div class="hdr-name" id="hdr-name">—</div><div class="hdr-level" id="hdr-level">LVL 1</div></div>
     </div>
     <button class="btn-logout" onclick="doLogout()">ÇIKIŞ</button>
@@ -387,11 +472,13 @@ body{
     <button class="joker-btn" id="j-fifty" onclick="useJoker('fifty')">⚡ %50</button>
     <button class="joker-btn" id="j-audience" onclick="useJoker('audience')">👥 SEYİRCİ</button>
     <button class="joker-btn" id="j-phone" onclick="useJoker('phone')">📞 TELEFON</button>
+    <button class="joker-btn" id="j-double" onclick="useJoker('double')" style="display:none;background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.4);color:var(--gold);">✌️ ÇİFT CEVAP</button>
     <button class="joker-btn" id="j-withdraw" onclick="withdrawGame()" style="background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.4);color:var(--gold);">💰 ÇEKİL</button>
   </div>
 </div>
 
 <!-- MODALS -->
+<!-- Voice -->
 <div class="modal-overlay hidden" id="modal-voice">
   <div class="modal" style="max-width:500px">
     <div class="modal-title" style="color:var(--blue)">🎙️ SES AYARLARI</div>
@@ -404,6 +491,7 @@ body{
   </div>
 </div>
 
+<!-- Game Over -->
 <div class="modal-overlay hidden" id="modal-gameover">
   <div class="modal" id="modal-gameover-inner">
     <div style="font-size:3.5rem;text-align:center;margin-bottom:12px" id="go-icon">🏆</div>
@@ -421,28 +509,52 @@ body{
   </div>
 </div>
 
+<!-- Leaderboard -->
 <div class="modal-overlay hidden" id="modal-lb">
   <div class="modal" style="max-width:520px">
     <div class="modal-title" style="color:var(--gold)">🏅 SIRALAMALAR</div>
     <div class="modal-sub">XP Tablosu — Canlı</div>
     <div class="lb-list" id="lb-list"></div>
-    <button class="btn-modal-full" onclick="closeModal('modal-lb')">KAPAT</button>
+    <button class="btn-modal-full" onclick="closeModal('modal-lb');if(_lbUnsub){_lbUnsub();_lbUnsub=null;}">KAPAT</button>
   </div>
 </div>
 
+<!-- Shop -->
 <div class="modal-overlay hidden" id="modal-shop">
-  <div class="modal" style="max-width:520px">
+  <div class="modal" style="max-width:560px">
     <div class="modal-title" style="color:var(--purple)">🛒 MAĞAZA</div>
     <div class="modal-sub">Bakiye: 💰 <span id="shop-balance">0</span></div>
-    <div class="shop-grid" id="shop-grid"></div>
+    <div class="shop-tabs">
+      <button class="shop-tab active" id="stab-items" onclick="shopTab('items')">🎮 ÖĞELER</button>
+      <button class="shop-tab" id="stab-effects" onclick="shopTab('effects')">✨ İSİM</button>
+      <button class="shop-tab" id="stab-frames" onclick="shopTab('frames')">🖼️ ÇERÇEVE</button>
+    </div>
+    <div id="shop-panel-items">
+      <div class="shop-grid" id="shop-grid-items"></div>
+    </div>
+    <div id="shop-panel-effects" class="hidden">
+      <div class="shop-grid" id="shop-grid-effects"></div>
+    </div>
+    <div id="shop-panel-frames" class="hidden">
+      <div class="shop-grid" id="shop-grid-frames"></div>
+    </div>
     <button class="btn-modal-full" onclick="closeModal('modal-shop')">KAPAT</button>
   </div>
 </div>
 
+<!-- Profile -->
 <div class="modal-overlay hidden" id="modal-profile">
   <div class="modal">
     <div class="modal-title" id="prof-title" style="color:var(--blue)">PROFİL</div>
-    <div class="profile-avatar-big" id="prof-avatar">?</div>
+    <!-- Avatar big with frame -->
+    <div style="text-align:center;margin-bottom:16px">
+      <div class="avatar-big-container" id="prof-avatar-container">
+        <div class="avatar-big-inner" id="prof-avatar" onclick="triggerPhotoUpload()" title="Fotoğraf yükle">?</div>
+        <div class="avatar-upload-hint" onclick="triggerPhotoUpload()" title="Fotoğraf değiştir">📷</div>
+      </div>
+      <div style="font-size:0.72rem;color:var(--text2);margin-top:6px">Fotoğraf yüklemek için tıkla</div>
+      <input type="file" id="photo-upload-input" accept="image/*" style="display:none" onchange="uploadProfilePhoto(this)">
+    </div>
     <div class="profile-stat-row">
       <div class="profile-stat"><div class="profile-stat-v" id="prof-games">0</div><div class="profile-stat-l">Oyun</div></div>
       <div class="profile-stat"><div class="profile-stat-v" id="prof-wins">0</div><div class="profile-stat-l">Galibiyet</div></div>
@@ -452,11 +564,12 @@ body{
       <div class="xp-header"><div class="xp-level" id="prof-level">SEVİYE 1</div><div class="xp-text" id="prof-xp-txt">0 / 500 XP</div></div>
       <div class="xp-bar-bg"><div class="xp-bar-fill" id="prof-xp-bar" style="width:0%"></div></div>
     </div>
-    <div id="prof-items" style="font-size:0.82rem;color:var(--text2);text-align:center;margin-bottom:16px"></div>
+    <div id="prof-cosmetics" style="font-size:0.82rem;color:var(--text2);text-align:center;margin-bottom:16px"></div>
     <button class="btn-modal-full" onclick="closeModal('modal-profile')">KAPAT</button>
   </div>
 </div>
 
+<!-- Admin -->
 <div class="modal-overlay hidden" id="modal-admin">
   <div class="modal" style="max-width:560px">
     <div class="modal-title" style="color:var(--blue)">⚙️ ADMİN PANELİ</div>
@@ -464,16 +577,10 @@ body{
       <button class="auth-tab active" id="adm-tab-coins" onclick="adminTab('coins')">💰 KULLANICI</button>
       <button class="auth-tab" id="adm-tab-questions" onclick="adminTab('questions')">❓ SORULAR</button>
     </div>
-
-    <!-- COIN YÖNETİMİ -->
     <div id="adm-panel-coins">
       <div class="section-title">Kullanıcı Yönetimi</div>
-      <div id="adm-user-list" style="max-height:420px;overflow-y:auto;">
-        <div style="text-align:center;color:var(--text2);padding:20px">Yükleniyor...</div>
-      </div>
+      <div id="adm-user-list" style="max-height:420px;overflow-y:auto;"><div style="text-align:center;color:var(--text2);padding:20px">Yükleniyor...</div></div>
     </div>
-
-    <!-- SORU YÖNETİMİ -->
     <div id="adm-panel-questions" class="hidden">
       <div class="admin-form">
         <div class="form-group"><label class="form-label">Soru Metni</label><textarea class="form-input" id="adm-q" placeholder="Soru metni..." style="min-height:60px;resize:vertical"></textarea></div>
@@ -486,7 +593,6 @@ body{
       </div>
       <div class="admin-q-list" id="adm-q-list"></div>
     </div>
-
     <button class="btn-modal-full" onclick="closeModal('modal-admin')">KAPAT</button>
   </div>
 </div>
@@ -496,6 +602,7 @@ body{
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit, onSnapshot, addDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC5FaCS2m8Ko2O6Tqf6NkpV4wmg0yXqduA",
@@ -510,11 +617,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
-// ─── Firebase helpers global olarak eriş ───
-window._FB = { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, browserSessionPersistence, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit, onSnapshot, addDoc, deleteDoc, serverTimestamp };
+window._FB = { auth, db, storage, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, browserSessionPersistence, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit, onSnapshot, addDoc, deleteDoc, serverTimestamp, ref, uploadBytes, getDownloadURL };
 
-// ─── Auth state değişince ───
 let _userDocUnsub = null;
 
 onAuthStateChanged(auth, async (user) => {
@@ -523,20 +629,15 @@ onAuthStateChanged(auth, async (user) => {
     await window._loadUserData(user.uid);
     document.getElementById('loading-screen').classList.add('hidden');
     enterLobby();
-
-    // Kullanıcı belgesini gerçek zamanlı dinle (coin/xp anında yansısın)
     if (_userDocUnsub) _userDocUnsub();
     _userDocUnsub = onSnapshot(doc(db, 'users', user.uid), (snap) => {
       if (snap.exists()) {
         const prev = window._userData ? window._userData.coins : 0;
         window._userData = snap.data();
         const curr = window._userData.coins || 0;
-        // Admin coin eklediyse bildirim göster
         if (prev !== undefined && curr > prev) {
           const diff = curr - prev;
-          if (typeof toast !== 'undefined') {
-            toast(`🎁 Hesabına ${diff.toLocaleString()} coin eklendi!`, 'gold');
-          }
+          if (typeof toast !== 'undefined') toast(`🎁 Hesabına ${diff.toLocaleString()} coin eklendi!`, 'gold');
         }
         if (typeof updateLobbyUI !== 'undefined') updateLobbyUI();
       }
@@ -550,26 +651,20 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// Sorular koleksiyonunu dinle (realtime)
 window._listenQuestions = function() {
   const q = query(collection(db, 'questions'));
   return onSnapshot(q, (snap) => {
     window._cachedQuestions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   });
 };
-
 window._listenQuestions();
-
-// Yükleme status
-document.getElementById('loading-status').textContent = 'BAĞLANIYOR...';
 </script>
 
 <script>
 // =====================================================================
-// QUIZORA — FIREBASE GAME ENGINE
+// QUIZORA — FULL GAME ENGINE v2.0
 // =====================================================================
 
-// ─── Kullanıcı verisi ───
 window._userData = null;
 window._currentUID = null;
 window._cachedQuestions = null;
@@ -577,9 +672,7 @@ window._cachedQuestions = null;
 window._loadUserData = async function(uid) {
   const { db, doc, getDoc } = window._FB;
   const snap = await getDoc(doc(db, 'users', uid));
-  if (snap.exists()) {
-    window._userData = snap.data();
-  }
+  if (snap.exists()) window._userData = snap.data();
   return window._userData;
 };
 
@@ -628,9 +721,713 @@ const PRIZE_TABLE = [100,200,300,500,1000,2000,4000,8000,16000,32000,64000,12500
 const COIN_TABLE = [10,15,20,30,50,80,120,180,250,350,500,700,1000,1500,2500];
 const BARRIERS = [4,9];
 
-// ─── Default Questions (450 adet) ───
+// ─── Name Effects Definition ───
+const NAME_EFFECTS = [
+  {id:'ne_gradient', name:'🌈 Gradient', desc:'Gökkuşağı renk geçişi', price:10000, cssClass:'ne-gradient', preview:'<span class="ne-gradient name-effect-preview">ÖRNEKİSİM</span>'},
+  {id:'ne_neon', name:'💚 Neon Yeşil', desc:'Neon glow efekti', price:10000, cssClass:'ne-neon', preview:'<span class="ne-neon name-effect-preview">ÖRNEKİSİM</span>'},
+  {id:'ne_blink', name:'🔆 Yanıp Sönen', desc:'Dikkat çekici yanıp sönme', price:10000, cssClass:'ne-blink', preview:'<span class="ne-blink name-effect-preview">ÖRNEKİSİM</span>'},
+  {id:'ne_fire', name:'🔥 Ateş', desc:'Ateşli renk efekti', price:10000, cssClass:'ne-fire', preview:'<span class="ne-fire name-effect-preview">ÖRNEKİSİM</span>'},
+  {id:'ne_shine', name:'✨ Parlayan', desc:'Işık kayma animasyonu', price:10000, cssClass:'ne-shine', preview:'<span class="ne-shine name-effect-preview">ÖRNEKİSİM</span>'},
+  {id:'ne_rainbow', name:'🌈 Gökkuşağı', desc:'Hızlı renk döngüsü', price:10000, cssClass:'ne-rainbow', preview:'<span class="ne-rainbow name-effect-preview">ÖRNEKİSİM</span>'},
+  {id:'ne_ice', name:'❄️ Buz', desc:'Soğuk neon mavi parlaklık', price:10000, cssClass:'ne-ice', preview:'<span class="ne-ice name-effect-preview">ÖRNEKİSİM</span>'},
+  {id:'ne_gold', name:'🥇 Altın', desc:'Altın parlaklık geçişi', price:10000, cssClass:'ne-gold', preview:'<span class="ne-gold name-effect-preview">ÖRNEKİSİM</span>'},
+];
+
+// ─── Profile Frames Definition ───
+const PROFILE_FRAMES = [
+  {id:'pf_gold', name:'🥇 Altın Çerçeve', desc:'Dönen altın çerçeve', price:20000, frameClass:'frame-gold', preview:'frame-gold'},
+  {id:'pf_neon', name:'💫 Neon Çerçeve', desc:'Neon ışıklı çerçeve', price:20000, frameClass:'frame-neon', preview:'frame-neon'},
+  {id:'pf_fire', name:'🔥 Alevli Çerçeve', desc:'Ateş efektli çerçeve', price:20000, frameClass:'frame-fire', preview:'frame-fire'},
+  {id:'pf_spin', name:'🌀 Dönen Çerçeve', desc:'Renkli dönen çerçeve', price:20000, frameClass:'frame-spin', preview:'frame-spin'},
+  {id:'pf_diamond', name:'💎 Elmas Çerçeve', desc:'Elmas parlaklık çerçevesi', price:20000, frameClass:'frame-diamond', preview:'frame-diamond'},
+];
+
+// ─── Standard Shop Items ───
+const SHOP_ITEMS = [
+  {id:'double_joker', icon:'✌️', name:'Çift Cevap Jokeri', desc:'Bir oyunda 2 şık işaretle (tek kullanım)', price:5000, type:'consumable'},
+  {id:'xp_boost_24h', icon:'⚡', name:'24 Saat 2x XP', desc:'24 saat boyunca çift XP kazan', price:10000, type:'boost24'},
+  {id:'vip_badge', icon:'👑', name:'VIP Rozeti', desc:'Profilinde VIP rozeti', price:7500, type:'badge'},
+  {id:'legend_badge', icon:'🏆', name:'Efsane Rozeti', desc:'Efsane oyuncu unvanı', price:15000, type:'badge'},
+  {id:'season_badge', icon:'🌟', name:'Sezon Rozeti', desc:'Bu sezonun özel rozeti', price:12500, type:'badge'},
+];
+
+// ─── XP Boost Helpers ───
+function isXpBoostActive() {
+  const u = window._userData;
+  if (!u || !u.xpBoostUntil) return false;
+  return Date.now() < u.xpBoostUntil;
+}
+
+function getXpBoostTimeLeft() {
+  const u = window._userData;
+  if (!u || !u.xpBoostUntil) return 0;
+  return Math.max(0, u.xpBoostUntil - Date.now());
+}
+
+function formatBoostTimer(ms) {
+  if (ms <= 0) return '';
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor((ms % 3600000) / 60000);
+  return h > 0 ? `${h}s ${m}d` : `${m}d`;
+}
+
+let _boostTimerInterval = null;
+function startBoostTimer() {
+  if (_boostTimerInterval) clearInterval(_boostTimerInterval);
+  _boostTimerInterval = setInterval(() => {
+    const el = document.getElementById('hdr-xpboost');
+    const timerEl = document.getElementById('hdr-boost-timer');
+    if (!el) return;
+    if (isXpBoostActive()) {
+      el.classList.remove('hidden');
+      if (timerEl) timerEl.textContent = formatBoostTimer(getXpBoostTimeLeft());
+    } else {
+      el.classList.add('hidden');
+      clearInterval(_boostTimerInterval);
+    }
+  }, 1000);
+}
+
+// ─── Apply Name Effect to element ───
+function applyNameEffect(el, username, effect) {
+  if (!el) return;
+  const eff = NAME_EFFECTS.find(e => e.id === effect);
+  // Clear old classes
+  NAME_EFFECTS.forEach(e => el.classList.remove(e.cssClass));
+  el.textContent = username;
+  if (eff) el.classList.add(eff.cssClass);
+}
+
+// ─── Apply Avatar Frame ───
+function applyFrame(container, frameId) {
+  // Remove old frame classes
+  PROFILE_FRAMES.forEach(f => container.classList.remove(f.frameClass));
+  container.classList.remove('has-frame');
+  if (frameId) {
+    const fr = PROFILE_FRAMES.find(f => f.id === frameId);
+    if (fr) {
+      container.classList.add('has-frame', fr.frameClass);
+    }
+  }
+}
+
+// ─── Get avatar inner HTML ───
+function getAvatarHTML(u, size='small') {
+  if (u && u.photoURL) {
+    return `<img src="${u.photoURL}" alt="avatar">`;
+  }
+  return (u && u.username) ? u.username[0].toUpperCase() : '?';
+}
+
+// ─── TTS ───
+const TTS = {
+  synth: window.speechSynthesis,
+  selectedVoice: null, allVoices: [], enabled: true,
+  init() {
+    const load = () => {
+      this.allVoices = this.synth.getVoices();
+      const saved = localStorage.getItem('qz_tts_voice');
+      if (saved) this.selectedVoice = this.allVoices.find(v => v.name === saved) || null;
+      if (!this.selectedVoice) this.selectedVoice = this.allVoices.find(v => v.lang.startsWith('tr')) || this.allVoices[0] || null;
+    };
+    this.synth.onvoiceschanged = load; load();
+    this.enabled = localStorage.getItem('qz_tts_enabled') !== 'false';
+  },
+  setVoice(name) { const v = this.allVoices.find(v => v.name === name); if (v) { this.selectedVoice = v; localStorage.setItem('qz_tts_voice', name); } },
+  stop() { this.synth.cancel(); },
+  speak(text, rate=1, pitch=1) {
+    if (!this.enabled) return Promise.resolve();
+    return new Promise(resolve => {
+      this.stop();
+      const savedRate = parseFloat(localStorage.getItem('qz_tts_rate') || '0.9');
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = this.selectedVoice ? this.selectedVoice.lang : 'tr-TR';
+      u.rate = savedRate * rate; u.pitch = pitch;
+      if (this.selectedVoice) u.voice = this.selectedVoice;
+      u.onend = resolve; u.onerror = resolve;
+      this.synth.speak(u);
+    });
+  },
+  async readQuestion(q, answers) {
+    G.inputLocked = true; updateAnswerState();
+    await this.speak(q, 0.9, 1.0); await delay(200);
+    const letters = ['A','B','C','D'];
+    for (let i = 0; i < answers.length; i++) { await this.speak(`${letters[i]}... ${answers[i]}`, 0.9, 1.0); await delay(100); }
+    G.inputLocked = false; updateAnswerState();
+  },
+  async sayCorrect() {
+    const phrases = ['Harika bir cevap!','Mükemmel gidiyorsun!','Doğru cevap, devam edelim!','Muhteşem performans!'];
+    await this.speak(phrases[Math.floor(Math.random()*phrases.length)], 1.0, 1.0);
+  },
+  async sayWrong(correctAnswer) {
+    await this.speak('Maalesef yanlış cevap.', 0.95, 0.95);
+    await delay(200);
+    await this.speak(`Doğru cevap: ${correctAnswer}`, 0.95, 1.0);
+  }
+};
+
+// ─── BGM ───
+const BGM = {
+  ctx:null, gainNode:null, volume:0.12, playing:false,
+  init() { try { if(this.ctx) return; this.ctx = new (window.AudioContext||window.webkitAudioContext)(); this.gainNode = this.ctx.createGain(); this.gainNode.gain.value = 0; this.gainNode.connect(this.ctx.destination); } catch(e){} },
+  play() { if(!this.ctx||this.playing)return; this.playing=true; this.gainNode.gain.setTargetAtTime(this.volume,this.ctx.currentTime,1); this._loop(); },
+  stop() { if(!this.gainNode)return; this.gainNode.gain.setTargetAtTime(0,this.ctx.currentTime,0.5); this.playing=false; },
+  _loop() {
+    if(!this.playing||!this.ctx)return;
+    const now=this.ctx.currentTime,notes=[220,246.94,261.63,293.66,329.63,349.23,392,440],pattern=[0,2,4,5,7,5,4,2,0];
+    let t=now;
+    pattern.forEach(ni=>{const osc=this.ctx.createOscillator(),g=this.ctx.createGain();osc.connect(g);g.connect(this.gainNode);osc.frequency.value=notes[ni%notes.length];osc.type='sine';g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.4,t+0.05);g.gain.exponentialRampToValueAtTime(0.001,t+0.3);osc.start(t);osc.stop(t+0.35);t+=0.6;});
+    setTimeout(()=>this._loop(),(t-now)*1000);
+  },
+  correct() { if(!this.ctx)return;const now=this.ctx.currentTime;[523.25,659.25,783.99].forEach((f,i)=>{const o=this.ctx.createOscillator(),g=this.ctx.createGain();o.connect(g);g.connect(this.ctx.destination);o.frequency.value=f;o.type='triangle';const t=now+i*0.12;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.3,t+0.03);g.gain.exponentialRampToValueAtTime(0.001,t+0.4);o.start(t);o.stop(t+0.45);}); },
+  wrong() { if(!this.ctx)return;const now=this.ctx.currentTime;[220,196,175].forEach((f,i)=>{const o=this.ctx.createOscillator(),g=this.ctx.createGain();o.connect(g);g.connect(this.ctx.destination);o.frequency.value=f;o.type='sawtooth';const t=now+i*0.15;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.2,t+0.05);g.gain.exponentialRampToValueAtTime(0.001,t+0.5);o.start(t);o.stop(t+0.55);}); }
+};
+
+// ─── Utils ───
+const delay = ms => new Promise(r => setTimeout(r, ms));
+
+function toast(msg, type='info') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`; t.textContent = msg; c.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(30px)'; setTimeout(()=>t.remove(),400); }, 3000);
+}
+
+function showEffect(txt, cls) {
+  const o = document.getElementById('effect-overlay'), t = document.getElementById('effect-text');
+  t.textContent = txt; t.className = `effect-text ${cls}`;
+  o.classList.remove('hidden');
+  setTimeout(()=>o.classList.add('hidden'), 1700);
+}
+
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+function showScreen(name) {
+  ['auth','lobby','game'].forEach(s=>document.getElementById(s+'-screen').classList.add('hidden'));
+  document.getElementById(name+'-screen').classList.remove('hidden');
+}
+
+// ─── Auth ───
+function toEmail(username) { return username.toLowerCase() + '@quizora.game'; }
+let authMode = 'login';
+function authTab(mode) {
+  authMode = mode;
+  document.querySelectorAll('.auth-tab').forEach((b,i) => b.classList.toggle('active',(i===0&&mode==='login')||(i===1&&mode==='register')));
+  document.getElementById('login-form').classList.toggle('hidden', mode!=='login');
+  document.getElementById('register-form').classList.toggle('hidden', mode!=='register');
+  document.getElementById('auth-err').textContent = '';
+}
+function setAuthErr(msg) { document.getElementById('auth-err').textContent = msg; }
+function checkStrength(p) {
+  let score=0;
+  if(p.length>=6)score++;if(p.length>=10)score++;if(/[A-Z]/.test(p))score++;if(/[0-9]/.test(p))score++;if(/[^A-Za-z0-9]/.test(p))score++;
+  const fill=document.getElementById('strength-fill');
+  const colors=['#ff3355','#ff8c00','#ffaa00','#00d4aa','#00ff88'];
+  fill.style.width=(score/5*100)+'%';fill.style.background=colors[score-1]||'#ff3355';
+}
+function validateUser(u) {
+  if(!u||u.length<3)return 'Kullanıcı adı en az 3 karakter olmalı.';
+  if(u.length>20)return 'Kullanıcı adı max 20 karakter.';
+  if(!/^[a-zA-Z0-9_]+$/.test(u))return 'Sadece harf, rakam ve _ kullanılabilir.';
+  return null;
+}
+
+async function doRegister() {
+  const u = document.getElementById('r-user').value.trim();
+  const p = document.getElementById('r-pass').value;
+  const p2 = document.getElementById('r-pass2').value;
+  const ue = validateUser(u);
+  if (ue) return setAuthErr(ue);
+  if (!p||p.length<6) return setAuthErr('Şifre en az 6 karakter olmalı.');
+  if (p !== p2) return setAuthErr('Şifreler eşleşmiyor.');
+  const { auth, db, createUserWithEmailAndPassword, doc, setDoc, collection, getDocs, serverTimestamp } = window._FB;
+  try {
+    const email = toEmail(u);
+    const cred = await createUserWithEmailAndPassword(auth, email, p);
+    const uid = cred.user.uid;
+    const snap = await getDocs(collection(db, 'users'));
+    const taken = snap.docs.some(d => d.data().username && d.data().username.toLowerCase() === u.toLowerCase() && d.id !== uid);
+    if (taken) { setAuthErr('Bu kullanıcı adı zaten alınmış.'); return; }
+    await setDoc(doc(db, 'users', uid), {
+      username: u, xp: 0, coins: 0, wins: 0, losses: 0, games: 0,
+      items: [], activeNameEffect: null, activeFrame: null,
+      photoURL: null, xpBoostUntil: null, joined: serverTimestamp()
+    });
+    setAuthErr('');
+  } catch(e) {
+    if (e.code === 'auth/email-already-in-use') setAuthErr('Bu kullanıcı adı zaten alınmış.');
+    else setAuthErr('Hata: ' + e.message);
+  }
+}
+
+async function doLogin() {
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value;
+  if (!u||!p) return setAuthErr('Tüm alanları doldurun.');
+  const { auth, setPersistence, browserLocalPersistence, browserSessionPersistence, signInWithEmailAndPassword } = window._FB;
+  const remember = document.getElementById('l-remember').checked;
+  try {
+    await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
+    await signInWithEmailAndPassword(auth, toEmail(u), p);
+    setAuthErr('');
+  } catch(e) {
+    if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') setAuthErr('Kullanıcı adı veya şifre hatalı.');
+    else if (e.code === 'auth/wrong-password') setAuthErr('Şifre hatalı.');
+    else setAuthErr('Giriş hatası: ' + e.message);
+  }
+}
+
+async function doLogout() {
+  TTS.stop(); BGM.stop();
+  const { auth, signOut } = window._FB;
+  await signOut(auth);
+}
+
+// ─── Profile Photo Upload ───
+function triggerPhotoUpload() {
+  document.getElementById('photo-upload-input').click();
+}
+
+async function uploadProfilePhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  if (file.size > 5 * 1024 * 1024) return toast('Fotoğraf 5MB\'den küçük olmalı!', 'error');
+  if (!file.type.startsWith('image/')) return toast('Lütfen bir resim dosyası seçin!', 'error');
+
+  toast('📷 Fotoğraf yükleniyor...', 'info');
+  try {
+    const { storage, ref, uploadBytes, getDownloadURL } = window._FB;
+    const storageRef = ref(storage, `avatars/${window._currentUID}`);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    await window._saveUserData({ photoURL: downloadURL });
+    toast('✅ Fotoğraf güncellendi!', 'success');
+    openProfile(); // Refresh profile
+    updateLobbyUI();
+  } catch(e) {
+    toast('Hata: ' + (e.message || 'Fotoğraf yüklenemedi'), 'error');
+  }
+}
+
+// ─── Lobby ───
+function enterLobby() {
+  showScreen('lobby');
+  updateLobbyUI();
+  if (isXpBoostActive()) startBoostTimer();
+}
+
+function updateLobbyUI() {
+  const u = window._userData;
+  if (!u) return;
+  const lv = getLevelInfo(u.xp||0);
+  const pct = getXpPercent(u.xp||0);
+
+  // Avatar
+  const avatarContainer = document.getElementById('hdr-avatar-container');
+  const avatarInner = document.getElementById('hdr-avatar');
+  if (u.photoURL) {
+    avatarInner.innerHTML = `<img src="${u.photoURL}" alt="avatar">`;
+  } else {
+    avatarInner.textContent = u.username[0].toUpperCase();
+  }
+  applyFrame(avatarContainer, u.activeFrame);
+
+  // Name with effect
+  const nameEl = document.getElementById('hdr-name');
+  applyNameEffect(nameEl, u.username, u.activeNameEffect);
+
+  document.getElementById('hdr-level').textContent = `LVL ${lv.level} — ${lv.name}`;
+  document.getElementById('hdr-wallet').textContent = (u.coins||0).toLocaleString();
+  document.getElementById('s-games').textContent = u.games||0;
+  document.getElementById('s-wins').textContent = u.wins||0;
+  document.getElementById('s-xp').textContent = (u.xp||0).toLocaleString();
+  document.getElementById('s-money').textContent = (u.coins||0).toLocaleString();
+  document.getElementById('xp-level-display').textContent = `SEVİYE ${lv.level} — ${lv.name}`;
+  document.getElementById('xp-progress-text').textContent = `${(u.xp||0).toLocaleString()} / ${lv.max===Infinity?'∞':lv.max.toLocaleString()} XP`;
+  document.getElementById('xp-bar').style.width = pct + '%';
+
+  const adminBtn = document.getElementById('admin-btn');
+  if (adminBtn) adminBtn.style.display = u.username.toLowerCase() === 'ercanulger' ? 'block' : 'none';
+
+  // XP Boost indicator
+  const boostEl = document.getElementById('hdr-xpboost');
+  const boostTimer = document.getElementById('hdr-boost-timer');
+  if (isXpBoostActive()) {
+    boostEl.classList.remove('hidden');
+    if (boostTimer) boostTimer.textContent = formatBoostTimer(getXpBoostTimeLeft());
+    startBoostTimer();
+  } else {
+    boostEl.classList.add('hidden');
+  }
+}
+
+// ─── Leaderboard ───
+let _lbUnsub = null;
+function openLeaderboard() {
+  const { db, collection, query, orderBy, limit, onSnapshot } = window._FB;
+  const me = window._userData?.username?.toLowerCase();
+  if (_lbUnsub) _lbUnsub();
+  const q = query(collection(db, 'users'), orderBy('xp','desc'), limit(20));
+  _lbUnsub = onSnapshot(q, (snap) => {
+    const users = snap.docs.map(d => d.data());
+    const medals = ['🥇','🥈','🥉'];
+    const list = document.getElementById('lb-list');
+    list.innerHTML = users.length === 0
+      ? '<div style="text-align:center;color:var(--text2);padding:20px">Henüz kayıtlı kullanıcı yok.</div>'
+      : users.map((u,i) => {
+          const iMe = u.username?.toLowerCase() === me;
+          const cls = i<3 ? 'top'+(i+1) : '';
+          const wr = (u.games||0) > 0 ? Math.round((u.wins||0)/(u.games||1)*100) : 0;
+
+          // Frame class
+          const frameCls = u.activeFrame
+            ? PROFILE_FRAMES.find(f=>f.id===u.activeFrame)?.frameClass || ''
+            : '';
+          const hasFrame = frameCls ? 'has-frame' : '';
+
+          // Name effect
+          const nameEff = u.activeNameEffect
+            ? NAME_EFFECTS.find(e=>e.id===u.activeNameEffect)?.cssClass || ''
+            : '';
+
+          // Avatar content
+          const avContent = u.photoURL
+            ? `<img src="${u.photoURL}" alt="avatar">`
+            : (u.username||'?')[0].toUpperCase();
+
+          return `<div class="lb-row ${cls} ${iMe?'me':''}">
+            <div class="lb-rank">${i<3?medals[i]:'#'+(i+1)}</div>
+            <div class="lb-av-container ${hasFrame} ${frameCls}">
+              <div class="lb-av-inner">${avContent}</div>
+            </div>
+            <div class="lb-name">
+              <span class="${nameEff}">${u.username||'?'}${iMe?' (sen)':''}</span>
+              ${u.items&&u.items.includes('vip_badge')?'<span style="color:var(--gold);font-size:0.7rem;margin-left:4px">👑</span>':''}
+              ${u.items&&u.items.includes('legend_badge')?'<span style="color:var(--red);font-size:0.7rem;margin-left:2px">🏆</span>':''}
+              ${isXpBoostActiveFor(u)?'<span class="xpboost-indicator" style="margin-left:6px;font-size:0.65rem">⚡2x</span>':''}
+            </div>
+            <div style="text-align:right">
+              <div class="lb-xp">⭐ ${(u.xp||0).toLocaleString()}</div>
+              <div class="lb-wr">${wr}% WR | ${u.games||0} oyun</div>
+            </div>
+          </div>`;
+        }).join('');
+  });
+  openModal('modal-lb');
+}
+
+function isXpBoostActiveFor(u) {
+  return u && u.xpBoostUntil && Date.now() < u.xpBoostUntil;
+}
+
+// ─── Shop ───
+let _currentShopTab = 'items';
+
+function shopTab(tab) {
+  _currentShopTab = tab;
+  ['items','effects','frames'].forEach(t => {
+    document.getElementById('shop-panel-'+t).classList.toggle('hidden', t!==tab);
+    document.getElementById('stab-'+t).classList.toggle('active', t===tab);
+  });
+  renderShopTab(tab);
+}
+
+function openShop() {
+  document.getElementById('shop-balance').textContent = (window._userData?.coins||0).toLocaleString();
+  shopTab('items');
+  openModal('modal-shop');
+}
+
+function renderShopTab(tab) {
+  const u = window._userData;
+  if (tab === 'items') {
+    const grid = document.getElementById('shop-grid-items');
+    grid.innerHTML = SHOP_ITEMS.map(item => {
+      const owned = (u.items||[]).includes(item.id);
+      const isBoost = item.type === 'boost24';
+      const isConsumable = item.type === 'consumable';
+      const boostActive = isBoost && isXpBoostActive();
+
+      let actionHTML = '';
+      if (isBoost && boostActive) {
+        actionHTML = `<div class="shop-active-badge">⚡ AKTİF — ${formatBoostTimer(getXpBoostTimeLeft())}</div>`;
+      } else if (isConsumable) {
+        // Double joker: can always buy
+        const hasJoker = (u.doubleJokerCount || 0) > 0;
+        actionHTML = hasJoker
+          ? `<div style="margin-top:4px"><div style="color:var(--green);font-size:0.78rem">✓ ${u.doubleJokerCount}x joker var</div><button onclick="buyShopItem('${item.id}')" style="background:none;border:none;cursor:pointer;width:100%;margin-top:4px"><div class="shop-price">💰 ${item.price.toLocaleString()}</div></button></div>`
+          : `<button onclick="buyShopItem('${item.id}')" style="background:none;border:none;cursor:pointer;width:100%"><div class="shop-price">💰 ${item.price.toLocaleString()}</div></button>`;
+      } else if (owned) {
+        actionHTML = '<div class="shop-owned">✓ SAHİPSİN</div>';
+      } else {
+        actionHTML = `<button onclick="buyShopItem('${item.id}')" style="background:none;border:none;cursor:pointer;width:100%"><div class="shop-price">💰 ${item.price.toLocaleString()}</div></button>`;
+      }
+
+      return `<div class="shop-item ${owned&&!isConsumable?'owned':''}">
+        <div class="shop-icon">${item.icon}</div>
+        <div class="shop-name">${item.name}</div>
+        <div class="shop-desc">${item.desc}</div>
+        ${actionHTML}
+      </div>`;
+    }).join('');
+  }
+
+  if (tab === 'effects') {
+    const grid = document.getElementById('shop-grid-effects');
+    const activeEff = u.activeNameEffect;
+    grid.innerHTML = NAME_EFFECTS.map(item => {
+      const owned = (u.items||[]).includes(item.id);
+      const isActive = activeEff === item.id;
+      let actionHTML = '';
+      if (!owned) {
+        actionHTML = `<button onclick="buyShopItem('${item.id}')" style="background:none;border:none;cursor:pointer;width:100%"><div class="shop-price">💰 ${item.price.toLocaleString()}</div></button>`;
+      } else if (isActive) {
+        actionHTML = `<div class="shop-btn-row"><div class="shop-active-badge">✓ AKTİF</div><button class="shop-btn-deactivate" onclick="deactivateEffect()">KAPAT</button></div>`;
+      } else {
+        actionHTML = `<div class="shop-btn-row"><div class="shop-owned">✓ Sahipsin</div><button class="shop-btn-activate" onclick="activateEffect('${item.id}')">AKTİFLEŞTİR</button></div>`;
+      }
+      return `<div class="shop-item ${owned?'owned':''} ${isActive?'active-effect':''}">
+        ${item.preview}
+        <div class="shop-name">${item.name}</div>
+        <div class="shop-desc">${item.desc}</div>
+        ${actionHTML}
+      </div>`;
+    }).join('');
+  }
+
+  if (tab === 'frames') {
+    const grid = document.getElementById('shop-grid-frames');
+    const activeFr = u.activeFrame;
+    grid.innerHTML = PROFILE_FRAMES.map(item => {
+      const owned = (u.items||[]).includes(item.id);
+      const isActive = activeFr === item.id;
+      let actionHTML = '';
+      if (!owned) {
+        actionHTML = `<button onclick="buyShopItem('${item.id}')" style="background:none;border:none;cursor:pointer;width:100%"><div class="shop-price">💰 ${item.price.toLocaleString()}</div></button>`;
+      } else if (isActive) {
+        actionHTML = `<div class="shop-btn-row"><div class="shop-active-badge">✓ AKTİF</div><button class="shop-btn-deactivate" onclick="deactivateFrame()">KAPAT</button></div>`;
+      } else {
+        actionHTML = `<div class="shop-btn-row"><div class="shop-owned">✓ Sahipsin</div><button class="shop-btn-activate" onclick="activateFrame('${item.id}')">AKTİFLEŞTİR</button></div>`;
+      }
+      // Frame preview
+      const preview = `<div class="frame-preview has-frame ${item.frameClass}"><div class="frame-preview-inner">😊</div></div>`;
+      return `<div class="shop-item ${owned?'owned':''} ${isActive?'active-effect':''}">
+        ${preview}
+        <div class="shop-name">${item.name}</div>
+        <div class="shop-desc">${item.desc}</div>
+        ${actionHTML}
+      </div>`;
+    }).join('');
+  }
+}
+
+async function buyShopItem(id) {
+  const u = window._userData;
+  const item = [...SHOP_ITEMS, ...NAME_EFFECTS, ...PROFILE_FRAMES].find(i=>i.id===id);
+  if (!item) return;
+  if ((u.coins||0) < item.price) return toast('Yetersiz bakiye!', 'error');
+
+  // Consumable: double joker
+  if (item.type === 'consumable') {
+    const newCoins = (u.coins||0) - item.price;
+    const newCount = (u.doubleJokerCount || 0) + 1;
+    await window._saveUserData({ coins: newCoins, doubleJokerCount: newCount });
+    toast(`✌️ Çift Cevap Jokeri satın alındı! (${newCount}x)`, 'gold');
+    renderShopTab(_currentShopTab);
+    updateLobbyUI();
+    return;
+  }
+
+  // XP Boost 24h
+  if (item.type === 'boost24') {
+    if (isXpBoostActive()) return toast('Boost zaten aktif!', 'info');
+    const newCoins = (u.coins||0) - item.price;
+    const boostUntil = Date.now() + 24 * 60 * 60 * 1000;
+    await window._saveUserData({ coins: newCoins, xpBoostUntil: boostUntil });
+    toast('⚡ 24 Saatlik 2x XP Boost aktif!', 'gold');
+    startBoostTimer();
+    renderShopTab(_currentShopTab);
+    updateLobbyUI();
+    return;
+  }
+
+  // One-time purchase items
+  if ((u.items||[]).includes(id)) return toast('Zaten sahipsin!', 'info');
+  const newCoins = (u.coins||0) - item.price;
+  const newItems = [...(u.items||[]), id];
+  await window._saveUserData({ coins: newCoins, items: newItems });
+  toast(`${item.icon||'✨'} ${item.name} satın alındı!`, 'gold');
+  renderShopTab(_currentShopTab);
+  updateLobbyUI();
+}
+
+async function activateEffect(id) {
+  await window._saveUserData({ activeNameEffect: id });
+  toast('✨ İsim efekti aktifleştirildi!', 'success');
+  renderShopTab('effects');
+  updateLobbyUI();
+}
+
+async function deactivateEffect() {
+  await window._saveUserData({ activeNameEffect: null });
+  toast('İsim efekti kapatıldı.', 'info');
+  renderShopTab('effects');
+  updateLobbyUI();
+}
+
+async function activateFrame(id) {
+  await window._saveUserData({ activeFrame: id });
+  toast('🖼️ Çerçeve aktifleştirildi!', 'success');
+  renderShopTab('frames');
+  updateLobbyUI();
+}
+
+async function deactivateFrame() {
+  await window._saveUserData({ activeFrame: null });
+  toast('Çerçeve kapatıldı.', 'info');
+  renderShopTab('frames');
+  updateLobbyUI();
+}
+
+// ─── Profile ───
+function openProfile() {
+  const u = window._userData;
+  const lv = getLevelInfo(u.xp||0);
+  const pct = getXpPercent(u.xp||0);
+  document.getElementById('prof-title').textContent = u.username;
+
+  // Avatar + frame
+  const container = document.getElementById('prof-avatar-container');
+  const inner = document.getElementById('prof-avatar');
+  if (u.photoURL) {
+    inner.innerHTML = `<img src="${u.photoURL}" alt="avatar">`;
+  } else {
+    inner.textContent = u.username[0].toUpperCase();
+  }
+  applyFrame(container, u.activeFrame);
+
+  document.getElementById('prof-games').textContent = u.games||0;
+  document.getElementById('prof-wins').textContent = u.wins||0;
+  document.getElementById('prof-wr').textContent = (u.games||0)>0 ? Math.round((u.wins||0)/(u.games||1)*100)+'%' : '0%';
+  document.getElementById('prof-level').textContent = `SEVİYE ${lv.level} — ${lv.name}`;
+  document.getElementById('prof-xp-txt').textContent = `${(u.xp||0).toLocaleString()} / ${lv.max===Infinity?'∞':lv.max.toLocaleString()} XP`;
+  document.getElementById('prof-xp-bar').style.width = pct+'%';
+
+  // Cosmetics info
+  const ownedEffects = NAME_EFFECTS.filter(e=>(u.items||[]).includes(e.id));
+  const ownedFrames = PROFILE_FRAMES.filter(f=>(u.items||[]).includes(f.id));
+  const activeEff = ownedEffects.find(e=>e.id===u.activeNameEffect);
+  const activeFr = ownedFrames.find(f=>f.id===u.activeFrame);
+  let cosText = '';
+  if (activeEff) cosText += `✨ Efekt: ${activeEff.name}  `;
+  if (activeFr) cosText += `🖼️ Çerçeve: ${activeFr.name}`;
+  if (!cosText) cosText = 'Aktif kozmetik yok';
+  document.getElementById('prof-cosmetics').textContent = cosText;
+
+  openModal('modal-profile');
+}
+
+// ─── Admin ───
+function openAdmin() {
+  adminTab('coins');
+  openModal('modal-admin');
+  renderAdminUsers();
+}
+
+function adminTab(tab) {
+  document.getElementById('adm-panel-coins').classList.toggle('hidden', tab !== 'coins');
+  document.getElementById('adm-panel-questions').classList.toggle('hidden', tab !== 'questions');
+  document.getElementById('adm-tab-coins').classList.toggle('active', tab === 'coins');
+  document.getElementById('adm-tab-questions').classList.toggle('active', tab === 'questions');
+  if (tab === 'questions') renderAdminList();
+  if (tab === 'coins') renderAdminUsers();
+}
+
+let _adminUserUnsub = null;
+async function renderAdminUsers() {
+  const { db, collection, query, orderBy, onSnapshot } = window._FB;
+  const el = document.getElementById('adm-user-list');
+  el.innerHTML = '<div style="text-align:center;color:var(--text2);padding:20px">Yükleniyor...</div>';
+  if (_adminUserUnsub) { _adminUserUnsub(); _adminUserUnsub = null; }
+  const q = query(collection(db, 'users'), orderBy('xp', 'desc'));
+  _adminUserUnsub = onSnapshot(q, (snap) => {
+    if (snap.empty) { el.innerHTML = '<div style="text-align:center;color:var(--text2);padding:20px">Henüz kullanıcı yok.</div>'; return; }
+    const myUid = window._currentUID;
+    el.innerHTML = snap.docs.map(d => {
+      const u = d.data(); const uid = d.id; const isMe = uid === myUid;
+      return `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--glass);border:1px solid ${isMe?'rgba(0,195,255,0.3)':'var(--border)'};border-radius:12px;margin-bottom:8px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;overflow:hidden;">
+          ${u.photoURL ? `<img src="${u.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : (u.username||'?')[0].toUpperCase()}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:0.88rem;color:${isMe?'var(--blue)':'var(--text)'};">${u.username||'?'}${isMe?' (sen)':''}</div>
+          <div style="font-size:0.72rem;color:var(--text2);">💰 ${(u.coins||0).toLocaleString()} &nbsp;·&nbsp; ⭐ ${(u.xp||0).toLocaleString()} XP &nbsp;·&nbsp; 🎮 ${u.games||0} oyun</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+          <input type="number" id="coin-input-${uid}" placeholder="Miktar" min="1" style="width:80px;padding:6px 8px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.82rem;outline:none;">
+          <button onclick="adminAddCoin('${uid}','${u.username||''}','${u.coins||0}')" style="padding:6px 12px;background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;border-radius:8px;color:#000;font-weight:700;font-size:0.78rem;cursor:pointer;white-space:nowrap;">+ COIN</button>
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
+
+async function adminAddCoin(uid, username, currentCoins) {
+  const input = document.getElementById('coin-input-' + uid);
+  const amount = parseInt(input?.value);
+  if (!amount || amount <= 0) return toast('Geçerli bir miktar girin!', 'error');
+  const { db, doc, updateDoc } = window._FB;
+  try {
+    const newCoins = parseInt(currentCoins) + amount;
+    await updateDoc(doc(db, 'users', uid), { coins: newCoins });
+    if (uid === window._currentUID && window._userData) { window._userData.coins = newCoins; updateLobbyUI(); }
+    if (input) input.value = '';
+    toast(`✅ ${username} hesabına ${amount.toLocaleString()} coin eklendi!`, 'gold');
+  } catch(e) { toast('Hata: ' + e.message, 'error'); }
+}
+
+document.getElementById('modal-admin').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) { if (_adminUserUnsub) { _adminUserUnsub(); _adminUserUnsub = null; } closeModal('modal-admin'); }
+});
+
+async function renderAdminList() {
+  let qs = window._cachedQuestions || DEFAULT_QUESTIONS;
+  const el = document.getElementById('adm-q-list');
+  el.innerHTML = `<div class="section-title">Mevcut Sorular (${qs.length})</div>` +
+    [...qs].reverse().slice(0,10).map(q => `
+      <div class="admin-q-item">
+        <span style="flex:1;color:var(--text2)">${(q.q||'').substring(0,40)}...</span>
+        <span style="margin:0 8px;font-size:0.7rem;color:${q.diff==='easy'?'var(--green)':q.diff==='medium'?'var(--gold2)':'var(--red)'}">${q.diff}</span>
+        ${q.id && typeof q.id === 'string' ? `<button class="btn-del" onclick="adminDelQ('${q.id}')">SİL</button>` : ''}
+      </div>`).join('');
+}
+
+async function adminAddQ() {
+  const q = document.getElementById('adm-q').value.trim();
+  const a = document.getElementById('adm-a').value.trim();
+  const b = document.getElementById('adm-b').value.trim();
+  const c = document.getElementById('adm-c').value.trim();
+  const d = document.getElementById('adm-d').value.trim();
+  const diff = document.getElementById('adm-diff').value;
+  if (!q||!a||!b||!c||!d) return toast('Tüm alanları doldurun!','error');
+  const { db, collection, addDoc, serverTimestamp } = window._FB;
+  try {
+    await addDoc(collection(db, 'questions'), { q, a:[a,b,c,d], correct:0, diff, createdAt: serverTimestamp() });
+    toast('Soru eklendi!','success');
+    ['adm-q','adm-a','adm-b','adm-c','adm-d'].forEach(id=>document.getElementById(id).value='');
+    setTimeout(renderAdminList, 800);
+  } catch(e) { toast('Hata: ' + e.message, 'error'); }
+}
+
+async function adminDelQ(id) {
+  if (!id || typeof id !== 'string') return;
+  const { db, doc, deleteDoc } = window._FB;
+  try { await deleteDoc(doc(db, 'questions', id)); toast('Soru silindi.','info'); setTimeout(renderAdminList, 500); }
+  catch(e) { toast('Hata: ' + e.message,'error'); }
+}
+
+// ─── DEFAULT QUESTIONS (450 adet - orijinal) ───
 const DEFAULT_QUESTIONS = [
-// ══════════ KOLAY (150) ══════════
 {q:"Türkiye'nin başkenti hangisidir?",a:["Ankara","İstanbul","İzmir","Bursa"],correct:0,diff:"easy"},
 {q:"Güneş sistemimizdeki en büyük gezegen hangisidir?",a:["Satürn","Neptün","Jüpiter","Uranüs"],correct:2,diff:"easy"},
 {q:"Su'nun kimyasal formülü nedir?",a:["CO2","H2O","O2","NaCl"],correct:1,diff:"easy"},
@@ -663,111 +1460,31 @@ const DEFAULT_QUESTIONS = [
 {q:"Hangi renk gökyüzünün rengidir?",a:["Yeşil","Sarı","Mavi","Mor"],correct:2,diff:"easy"},
 {q:"Portakal hangi vitaminle zengindir?",a:["A","B","C","D"],correct:2,diff:"easy"},
 {q:"Dünyanın en büyük çölü hangisidir?",a:["Gobi","Kalahari","Arabistan","Sahra"],correct:3,diff:"easy"},
-{q:"Hangi sporda 'şut' atılır?",a:["Voleybol","Basketbol","Tenis","Yüzme"],correct:1,diff:"easy"},
 {q:"İstanbul Boğazı hangi iki denizi birleştirir?",a:["Karadeniz - Akdeniz","Karadeniz - Marmara","Ege - Akdeniz","Adriyatik - Ege"],correct:1,diff:"easy"},
 {q:"Hangi hayvan uçar ama kuş değildir?",a:["Penguen","Yarasa","Devekuşu","Tavuk"],correct:1,diff:"easy"},
 {q:"Bir yılda kaç hafta vardır?",a:["48","50","52","54"],correct:2,diff:"easy"},
 {q:"Hangi element en hafiftir?",a:["Helyum","Hidrojen","Lityum","Karbon"],correct:1,diff:"easy"},
-{q:"Hangi ülkede çay en çok tüketilir?",a:["İngiltere","Çin","Hindistan","Türkiye"],correct:3,diff:"easy"},
 {q:"Hangi organda kan pompalanır?",a:["Karaciğer","Böbrek","Kalp","Akciğer"],correct:2,diff:"easy"},
-{q:"Hangi meyve kırmızı ve yuvarlaktır?",a:["Muz","Elma","Armut","Kavun"],correct:1,diff:"easy"},
 {q:"Dünyanın en yüksek dağı hangisidir?",a:["K2","Everest","Kilimanjaro","Mont Blanc"],correct:1,diff:"easy"},
 {q:"Hangi ülke piramitlerle ünlüdür?",a:["Irak","Meksika","Mısır","İran"],correct:2,diff:"easy"},
-{q:"Hangi araç havada uçar?",a:["Tekne","Tren","Uçak","Otobüs"],correct:2,diff:"easy"},
-{q:"Türk bayrağında kaç renk vardır?",a:["1","2","3","4"],correct:1,diff:"easy"},
-{q:"Hangi yiyecek bal üretir?",a:["Arı","Karınca","Kelebek","Sinek"],correct:0,diff:"easy"},
-{q:"Hangi ülke çini icad etmiştir?",a:["Japonya","Kore","Çin","Hindistan"],correct:2,diff:"easy"},
-{q:"Bir günde kaç saat vardır?",a:["12","20","24","36"],correct:2,diff:"easy"},
-{q:"Hangi hayvan en büyük kara hayvanıdır?",a:["Zürafa","Gergedan","Fil","Aslan"],correct:2,diff:"easy"},
-{q:"Kemiklerden oluşan sisteme ne denir?",a:["Kas sistemi","İskelet sistemi","Sinir sistemi","Dolaşım sistemi"],correct:1,diff:"easy"},
-{q:"Hangi mevsimde çiçekler açar?",a:["Kış","Sonbahar","Yaz","İlkbahar"],correct:3,diff:"easy"},
+{q:"Türkiye'nin kaç ili vardır?",a:["71","79","81","85"],correct:2,diff:"easy"},
+{q:"Hangi element havada en bol bulunur?",a:["Oksijen","Argon","Karbon","Azot"],correct:3,diff:"easy"},
 {q:"Hangi ülkenin başkenti Tokyo'dur?",a:["Çin","Kore","Japonya","Vietnam"],correct:2,diff:"easy"},
-{q:"Hangi sporda 'servis' atılır?",a:["Futbol","Voleybol","Basketbol","Golf"],correct:1,diff:"easy"},
-{q:"İnsan vücudunun en büyük organı hangisidir?",a:["Kalp","Beyin","Karaciğer","Deri"],correct:3,diff:"easy"},
-{q:"Hangi gezegen halkalarıyla ünlüdür?",a:["Jüpiter","Mars","Satürn","Uranüs"],correct:2,diff:"easy"},
-{q:"Hangi renk yaprağın rengidir?",a:["Mavi","Sarı","Yeşil","Kırmızı"],correct:2,diff:"easy"},
-{q:"Hangi ülkede Büyük Duvar bulunur?",a:["Japonya","Hindistan","Çin","Kore"],correct:2,diff:"easy"},
-{q:"Suyun kaynama noktası kaç derecedir?",a:["80°C","90°C","100°C","120°C"],correct:2,diff:"easy"},
-{q:"Hangi sporda pas verilir?",a:["Tenis","Atletizm","Futbol","Yüzme"],correct:2,diff:"easy"},
 {q:"Hangi ülkede kangaroo yaşar?",a:["Yeni Zelanda","Brezilya","Avustralya","Afrika"],correct:2,diff:"easy"},
-{q:"Hangi renk karanlığı temsil eder?",a:["Beyaz","Gri","Sarı","Siyah"],correct:3,diff:"easy"},
-{q:"Türkiye'nin güney kıyısını hangi deniz yıkar?",a:["Karadeniz","Ege","Marmara","Akdeniz"],correct:3,diff:"easy"},
-{q:"Hangi hayvan 'Hız' sembolüdür?",a:["Aslan","Çita","Kaplan","Kurt"],correct:1,diff:"easy"},
-{q:"Hangi meyve mor renklidir?",a:["Elma","Portakal","Üzüm","Kavun"],correct:2,diff:"easy"},
-{q:"Hangi ülkenin bayrağında yıldız ve ay vardır?",a:["Türkiye","İtalya","Fransa","Almanya"],correct:0,diff:"easy"},
 {q:"Dünya'nın en büyük kıtası hangisidir?",a:["Afrika","Amerika","Avrupa","Asya"],correct:3,diff:"easy"},
 {q:"Hangi hayvan ağ örer?",a:["Arı","Karınca","Örümcek","Sinek"],correct:2,diff:"easy"},
 {q:"Hangi organda sindirim başlar?",a:["Mide","Bağırsak","Ağız","Karaciğer"],correct:2,diff:"easy"},
-{q:"Hangi renkten yeşil elde edilir?",a:["Kırmızı + Mavi","Sarı + Mavi","Sarı + Kırmızı","Mavi + Beyaz"],correct:1,diff:"easy"},
-{q:"Hangi ülkede Nil nehri akar?",a:["Libya","Mısır","Sudan","Nijer"],correct:1,diff:"easy"},
-{q:"Hangi hayvan suda yaşar?",a:["Kurt","Aslan","Balık","Kartal"],correct:2,diff:"easy"},
-{q:"Bir haftada kaç gün hafta sonu vardır?",a:["1","2","3","4"],correct:1,diff:"easy"},
-{q:"Hangi alet zamanı ölçer?",a:["Cetvel","Saat","Termometre","Terazi"],correct:1,diff:"easy"},
-{q:"Hangi renk tehlike simgesidir?",a:["Mavi","Yeşil","Kırmızı","Sarı"],correct:2,diff:"easy"},
-{q:"Hangi ülkede Amazon ormanları bulunur?",a:["Arjantin","Kolombiya","Brezilya","Peru"],correct:2,diff:"easy"},
-{q:"Hangi sporda raket ve top kullanılır?",a:["Futbol","Masatenisi","Basketbol","Yüzme"],correct:1,diff:"easy"},
-{q:"Hangi gezegen Güneş'e en yakındır?",a:["Venüs","Mars","Merkür","Dünya"],correct:2,diff:"easy"},
-{q:"Hangi metal en iyi iletkendir?",a:["Demir","Bakır","Gümüş","Altın"],correct:2,diff:"easy"},
-{q:"Hangi ülkenin başkenti Paris'tir?",a:["Belçika","İsviçre","Fransa","Hollanda"],correct:2,diff:"easy"},
-{q:"Hangi hayvan sürünerek ilerler?",a:["Kuş","Balık","Yılan","Kartal"],correct:2,diff:"easy"},
-{q:"Hangi yiyecekte protein boldur?",a:["Meyve","Et","Şeker","Yağ"],correct:1,diff:"easy"},
-{q:"Türkiye'nin kaç ili vardır?",a:["71","79","81","85"],correct:2,diff:"easy"},
-{q:"Hangi element güneşte en bol bulunur?",a:["Oksijen","Helyum","Hidrojen","Karbon"],correct:2,diff:"easy"},
-{q:"Hangi sporda 'file' kullanılır?",a:["Futbol","Tenis","Golf","Atletizm"],correct:1,diff:"easy"},
-{q:"Hangi hayvan 'Asya'nın simgesi' olarak kabul edilir?",a:["Aslan","Kaplan","Fil","Gergedan"],correct:2,diff:"easy"},
-{q:"Hangi gezegen Güneş'e en uzaktır?",a:["Satürn","Uranüs","Neptün","Jüpiter"],correct:2,diff:"easy"},
-{q:"Hangi ülkenin başkenti Berlin'dir?",a:["Avusturya","Hollanda","İsviçre","Almanya"],correct:3,diff:"easy"},
-{q:"Hangi organ görme işlevi görür?",a:["Kulak","Burun","Göz","Dil"],correct:2,diff:"easy"},
-{q:"Hangi kıta en küçüktür?",a:["Avrupa","Okyanusya","Antarktika","Afrika"],correct:1,diff:"easy"},
-{q:"Hangi renk sağlık simgesidir?",a:["Kırmızı","Sarı","Yeşil","Mavi"],correct:2,diff:"easy"},
-{q:"Hangi ülkede Kolosseum bulunur?",a:["Yunanistan","İtalya","İspanya","Türkiye"],correct:1,diff:"easy"},
-{q:"Hangi hayvan 'Kutup Ayısı' olarak bilinir?",a:["Panda","Koala","Polar Bear","Grizzly"],correct:2,diff:"easy"},
-{q:"Hangi alet ısıyı ölçer?",a:["Barometer","Termometre","Higrometer","Voltmetre"],correct:1,diff:"easy"},
-{q:"Hangi meyve yeşil renklidir?",a:["Çilek","Karpuz kabuğu","Muz","Portakal"],correct:1,diff:"easy"},
-{q:"Türkiye'nin batısında hangi ülke bulunur?",a:["İran","Irak","Yunanistan","Suriye"],correct:2,diff:"easy"},
-{q:"Hangi hayvan en uzun boyunlu kara hayvanıdır?",a:["Fil","Deve","Zürafa","At"],correct:2,diff:"easy"},
-{q:"Hangi sporda 'gol' atılır?",a:["Tenis","Basketbol","Futbol","Voleybol"],correct:2,diff:"easy"},
-{q:"Hangi element havada en bol bulunur?",a:["Oksijen","Argon","Karbon","Azot"],correct:3,diff:"easy"},
-{q:"Hangi ülkenin başkenti Madrid'dir?",a:["Portekiz","Fransa","İspanya","İtalya"],correct:2,diff:"easy"},
-{q:"Hangi organ duyma işlevi görür?",a:["Göz","Dil","Burun","Kulak"],correct:3,diff:"easy"},
-{q:"Hangi ülkede Taj Mahal bulunur?",a:["Pakistan","Bangladeş","Hindistan","Nepal"],correct:2,diff:"easy"},
-{q:"Hangi hayvan 'Brezilya'nın simgesi' olarak bilinir?",a:["Jaguar","Kartal","Papağan","Maymun"],correct:0,diff:"easy"},
+{q:"Bir günde kaç saat vardır?",a:["12","20","24","36"],correct:2,diff:"easy"},
+{q:"Hangi hayvan en büyük kara hayvanıdır?",a:["Zürafa","Gergedan","Fil","Aslan"],correct:2,diff:"easy"},
+{q:"Türkiye'nin güney kıyısını hangi deniz yıkar?",a:["Karadeniz","Ege","Marmara","Akdeniz"],correct:3,diff:"easy"},
 {q:"Bir yılda kaç gün vardır?",a:["350","360","365","370"],correct:2,diff:"easy"},
-{q:"Hangi ülkede Stonehenge bulunur?",a:["İrlanda","Fransa","İngiltere","İskoçya"],correct:2,diff:"easy"},
-{q:"Hangi renk denizi simgeler?",a:["Yeşil","Sarı","Mavi","Mor"],correct:2,diff:"easy"},
-{q:"Hangi sporda 'sayı' kazanılır?",a:["Tenis","Basketbol","Futbol","Yüzme"],correct:1,diff:"easy"},
-{q:"Hangi ülkede Mount Fuji bulunur?",a:["Çin","Kore","Japonya","Vietnam"],correct:2,diff:"easy"},
-{q:"Hangi hayvan penguendir?",a:["Uçan kuş","Sürüngen","Memeli","Uçamayan kuş"],correct:3,diff:"easy"},
-{q:"Hangi ülkede Akropolis bulunur?",a:["İtalya","Türkiye","Yunanistan","Mısır"],correct:2,diff:"easy"},
-{q:"Hangi sporda 'kürek' çekilir?",a:["Rafting","Kayak","Yelken","Rowing"],correct:3,diff:"easy"},
-{q:"Hangi meyve çekirdeksizdir?",a:["Kiraz","Şeftali","Muz","Erik"],correct:2,diff:"easy"},
-{q:"Hangi ülkede Acropolis bulunur?",a:["Türkiye","İtalya","İspanya","Yunanistan"],correct:3,diff:"easy"},
-{q:"Hangi mevsimde yapraklar dökülür?",a:["İlkbahar","Yaz","Sonbahar","Kış"],correct:2,diff:"easy"},
-{q:"Hangi ülkenin başkenti Londra'dır?",a:["İskoçya","Galler","İrlanda","İngiltere"],correct:3,diff:"easy"},
-{q:"Hangi hayvan en çok uyur?",a:["Aslan","Koala","Fil","At"],correct:1,diff:"easy"},
-{q:"Hangi sporda 'smash' yapılır?",a:["Futbol","Tenis","Basketbol","Yüzme"],correct:1,diff:"easy"},
-{q:"Hangi ülkede Kızıl Meydan bulunur?",a:["Çin","Polonya","Rusya","Ukrayna"],correct:2,diff:"easy"},
-{q:"Hangi gezegen en küçüktür?",a:["Mars","Venüs","Merkür","Jüpiter"],correct:2,diff:"easy"},
-{q:"Hangi ülkenin başkenti Atina'dır?",a:["İtalya","Türkiye","Bulgaristan","Yunanistan"],correct:3,diff:"easy"},
-{q:"Hangi hayvan 'Avustralya'nın simgesi'dir?",a:["Koala","Kanguru","Wombat","Dingo"],correct:1,diff:"easy"},
-{q:"Hangi sporda 'topa kafa vurulur'?",a:["Basketbol","Voleybol","Futbol","Rugby"],correct:2,diff:"easy"},
-{q:"Hangi element yanmaz?",a:["Hidrojen","Oksijen","Karbon","Azot"],correct:3,diff:"easy"},
+{q:"Hangi ülkenin başkenti Paris'tir?",a:["Belçika","İsviçre","Fransa","Hollanda"],correct:2,diff:"easy"},
+{q:"Hangi ülkenin başkenti Berlin'dir?",a:["Avusturya","Hollanda","İsviçre","Almanya"],correct:3,diff:"easy"},
+{q:"Hangi ülkede Kolosseum bulunur?",a:["Yunanistan","İtalya","İspanya","Türkiye"],correct:1,diff:"easy"},
+{q:"Hangi ülkede Taj Mahal bulunur?",a:["Pakistan","Bangladeş","Hindistan","Nepal"],correct:2,diff:"easy"},
 {q:"Hangi ülkede Big Ben kulesi bulunur?",a:["Fransa","ABD","İngiltere","Almanya"],correct:2,diff:"easy"},
-{q:"Hangi hayvan sütünden peynir yapılır?",a:["Keçi","İnek","Koyun","Hepsi"],correct:3,diff:"easy"},
-{q:"Hangi ülkenin başkenti Viyana'dır?",a:["Almanya","İsviçre","Avusturya","Çek Cumhuriyeti"],correct:2,diff:"easy"},
-{q:"Hangi meyve çilek değildir?",a:["Çilek","Dut","Böğürtlen","Domates"],correct:3,diff:"easy"},
-{q:"Hangi ülkede Ayers Rock (Uluru) bulunur?",a:["Yeni Zelanda","Papua","Avustralya","Fiji"],correct:2,diff:"easy"},
-{q:"Hangi sporda 'tramplen' kullanılır?",a:["Yüzme","Cimnastik","Atletizm","Judo"],correct:1,diff:"easy"},
-{q:"Hangi renk buz/kar rengidir?",a:["Gri","Mavi","Beyaz","Sarı"],correct:2,diff:"easy"},
-{q:"Hangi ülkenin başkenti Ankara'dır?",a:["Azerbaycan","Kazakistan","Türkiye","Özbekistan"],correct:2,diff:"easy"},
-{q:"Hangi hayvan zehirli ısırığıyla bilinir?",a:["Kelebek","Yılan","Ceylan","Geyik"],correct:1,diff:"easy"},
-{q:"Hangi sporda 'at' kullanılır?",a:["Futbol","Tenis","Binicilik","Yüzme"],correct:2,diff:"easy"},
-{q:"Hangi element en ağır metaldir?",a:["Kurşun","Altın","Platin","Osmiyum"],correct:3,diff:"easy"},
-{q:"Hangi ülkenin başkenti Amsterdam'dır?",a:["Belçika","Hollanda","Danimarka","Norveç"],correct:1,diff:"easy"},
-{q:"Hangi meyve suyu sarı renklidir?",a:["Domates","Üzüm","Portakal","Karpuz"],correct:2,diff:"easy"},
-{q:"Hangi sporda 'halter' kullanılır?",a:["Futbol","Tenis","Halter/Ağırlık Kaldırma","Basketbol"],correct:2,diff:"easy"},
-
-// ══════════ ORTA (150) ══════════
+{q:"Hangi ülkenin başkenti Madrid'dir?",a:["Portekiz","Fransa","İspanya","İtalya"],correct:2,diff:"easy"},
+{q:"Hangi ülkede Büyük Duvar bulunur?",a:["Japonya","Hindistan","Çin","Kore"],correct:2,diff:"easy"},
 {q:"Hangi element periyodik tabloda 'Au' sembolü ile gösterilir?",a:["Gümüş","Demir","Altın","Bakır"],correct:2,diff:"medium"},
 {q:"Osmanlı İmparatorluğu hangi yılda kurulmuştur?",a:["1299","1453","1071","1389"],correct:0,diff:"medium"},
 {q:"Pi sayısının ilk 3 basamağı nedir?",a:["3.14","3.16","3.12","3.18"],correct:0,diff:"medium"},
@@ -775,729 +1492,113 @@ const DEFAULT_QUESTIONS = [
 {q:"Hangi ülke 2022 FIFA Dünya Kupası'nı kazandı?",a:["Fransa","Brezilya","Arjantin","Hırvatistan"],correct:2,diff:"medium"},
 {q:"DNA'nın açılımı nedir?",a:["Dioksiribonükleik Asit","Dinitrojen Asit","Dikarbonokleik Asit","Difosfor Asit"],correct:0,diff:"medium"},
 {q:"Işığın hızı saniyede kaç km'dir?",a:["200.000","299.792","350.000","150.000"],correct:1,diff:"medium"},
-{q:"Dünya'dan sonra Güneş Sistemindeki kaçıncı gezegen Mars'tır?",a:["3.","4.","5.","2."],correct:1,diff:"medium"},
 {q:"Hangi element periyodik tabloda 'Fe' sembolü ile gösterilir?",a:["Flor","Fosfor","Demir","Fermiyum"],correct:2,diff:"medium"},
 {q:"Hangi ülkede Nobel Ödülleri verilir?",a:["Danimarka","İsveç","Norveç","Finlandiya"],correct:1,diff:"medium"},
 {q:"Osmanlı İmparatorluğu hangi yılda sona ermiştir?",a:["1920","1922","1923","1924"],correct:1,diff:"medium"},
 {q:"Hangi bilim insanı izafiyet teorisini geliştirmiştir?",a:["Newton","Bohr","Einstein","Planck"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Ag' sembolü ile gösterilir?",a:["Altın","Gümüş","Baryum","Arsenik"],correct:1,diff:"medium"},
-{q:"Hangi ülkede Kyoto şehri bulunur?",a:["Çin","Kore","Japonya","Vietnam"],correct:2,diff:"medium"},
 {q:"Hangi organ insülin üretir?",a:["Karaciğer","Böbrek","Pankreas","Dalak"],correct:2,diff:"medium"},
 {q:"Türkiye Cumhuriyeti hangi yılda kurulmuştur?",a:["1919","1920","1921","1923"],correct:3,diff:"medium"},
 {q:"Hangi bilim insanı yerçekimi yasasını formüle etmiştir?",a:["Galileo","Copernicus","Newton","Kepler"],correct:2,diff:"medium"},
-{q:"Hangi element en iyi ısı iletkenidir?",a:["Demir","Bakır","Gümüş","Alüminyum"],correct:2,diff:"medium"},
 {q:"Hangi savaş 1914-1918 yılları arasında yaşandı?",a:["Napolyon Savaşları","1. Dünya Savaşı","2. Dünya Savaşı","Soğuk Savaş"],correct:1,diff:"medium"},
 {q:"Hangi ülkede Amazon Nehri'nin büyük bölümü akar?",a:["Kolombiya","Peru","Venezuela","Brezilya"],correct:3,diff:"medium"},
-{q:"Hangi bilim insanı elektriği keşfetmiştir?",a:["Edison","Franklin","Faraday","Tesla"],correct:1,diff:"medium"},
-{q:"Hangi ülkede Eiffel Kulesi bulunur?",a:["İtalya","İspanya","Fransa","Almanya"],correct:2,diff:"medium"},
-{q:"İnsan vücudunda kaç tane ana kan grubu vardır?",a:["2","3","4","5"],correct:2,diff:"medium"},
-{q:"Hangi gezegen 'Mavi Gezegen' olarak bilinir?",a:["Venüs","Neptün","Uranüs","Dünya"],correct:3,diff:"medium"},
-{q:"Hangi element havada en bol bulunan inert gazdır?",a:["Neon","Kripton","Argon","Helyum"],correct:2,diff:"medium"},
-{q:"Hangi ülke 2018 FIFA Dünya Kupası'nı kazandı?",a:["Almanya","Fransa","Brezilya","Arjantin"],correct:1,diff:"medium"},
-{q:"Hangi bilim insanı evrim teorisini geliştirmiştir?",a:["Mendel","Lamarck","Darwin","Wallace"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Cu' sembolü ile gösterilir?",a:["Karbon","Kobalt","Bakır","Krom"],correct:2,diff:"medium"},
-{q:"Hangi ülkede Colosseum bulunur?",a:["Yunanistan","İtalya","İspanya","Türkiye"],correct:1,diff:"medium"},
-{q:"İnsan vücudundaki en büyük kemik hangisidir?",a:["Omurga","Kaburga","Uyluk kemiği","Köprücük kemiği"],correct:2,diff:"medium"},
-{q:"Hangi ülkede Atatürk doğmuştur?",a:["Türkiye","Yunanistan","Bulgaristan","Makedonya"],correct:1,diff:"medium"},
-{q:"Hangi element radyoaktiftir?",a:["Karbon","Azot","Uranyum","Argon"],correct:2,diff:"medium"},
-{q:"Hangi ülke 2014 FIFA Dünya Kupası'nı kazandı?",a:["Brezilya","Arjantin","Fransa","Almanya"],correct:3,diff:"medium"},
 {q:"Hangi bilim insanı ampulü icat etmiştir?",a:["Tesla","Faraday","Edison","Bell"],correct:2,diff:"medium"},
-{q:"İnsan vücudunda kaç çift kosta (kaburga) vardır?",a:["10","11","12","13"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Pb' sembolü ile gösterilir?",a:["Platinyum","Pota sium","Kurşun","Polonyum"],correct:2,diff:"medium"},
-{q:"Hangi ülkede Kabe bulunur?",a:["Irak","Mısır","Suudi Arabistan","İran"],correct:2,diff:"medium"},
+{q:"Hangi element periyodik tabloda 'Ag' sembolü ile gösterilir?",a:["Altın","Gümüş","Baryum","Arsenik"],correct:1,diff:"medium"},
+{q:"Hangi bilim insanı evrim teorisini geliştirmiştir?",a:["Mendel","Lamarck","Darwin","Wallace"],correct:2,diff:"medium"},
+{q:"Hangi ülke 2018 FIFA Dünya Kupası'nı kazandı?",a:["Almanya","Fransa","Brezilya","Arjantin"],correct:1,diff:"medium"},
+{q:"Hangi organ safra üretir?",a:["Pankreas","Dalak","Böbrek","Karaciğer"],correct:3,diff:"medium"},
+{q:"Hangi bilim insanı penicilini keşfetmiştir?",a:["Pasteur","Lister","Fleming","Koch"],correct:2,diff:"medium"},
+{q:"Hangi ülke 2014 FIFA Dünya Kupası'nı kazandı?",a:["Brezilya","Arjantin","Fransa","Almanya"],correct:3,diff:"medium"},
 {q:"Hangi bilim insanı radyumu keşfetmiştir?",a:["Einstein","Röntgen","Marie Curie","Bohr"],correct:2,diff:"medium"},
 {q:"Hangi ülke 2010 FIFA Dünya Kupası'nı kazandı?",a:["Almanya","Brezilya","İspanya","Arjantin"],correct:2,diff:"medium"},
 {q:"Hangi organ oksijeni kana karıştırır?",a:["Kalp","Böbrek","Karaciğer","Akciğer"],correct:3,diff:"medium"},
 {q:"Hangi ülkede Angkor Wat tapınağı bulunur?",a:["Tayland","Vietnam","Kamboçya","Myanmar"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Na' sembolü ile gösterilir?",a:["Azot","Sodyum","Nikel","Neon"],correct:1,diff:"medium"},
-{q:"Hangi bilim insanı penicilini keşfetmiştir?",a:["Pasteur","Lister","Fleming","Koch"],correct:2,diff:"medium"},
+{q:"Hangi bilim insanı X-ışınlarını keşfetmiştir?",a:["Curie","Becquerel","Röntgen","Thomson"],correct:2,diff:"medium"},
 {q:"Hangi ülke 2006 FIFA Dünya Kupası'nı kazandı?",a:["Fransa","Almanya","İtalya","Portekiz"],correct:2,diff:"medium"},
-{q:"Hangi organ safra üretir?",a:["Pankreas","Dalak","Böbrek","Karaciğer"],correct:3,diff:"medium"},
 {q:"Hangi ülkede Machu Picchu bulunur?",a:["Bolivya","Kolombiya","Peru","Şili"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'K' sembolü ile gösterilir?",a:["Karbon","Kalsiyum","Potasyum","Kripton"],correct:2,diff:"medium"},
 {q:"Hangi bilim insanı polio aşısını geliştirmiştir?",a:["Pasteur","Salk","Sabin","Jenner"],correct:1,diff:"medium"},
 {q:"Hangi ülke 2002 FIFA Dünya Kupası'nı kazandı?",a:["Arjantin","İtalya","Fransa","Brezilya"],correct:3,diff:"medium"},
-{q:"Hangi organ idrar üretir?",a:["Karaciğer","Dalak","Böbrek","Pankreas"],correct:2,diff:"medium"},
-{q:"Hangi ülkede Borobudur tapınağı bulunur?",a:["Tayland","Hindistan","Endonezya","Filipinler"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Hg' sembolü ile gösterilir?",a:["Helyum","Hafniyum","Cıva","Holmiyum"],correct:2,diff:"medium"},
-{q:"Hangi bilim insanı tüp bebeği geliştirmiştir?",a:["Watson","Edwards","Barnard","Christiaan"],correct:1,diff:"medium"},
-{q:"Hangi ülke 1998 FIFA Dünya Kupası'nı kazandı?",a:["İtalya","Brezilya","Fransa","Almanya"],correct:2,diff:"medium"},
-{q:"Hangi organ hormon salgılar?",a:["Akciğer","Böbrek","Endokrin bezler","Kalp"],correct:2,diff:"medium"},
 {q:"Hangi ülkede Chichen Itza bulunur?",a:["Guatemala","Meksika","Honduras","Belize"],correct:1,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Sn' sembolü ile gösterilir?",a:["Sülfür","Selenyum","Skandiyum","Kalay"],correct:3,diff:"medium"},
-{q:"Hangi bilim insanı X-ışınlarını keşfetmiştir?",a:["Curie","Becquerel","Röntgen","Thomson"],correct:2,diff:"medium"},
-{q:"Hangi ülke 1994 FIFA Dünya Kupası'nı kazandı?",a:["İtalya","Almanya","Brezilya","Arjantin"],correct:2,diff:"medium"},
-{q:"İnsan vücudunda kaç dişi vardır (yetişkin)?",a:["28","30","32","34"],correct:2,diff:"medium"},
-{q:"Hangi ülkede Alhambra Sarayı bulunur?",a:["Portekiz","İtalya","Fas","İspanya"],correct:3,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'W' sembolü ile gösterilir?",a:["Wolfram/Tungsten","Vanadyum","Vizmut","Wazoryum"],correct:0,diff:"medium"},
 {q:"Hangi bilim insanı dinamiti icat etmiştir?",a:["Pasteur","Nobel","Faraday","Edison"],correct:1,diff:"medium"},
 {q:"Hangi ülke 1990 FIFA Dünya Kupası'nı kazandı?",a:["Arjantin","Brezilya","Batı Almanya","İtalya"],correct:2,diff:"medium"},
-{q:"Hangi organ beyni besler?",a:["Kalp","Akciğer","Karaciğer","Böbrek"],correct:0,diff:"medium"},
 {q:"Hangi ülkede Persepolis harabaları bulunur?",a:["Irak","Suriye","İran","Türkiye"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Ti' sembolü ile gösterilir?",a:["Titanyum","Tantal","Talyum","Telluryum"],correct:0,diff:"medium"},
-{q:"Hangi bilim insanı çiçek hastalığı aşısını geliştirmiştir?",a:["Pasteur","Lister","Jenner","Fleming"],correct:2,diff:"medium"},
+{q:"Hangi bilim insanı elektrik motorunu geliştirmiştir?",a:["Faraday","Edison","Tesla","Hertz"],correct:2,diff:"medium"},
 {q:"Hangi ülke 1986 FIFA Dünya Kupası'nı kazandı?",a:["Brezilya","İtalya","Almanya","Arjantin"],correct:3,diff:"medium"},
-{q:"Hangi organ bağışıklık sistemi için önemlidir?",a:["Böbrek","Karaciğer","Dalak","Pankreas"],correct:2,diff:"medium"},
-{q:"Hangi ülkede Keops Piramidi bulunur?",a:["Tunus","Libya","Mısır","Sudan"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Ni' sembolü ile gösterilir?",a:["Nyobiym","Azot","Nikel","Neon"],correct:2,diff:"medium"},
+{q:"Hangi ülkede Topkapı Sarayı bulunur?",a:["İran","Mısır","Türkiye","Yunanistan"],correct:2,diff:"medium"},
 {q:"Hangi bilim insanı gramofonu icat etmiştir?",a:["Bell","Edison","Tesla","Marconi"],correct:1,diff:"medium"},
 {q:"Hangi ülke 1982 FIFA Dünya Kupası'nı kazandı?",a:["Brezilya","Fransa","Almanya","İtalya"],correct:3,diff:"medium"},
-{q:"Hangi organ vücuttaki toksinleri filtreler?",a:["Akciğer","Dalak","Pankreas","Karaciğer"],correct:3,diff:"medium"},
 {q:"Hangi ülkede Petra şehri bulunur?",a:["Suriye","İsrail","Irak","Ürdün"],correct:3,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Cr' sembolü ile gösterilir?",a:["Karbon","Krom","Kobalt","Klor"],correct:1,diff:"medium"},
-{q:"Hangi bilim insanı telefonu icat etmiştir?",a:["Edison","Marconi","Bell","Tesla"],correct:2,diff:"medium"},
+{q:"Hangi bilim insanı miktrop teorisini açıkladı?",a:["Koch","Pasteur","Leeuwenhoek","Jenner"],correct:2,diff:"medium"},
 {q:"Hangi ülke 1978 FIFA Dünya Kupası'nı kazandı?",a:["Brezilya","Hollanda","Almanya","Arjantin"],correct:3,diff:"medium"},
-{q:"Hangi organ ses üretir?",a:["Akciğer","Gırtlak","Ağız","Burun"],correct:1,diff:"medium"},
-{q:"Hangi ülkede Baalbek tapınakları bulunur?",a:["Suriye","İsrail","Lübnan","Irak"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Mn' sembolü ile gösterilir?",a:["Magnezium","Molibden","Mangan","Merkür"],correct:2,diff:"medium"},
-{q:"Hangi bilim insanı radyoaktiviteyi keşfetmiştir?",a:["Curie","Thomson","Röntgen","Becquerel"],correct:3,diff:"medium"},
-{q:"Hangi ülke 1974 FIFA Dünya Kupası'nı kazandı?",a:["Brezilya","Hollanda","İtalya","Batı Almanya"],correct:3,diff:"medium"},
-{q:"Hangi organ nefes almayı sağlar?",a:["Kalp","Böbrek","Akciğer","Karaciğer"],correct:2,diff:"medium"},
-{q:"Hangi ülkede Hagia Sophia bulunur?",a:["Yunanistan","Rusya","İran","Türkiye"],correct:3,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Co' sembolü ile gösterilir?",a:["Karbon","Klor","Kobalt","Kalsiyum"],correct:2,diff:"medium"},
-{q:"Hangi bilim insanı tablo geliştirerek genetik yasalarını bulmuştur?",a:["Darwin","Watson","Crick","Mendel"],correct:3,diff:"medium"},
-{q:"Hangi ülke 1970 FIFA Dünya Kupası'nı kazandı?",a:["İtalya","Almanya","Uruguay","Brezilya"],correct:3,diff:"medium"},
-{q:"Hangi organ koku almayı sağlar?",a:["Kulak","Göz","Burun","Dil"],correct:2,diff:"medium"},
-{q:"Hangi ülkede Teotihuacan piramitleri bulunur?",a:["Guatemala","Meksika","Peru","Honduras"],correct:1,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Zn' sembolü ile gösterilir?",a:["Zirkonyum","Çinko","Zemeryum","Zeon"],correct:1,diff:"medium"},
-{q:"Hangi bilim insanı elektromanyetik induktif keşfetmiştir?",a:["Tesla","Faraday","Hertz","Maxwell"],correct:1,diff:"medium"},
-{q:"Hangi ülke 1966 FIFA Dünya Kupası'nı kazandı?",a:["Almanya","Portekiz","İngiltere","Brezilya"],correct:2,diff:"medium"},
-{q:"Hangi organ tat almayı sağlar?",a:["Burun","Göz","Kulak","Dil"],correct:3,diff:"medium"},
-{q:"Hangi ülkede Petra antik kenti bulunur?",a:["İsrail","Suriye","Mısır","Ürdün"],correct:3,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Ca' sembolü ile gösterilir?",a:["Karbon","Kobalt","Kalsiyum","Klor"],correct:2,diff:"medium"},
-{q:"Hangi bilim insanı yerçekimi dalgalarını tahmin etmiştir?",a:["Newton","Bohr","Einstein","Hawking"],correct:2,diff:"medium"},
-{q:"Hangi ülke 1962 FIFA Dünya Kupası'nı kazandı?",a:["Arjantin","Brezilya","Şili","Uruguay"],correct:1,diff:"medium"},
-{q:"Hangi organ kan filtreler ve idrar oluşturur?",a:["Karaciğer","Dalak","Pankreas","Böbrek"],correct:3,diff:"medium"},
-{q:"Hangi ülkede Topkapı Sarayı bulunur?",a:["İran","Mısır","Türkiye","Yunanistan"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Cl' sembolü ile gösterilir?",a:["Karbon","Kalsiyum","Klor","Kobalt"],correct:2,diff:"medium"},
-{q:"Hangi bilim insanı Güneş Sistemini ortaya koymuştur?",a:["Galileo","Kepler","Copernicus","Brahe"],correct:2,diff:"medium"},
-{q:"Hangi ülke 1958 FIFA Dünya Kupası'nı kazandı?",a:["İsveç","Fransa","Uruguay","Brezilya"],correct:3,diff:"medium"},
-{q:"Hangi organ kan şekerini dengeler?",a:["Karaciğer","Böbrek","Pankreas","Dalak"],correct:2,diff:"medium"},
 {q:"Hangi ülkede Vatican City bulunur?",a:["İspanya","Yunanistan","İtalya","Fransa"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'P' sembolü ile gösterilir?",a:["Platin","Potasyum","Fosfor","Polonyum"],correct:2,diff:"medium"},
-{q:"Hangi bilim insanı elektrik motorunu geliştirmiştir?",a:["Faraday","Edison","Tesla","Hertz"],correct:2,diff:"medium"},
-{q:"Hangi ülke 1954 FIFA Dünya Kupası'nı kazandı?",a:["İtalya","Macaristan","Brezilya","Batı Almanya"],correct:3,diff:"medium"},
-{q:"Hangi organ vücuttaki yağları sindirir?",a:["Mide","Pankreas","Karaciğer","Safra kesesi"],correct:3,diff:"medium"},
-{q:"Hangi ülkede Karnak Tapınağı bulunur?",a:["İsrail","Libya","Tunus","Mısır"],correct:3,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'S' sembolü ile gösterilir?",a:["Silisyum","Sodyum","Sülfür","Selenyum"],correct:2,diff:"medium"},
-{q:"Hangi bilim insanı atom modelini geliştirmiştir?",a:["Thomson","Bohr","Rutherford","Dalton"],correct:1,diff:"medium"},
-{q:"Hangi ülke 1950 FIFA Dünya Kupası'nı kazandı?",a:["Brezilya","İngiltere","Uruguay","Arjantin"],correct:2,diff:"medium"},
-{q:"Hangi organ vücuttaki karbondioksiti dışarı atar?",a:["Kalp","Böbrek","Karaciğer","Akciğer"],correct:3,diff:"medium"},
-{q:"Hangi ülkede Abu Simbel tapınakları bulunur?",a:["Sudan","Libya","Mısır","Tunus"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Si' sembolü ile gösterilir?",a:["Sodyum","Silisyum","Selenyum","Sülfür"],correct:1,diff:"medium"},
-{q:"Hangi bilim insanı elektron teorisini geliştirmiştir?",a:["Bohr","Curie","Thomson","Rutherford"],correct:2,diff:"medium"},
-{q:"Hangi ülke ilk dünya kupasını kazandı (1930)?",a:["Arjantin","Brezilya","Uruguay","ABD"],correct:2,diff:"medium"},
-{q:"Hangi organ vücuttaki şeker depolar?",a:["Böbrek","Pankreas","Dalak","Karaciğer"],correct:3,diff:"medium"},
-{q:"Hangi ülkede Mezopotamya medeniyeti gelişmiştir?",a:["İran","Türkiye","Irak","Suriye"],correct:2,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Al' sembolü ile gösterilir?",a:["Argon","Alüminyum","Antimon","Arsenik"],correct:1,diff:"medium"},
+{q:"Hangi bilim insanı çiçek hastalığı aşısını geliştirmiştir?",a:["Pasteur","Lister","Jenner","Fleming"],correct:2,diff:"medium"},
+{q:"Hangi ülke 1974 FIFA Dünya Kupası'nı kazandı?",a:["Brezilya","Hollanda","İtalya","Batı Almanya"],correct:3,diff:"medium"},
 {q:"Hangi bilim insanı kanın dolaşımını keşfetmiştir?",a:["Galen","Harvey","Vesalius","Hippocrates"],correct:1,diff:"medium"},
 {q:"Hangi ülke en fazla Nobel Ödülü kazanmıştır?",a:["İngiltere","Fransa","Almanya","ABD"],correct:3,diff:"medium"},
-{q:"Hangi organ vücudun merkezini korur?",a:["Deri","Kafatası","Omurga","Göğüs kafesi"],correct:2,diff:"medium"},
-{q:"Hangi ülkede Nara'da antik tapınaklar bulunur?",a:["Çin","Kore","Vietnam","Japonya"],correct:3,diff:"medium"},
-{q:"Hangi element periyodik tabloda 'Mg' sembolü ile gösterilir?",a:["Mangan","Molibden","Magneziyum","Merkür"],correct:2,diff:"medium"},
-{q:"Hangi bilim insanı mikropları keşfetmiştir?",a:["Koch","Pasteur","Leeuwenhoek","Jenner"],correct:2,diff:"medium"},
-{q:"Hangi ülke en fazla Oscar Ödülü kazanmıştır?",a:["İngiltere","Fransa","Almanya","ABD"],correct:3,diff:"medium"},
-{q:"Hangi organ vücudun koordinasyonunu sağlar?",a:["Kalp","Akciğer","Beyin","Karaciğer"],correct:2,diff:"medium"},
-{q:"Hangi ülkede Polonnaruwa antik kenti bulunur?",a:["Hindistan","Bangladeş","Nepal","Sri Lanka"],correct:3,diff:"medium"},
-
-// ══════════ ZOR (150) ══════════
+{q:"Hangi ülke 1966 FIFA Dünya Kupası'nı kazandı?",a:["Almanya","Portekiz","İngiltere","Brezilya"],correct:2,diff:"medium"},
+{q:"Hangi ülkede Hagia Sophia bulunur?",a:["Yunanistan","Rusya","İran","Türkiye"],correct:3,diff:"medium"},
+{q:"Hangi ülke 1962 FIFA Dünya Kupası'nı kazandı?",a:["Arjantin","Brezilya","Şili","Uruguay"],correct:1,diff:"medium"},
+{q:"Hangi ülke 1958 FIFA Dünya Kupası'nı kazandı?",a:["İsveç","Fransa","Uruguay","Brezilya"],correct:3,diff:"medium"},
+{q:"Hangi ülke 1954 FIFA Dünya Kupası'nı kazandı?",a:["İtalya","Macaristan","Brezilya","Batı Almanya"],correct:3,diff:"medium"},
+{q:"Hangi ülke 1950 FIFA Dünya Kupası'nı kazandı?",a:["Brezilya","İngiltere","Uruguay","Arjantin"],correct:2,diff:"medium"},
+{q:"Hangi ülke ilk dünya kupasını kazandı (1930)?",a:["Arjantin","Brezilya","Uruguay","ABD"],correct:2,diff:"medium"},
+// HARD
 {q:"Higgs Bozonu hangi yılda deneysel olarak doğrulandı?",a:["2010","2012","2014","2008"],correct:1,diff:"hard"},
 {q:"Fibonacci dizisinde 144'ten sonra gelen sayı nedir?",a:["233","221","256","200"],correct:0,diff:"hard"},
-{q:"Kuantum mekaniğinde 'süperpozisyon' kavramını açıklayan deney hangisidir?",a:["Schrödinger'in Kedisi","Newton'ın Elması","Faraday Kafesi","Heisenberg Matrisi"],correct:0,diff:"hard"},
 {q:"İlk bilgisayar programcısı olarak kabul edilen kişi kimdir?",a:["Alan Turing","Ada Lovelace","Charles Babbage","Grace Hopper"],correct:1,diff:"hard"},
 {q:"Evrenin tahmini yaşı kaç yıldır?",a:["9.8 milyar","13.8 milyar","18.5 milyar","7.2 milyar"],correct:1,diff:"hard"},
 {q:"Fermat'ın Son Teoremi'ni kanıtlayan matematikçi kimdir?",a:["Carl Gauss","Andrew Wiles","Leonhard Euler","Srinivasa Ramanujan"],correct:1,diff:"hard"},
-{q:"Hangisi kuantum kriptografisinin temelini oluşturur?",a:["RSA Algoritması","Heisenberg Belirsizlik İlkesi","AES Şifreleme","Diffie-Hellman"],correct:1,diff:"hard"},
-{q:"P vs NP problemi hangi alan için kritik öneme sahiptir?",a:["Biyoloji","Kimya","Bilgisayar Bilimi","Fizik"],correct:2,diff:"hard"},
-{q:"Riemann Hipotezi hangi alanla ilgilidir?",a:["Geometri","Asal sayılar","İstatistik","Topoloji"],correct:1,diff:"hard"},
-{q:"Hangi fizik kanunu 'Bir cismin momentumu korunur' ilkesini açıklar?",a:["Termodinamik 1. Kanunu","Momentum Korunumu","Enerji Korunumu","Newton 3. Yasası"],correct:1,diff:"hard"},
 {q:"DNA'nın çift sarmal yapısını keşfeden bilim insanları kimlerdir?",a:["Curie ve Becquerel","Watson ve Crick","Mendel ve Morgan","Darwin ve Wallace"],correct:1,diff:"hard"},
 {q:"Kuantum bilgisayarlarda kullanılan temel birim nedir?",a:["Bit","Bayt","Qubit","Nibble"],correct:2,diff:"hard"},
-{q:"Hangi matematik problemi Milenyum Ödülü problemleri arasındadır?",a:["Fermat Teoremi","Poincaré Konjektürü","Goldbach Konjektürü","Collatz Konjektürü"],correct:1,diff:"hard"},
 {q:"Kara delikler ilk olarak hangi bilim insanının çalışmalarıyla teorik olarak öngörüldü?",a:["Hawking","Einstein","Schwarzschild","Penrose"],correct:2,diff:"hard"},
 {q:"CRISPR-Cas9 teknolojisi neyi mümkün kılmaktadır?",a:["Protein sentezi","Gen düzenleme","RNA sentezi","Hücre bölünmesi"],correct:1,diff:"hard"},
 {q:"Hangi matematikçi 'İnkompletness Teoremi'ni kanıtlamıştır?",a:["Hilbert","Turing","Gödel","Cantor"],correct:2,diff:"hard"},
-{q:"Kuantum dolanıklık (entanglement) nedir?",a:["Parçacıkların birbirine mekanik bağlı olması","İki parçacığın birbirinden bağımsız ölçülememesi","Parçacıkların aynı konumda bulunması","Enerjinin eşit dağılımı"],correct:1,diff:"hard"},
 {q:"Hangi fizik deneyi ışığın dalga ve parçacık özelliğini gösterir?",a:["Compton Saçılması","Fotoelektrik Etki","Çift Yarık Deneyi","Michelson-Morley"],correct:2,diff:"hard"},
 {q:"Euler'in kimlik formülü (e^iπ + 1 = 0) hangi sayıları içerir?",a:["e, i, π, 0, 1","e, i, π, 2, 1","e, i, π, 0, 2","√2, i, π, 0, 1"],correct:0,diff:"hard"},
-{q:"Antropik prensip neyle ilgilidir?",a:["Evrenin yapısı","Evrendeki gözlemci etkisi","Maddenin kökeni","Karadelik oluşumu"],correct:1,diff:"hard"},
-{q:"Hangi element 93. atom numarasına sahiptir?",a:["Uranyum","Plütonyum","Neptünyum","Amerikaniyum"],correct:2,diff:"hard"},
 {q:"Nash Dengesi hangi alanda kullanılır?",a:["Fizik","Oyun teorisi","Kimya","Biyoloji"],correct:1,diff:"hard"},
-{q:"Hangi teori evrenin başlangıcını açıklar?",a:["Kararlı Durum Teorisi","Big Crunch","Büyük Patlama (Big Bang)","Döngüsel Evren"],correct:2,diff:"hard"},
 {q:"Holografik prensip neyi öne sürer?",a:["Evrenin 3 boyutlu olduğunu","Evrenin 2 boyutlu yüzey üzerinde kodlandığını","Karadeliklerin sonsuz yoğunlukta olduğunu","Zaman yolculuğunun mümkün olduğunu"],correct:1,diff:"hard"},
-{q:"Hangi matematikçi modern sayı teorisinin babası sayılır?",a:["Euler","Gauss","Riemann","Fermat"],correct:1,diff:"hard"},
 {q:"Protein katlama problemi hangi alanda kritik öneme sahiptir?",a:["Fizik","Astronomi","Biyoinformatik","Kimya mühendisliği"],correct:2,diff:"hard"},
-{q:"Hangi teori renk yükü olan parçacıklar arasındaki kuvveti açıklar?",a:["Kuantum Elektrodinamiği","Kuantum Kromodinamiği","Standart Model","Sicim Teorisi"],correct:1,diff:"hard"},
-{q:"Navier-Stokes denklemleri neyi açıklar?",a:["Elektromanyetizma","Termodinamik","Akışkan dinamiği","Kuantum mekaniği"],correct:2,diff:"hard"},
-{q:"Hangi bilim insanı 'Kara delikler buharlaşır' teorisini öne sürmüştür?",a:["Penrose","Hawking","Thorne","Wheeler"],correct:1,diff:"hard"},
 {q:"Heisenberg Belirsizlik İlkesi nedir?",a:["Bir parçacığın konumu ve momentumu aynı anda tam olarak bilinemez","Işık hızı aşılamaz","Enerji korunur","Entropi her zaman artar"],correct:0,diff:"hard"},
-{q:"Langlands Programı hangi iki alanı birleştirmeye çalışır?",a:["Fizik ve kimya","Geometri ve sayı teorisi","Biyoloji ve matematik","Astronomi ve fizik"],correct:1,diff:"hard"},
-{q:"Hangi element 'Yeni Tokyo' anlamına gelen ismi taşır?",a:["Einsteinyum","Japonium","Nihonyum","Tennessine"],correct:2,diff:"hard"},
-{q:"Quantum supremacy (kuantum üstünlüğü) kavramını ilk kez hangi şirket deneysel olarak kanıtladığını öne sürdü?",a:["IBM","Microsoft","Intel","Google"],correct:3,diff:"hard"},
+{q:"Hangi element 93. atom numarasına sahiptir?",a:["Uranyum","Plütonyum","Neptünyum","Amerikaniyum"],correct:2,diff:"hard"},
 {q:"Mandelbrot Kümesi hangi matematiksel yapıyla ilgilidir?",a:["Topoloji","Fraktallar","Sayı Teorisi","Cebir"],correct:1,diff:"hard"},
 {q:"Hangi biyolojik süreç ATP üretimini gerçekleştirir?",a:["Glikoliz","Krebs Döngüsü","Oksidatif Fosforilasyon","Fotosentez"],correct:2,diff:"hard"},
-{q:"Hangi fizikçi manyetik monopollerin varlığını öngördü?",a:["Maxwell","Faraday","Dirac","Hertz"],correct:2,diff:"hard"},
-{q:"Birch ve Swinnerton-Dyer Konjektürü hangi matematiksel nesnelerle ilgilidir?",a:["Primer sayılar","Eliptik eğriler","Topolojik uzaylar","Matrisler"],correct:1,diff:"hard"},
-{q:"Hangi teori parçacık fiziğinde dördü birleştirme sorunuyla ilgilenir?",a:["Standart Model","Büyük Birleşik Teori (GUT)","Süpersimetri","Sicim Teorisi"],correct:1,diff:"hard"},
-{q:"Kozmik enflasyon teorisi neyi açıklar?",a:["Evrenin genişlemesini","Big Bang sonrası hızlı genişlemeyi","Karadeliklerin büyümesini","Galaksilerin oluşumunu"],correct:1,diff:"hard"},
-{q:"Hangi matematiksel yapı topolojide 'delinmiş donuts' olarak tanımlanır?",a:["Möbius Şeridi","Torus","Klein Şişesi","Projektif Düzlem"],correct:1,diff:"hard"},
-{q:"Hangi parçacık 'Tanrı Parçacığı' olarak bilinir?",a:["Kuark","Graviton","Higgs Bozonu","Nötrino"],correct:2,diff:"hard"},
-{q:"Yang-Mills denklemleri hangi kuvvetleri açıklar?",a:["Yerçekimi","Güçlü ve zayıf nükleer kuvvetler","Elektromanyetizma","Tüm temel kuvvetler"],correct:1,diff:"hard"},
-{q:"Hangi matematik dalı sürekli dönüşümleri inceler?",a:["Cebir","Aritmetik","Topoloji","İstatistik"],correct:2,diff:"hard"},
-{q:"Epigenetik nedir?",a:["DNA dizisini değiştirmeden gen ifadesindeki değişiklikler","DNA'nın fiziksel yapısı","RNA sentezinin mekanizması","Protein katlanma süreci"],correct:0,diff:"hard"},
-{q:"Hangi bilim insanı 'Zaman kısalması' kavramını açıklamıştır?",a:["Newton","Maxwell","Lorentz","Einstein"],correct:3,diff:"hard"},
-{q:"Olasılık teorisinde Bayes Teoremi neyi açıklar?",a:["Bağımsız olayları","Koşullu olasılığı","Normal dağılımı","Merkezi limit teoremini"],correct:1,diff:"hard"},
-{q:"Hangi moleküler yapı ribozomların temel bileşenidir?",a:["DNA","rRNA","mRNA","tRNA"],correct:1,diff:"hard"},
-{q:"Hangi fiziksel olgu 'tünel etkisi' olarak bilinir?",a:["Parçacıkların yüksek enerji duvarlarını aşması","Parçacıkların düşük enerji bariyerlerinden geçebilmesi","Işığın kırılması","Dalga boyu değişimi"],correct:1,diff:"hard"},
-{q:"Kolmogorov Karmaşıklığı neyi ölçer?",a:["Algoritmanın hızını","Veriyi tanımlayan en kısa programın uzunluğunu","Veritabanı boyutunu","Hesaplama süresini"],correct:1,diff:"hard"},
-{q:"Hangi biyolojik süreç telomerlerin kısalmasıyla ilişkilidir?",a:["Kanser","Hücre bölünmesi","Yaşlanma","Apoptoz"],correct:2,diff:"hard"},
-{q:"Hangi matematiksel yapı 'dörtboyutlu uzayda küre' olarak tanımlanır?",a:["Hiperküre","3-Küre","4-Yüzey","S3"],correct:1,diff:"hard"},
-{q:"Feynman diyagramları nedir?",a:["Parçacık çarpışmalarının görsel temsili","Kuantum durumların matrisi","Dalga fonksiyonu çöküşü","Olasılık amplitüdü hesabı"],correct:0,diff:"hard"},
-{q:"Hangi süreç mitokondride gerçekleşir?",a:["Protein sentezi","DNA replikasyonu","Hücresel solunum","Fotosentez"],correct:2,diff:"hard"},
+{q:"Navier-Stokes denklemleri neyi açıklar?",a:["Elektromanyetizma","Termodinamik","Akışkan dinamiği","Kuantum mekaniği"],correct:2,diff:"hard"},
+{q:"Hangi bilim insanı 'Kara delikler buharlaşır' teorisini öne sürmüştür?",a:["Penrose","Hawking","Thorne","Wheeler"],correct:1,diff:"hard"},
+{q:"Langlands Programı hangi iki alanı birleştirmeye çalışır?",a:["Fizik ve kimya","Geometri ve sayı teorisi","Biyoloji ve matematik","Astronomi ve fizik"],correct:1,diff:"hard"},
+{q:"Shor Algoritması neyi çözmede kullanılır?",a:["Sıralama problemleri","Büyük sayıların asal çarpanlarına ayrılması","Optimizasyon problemleri","Veritabanı arama"],correct:1,diff:"hard"},
 {q:"Kaotik sistemlerin temel özelliği nedir?",a:["Tahmin edilebilirlik","Başlangıç koşullarına aşırı duyarlılık","Düzenli periyodik davranış","Enerji korunumu"],correct:1,diff:"hard"},
-{q:"Hangi matematiksel kavram 'sayıların sayısı' problemiyle ilgilidir?",a:["Kardinalite","Ordinalite","Transfinit sayılar","Cantor diyagonalizasyonu"],correct:0,diff:"hard"},
 {q:"Hangi molekül enerji para birimi olarak kullanılır?",a:["ADP","NAD+","ATP","FADH2"],correct:2,diff:"hard"},
 {q:"Hangi fizik teorisi uzay-zamanın eğriliğini açıklar?",a:["Özel Görelilik","Kuantum Mekaniği","Genel Görelilik","Termodinamik"],correct:2,diff:"hard"},
-{q:"Kompleks analiz alanında Cauchy İntegral Formülü neyi söyler?",a:["Analitik fonksiyonun iç değerleri dış değerlerden hesaplanabilir","Türevin sürekliliği","Gerçek integralin hesabı","Seri yakınsaması"],correct:0,diff:"hard"},
-{q:"Hangi gen düzenleme mekanizması 'kesici' RNA kullanır?",a:["RNAi","CRISPR","Rekombinasyon","Transpozisyon"],correct:1,diff:"hard"},
-{q:"Hangi teori uzay-zamanı titreşen ipler olarak tanımlar?",a:["Sicim Teorisi","M-Teorisi","Loop Kuantum Yerçekimi","Supergraviton"],correct:0,diff:"hard"},
-{q:"Laplace Dönüşümü nerede kullanılır?",a:["Diferansiyel denklemlerin çözümünde","İstatistiksel analizde","Veri sıkıştırmada","Kriptografide"],correct:0,diff:"hard"},
-{q:"Hangi süreç hücre içinde protein üretimini gerçekleştirir?",a:["Transkripsiyon","Translasyon","Replikasyon","Rekombinasyon"],correct:1,diff:"hard"},
-{q:"Kanonsal kuantumlaştırma nedir?",a:["Klasik sistemin kuantum sistemine dönüştürülmesi","Parçacık hızının ölçülmesi","Dalga fonksiyonunun normalize edilmesi","Hamiltonian hesabı"],correct:0,diff:"hard"},
-{q:"Galois Teorisi neyi açıklar?",a:["Diferansiyel geometri","Polinom denklemlerinin çözümü ve grup simetrileri","Topolojik uzaylar","Sayı teorisi"],correct:1,diff:"hard"},
-{q:"Hangi moleküler mekanizma hücre döngüsünü düzenler?",a:["Siklin-CDK kompleksleri","RNA polimeraz","Ribosom aktivasyonu","Mitokondri füzyonu"],correct:0,diff:"hard"},
-{q:"Hangi matematiksel yapı Lie grubu değildir?",a:["SO(3)","SU(2)","Kleyn Dört Grubu","GL(n,R)"],correct:2,diff:"hard"},
-{q:"Hangi fizik deneyi Maxwell'in canavarı paradoksunu ele alır?",a:["Szilard Motoru","Maxwell Canavarı Deneyi","Carnot Motoru","Stirling Motoru"],correct:0,diff:"hard"},
-{q:"Hangi biyolojik proses horizontal gen transferi içerir?",a:["Mitoz","Mayoz","Konjugasyon","Transkripsiyon"],correct:2,diff:"hard"},
-{q:"Algoritma karmaşıklığında O(n log n) hangi algoritmayı temsil eder?",a:["Bubble Sort","Quick Sort","Merge Sort","Linear Search"],correct:2,diff:"hard"},
-{q:"Hangi kavram biyolojide 'doğal seçilim'in temelidir?",a:["Mutasyon","Rekombinasyon","Uyum (Fitness)","Gen akışı"],correct:2,diff:"hard"},
-{q:"Hangi matematiksel dönüşüm frekans uzayına geçişi sağlar?",a:["Laplace Dönüşümü","Fourier Dönüşümü","Z Dönüşümü","Hilbert Dönüşümü"],correct:1,diff:"hard"},
-{q:"Hangi parçacık fiziği kavramı renk yükü olmayan bileşik parçacıkları açıklar?",a:["Meson","Baryon","Hadron","Kolorasyon"],correct:2,diff:"hard"},
-{q:"Hangi biyokimyasal yol glikozu pirüvata dönüştürür?",a:["Beta oksidasyon","Glikoliz","Glukoneogenez","Pentoz fosfat yolu"],correct:1,diff:"hard"},
-{q:"Banach-Tarski Paradoksu neyi öne sürer?",a:["Bir küreyi iki özdeş küreye bölmek mümkündür","Sonsuz kümelerin sayılabilirliği","Ölçüm teorisinin çöküşü","Gerçek sayılar arasında süreklilik"],correct:0,diff:"hard"},
-{q:"Hangi sinyal iletim yolu MAPK kaskadını içerir?",a:["İnsülin sinyali","Büyüme faktörü sinyali","GPCR sinyali","Sitokin sinyali"],correct:1,diff:"hard"},
-{q:"Hangi matematiksel alan 'şekillerin esnek dönüşümü'nü inceler?",a:["Analitik Geometri","Topoloji","Diferansiyel Geometri","Projektif Geometri"],correct:1,diff:"hard"},
-{q:"Qubit decoherence nedir?",a:["Kuantum bilginin termal gürültü nedeniyle kaybolması","Qubitin ölçülmesi","İki qubiti dolanık hale getirme","Kuantum hata düzeltme"],correct:0,diff:"hard"},
-{q:"Hangi enzim RNA'dan DNA sentezler?",a:["DNA polimeraz","RNA polimeraz","Ters transkriptaz","Helikaz"],correct:2,diff:"hard"},
-{q:"Hangi matematiksel teori 'sonsuzlukların hiyerarşisi'ni inceler?",a:["Set Teorisi","Sayı Teorisi","Olasılık Teorisi","Cebir"],correct:0,diff:"hard"},
-{q:"Hangi fizik kavramı 'zamana göre enerji korunumu'nu açıklar?",a:["Noether Teoremi","Hamiltonian Mekaniği","Lagrangian Mekaniği","Viryal Teorem"],correct:0,diff:"hard"},
-{q:"Hangi biyolojik mekanizma epigenetik kalıtımı sağlar?",a:["DNA metilasyonu","RNA interferansı","Telomer uzaması","Transpozon aktivasyonu"],correct:0,diff:"hard"},
-{q:"Shor Algoritması neyi çözmede kullanılır?",a:["Sıralama problemleri","Büyük sayıların asal çarpanlarına ayrılması","Optimizasyon problemleri","Veritabanı arama"],correct:1,diff:"hard"},
-{q:"Hangi diferansiyel denklem sistemi kaotik davranış gösterir?",a:["Basit harmonik osilatör","Lorenz sistemi","Keplerian hareket","Hooke yasası"],correct:1,diff:"hard"},
-{q:"Hangi protein misfolding hastalıkla ilişkilidir?",a:["Hemoglobin","Prion proteinler","Kollajen","Aktin"],correct:1,diff:"hard"},
-{q:"Hangi matematiksel yapı Lie cebiri değildir?",a:["so(3)","su(2)","gl(n)","Z/nZ"],correct:3,diff:"hard"},
-{q:"Hangi fiziksel özellik karanlık maddeyi tanımlar?",a:["Elektromanyetik etkileşim yapar","Yalnızca yerçekimi etkileşimi gösterir","Işık yayar","Sıcaklığı vardır"],correct:1,diff:"hard"},
-{q:"Hangi teorik kavram çok-evrenleri (Multiverse) öngörür?",a:["Kozmik Enflasyon","Sicim Teorisi","Kuantum Mekaniği","Genel Görelilik"],correct:0,diff:"hard"},
-{q:"Hangi enzim DNA replikasyonunda başlangıç dizisi sentezler?",a:["DNA polimeraz I","DNA polimeraz III","Primaz","Ligaz"],correct:2,diff:"hard"},
-{q:"Hangi matematiksel kavram 'sayılamaz sonsuzluk' içerir?",a:["Doğal sayılar","Rasyonel sayılar","Gerçek sayılar","Tam sayılar"],correct:2,diff:"hard"},
-{q:"Hangi parçacık kütlesiz olup ışık hızında hareket eder?",a:["Elektron","Proton","Foton","Nötron"],correct:2,diff:"hard"},
-{q:"Hangi biyokimyasal süreç 'proton pompalama'yı içerir?",a:["Glikoliz","Oksidatif fosforilasyon","Glikoneogenez","Yağ asidi sentezi"],correct:1,diff:"hard"},
-{q:"Weil Konjektürleri hangi alanla ilgilidir?",a:["Analiz","Cebirsel Geometri","Olasılık","Kombinatorik"],correct:1,diff:"hard"},
-{q:"Hangi fiziksel kuvvet çekirdeği bir arada tutar?",a:["Elektromanyetik kuvvet","Zayıf nükleer kuvvet","Güçlü nükleer kuvvet","Yerçekimi"],correct:2,diff:"hard"},
-{q:"Hangi protein yapısı alfa sarmalı ve beta tabakası içerir?",a:["Birincil yapı","İkincil yapı","Üçüncül yapı","Dördüncül yapı"],correct:1,diff:"hard"},
+{q:"Hangi parçacık 'Tanrı Parçacığı' olarak bilinir?",a:["Kuark","Graviton","Higgs Bozonu","Nötrino"],correct:2,diff:"hard"},
+{q:"Hangi matematik dalı sürekli dönüşümleri inceler?",a:["Cebir","Aritmetik","Topoloji","İstatistik"],correct:2,diff:"hard"},
+{q:"Epigenetik nedir?",a:["DNA dizisini değiştirmeden gen ifadesindeki değişiklikler","DNA'nın fiziksel yapısı","RNA sentezinin mekanizması","Protein katlanma süreci"],correct:0,diff:"hard"},
+{q:"Olasılık teorisinde Bayes Teoremi neyi açıklar?",a:["Bağımsız olayları","Koşullu olasılığı","Normal dağılımı","Merkezi limit teoremini"],correct:1,diff:"hard"},
+{q:"Hangi biyolojik süreç telomerlerin kısalmasıyla ilişkilidir?",a:["Kanser","Hücre bölünmesi","Yaşlanma","Apoptoz"],correct:2,diff:"hard"},
 {q:"Goldbach Konjektürü neyi öne sürer?",a:["Her çift sayı iki asal sayının toplamıdır","Her tek sayı üç asal sayının toplamıdır","Sonsuz sayıda asal sayı vardır","Asal sayılar log dağılımı izler"],correct:0,diff:"hard"},
-{q:"Hangi fizik kavramı 'entropi her zaman artar'ı ifade eder?",a:["Termodinamik 1. Yasa","Termodinamik 2. Yasa","Termodinamik 3. Yasa","Termodinamik 0. Yasa"],correct:1,diff:"hard"},
-{q:"Hangi süreç endoplazmik retikulum ile ilişkilidir?",a:["ATP sentezi","Protein işleme ve taşıma","DNA replikasyonu","Hücre bölünmesi"],correct:1,diff:"hard"},
+{q:"Hangi fizik kanunu 'entropi her zaman artar'ı ifade eder?",a:["Termodinamik 1. Yasa","Termodinamik 2. Yasa","Termodinamik 3. Yasa","Termodinamik 0. Yasa"],correct:1,diff:"hard"},
 {q:"Hangi teori hem kuantum mekaniğini hem de özel göreliliği birleştirir?",a:["Sicim Teorisi","Kuantum Alan Teorisi","Genel Görelilik","M-Teorisi"],correct:1,diff:"hard"},
-{q:"Hangi matematiksel çerçeve simetri ve dönüşümleri inceler?",a:["Grup Teorisi","Sayı Teorisi","Topoloji","Analiz"],correct:0,diff:"hard"},
 {q:"Hangi biyolojik molekül ribozomda sentezlenir?",a:["DNA","RNA","Protein","Lipid"],correct:2,diff:"hard"},
 {q:"Hangi konsept 'hesaplanamaz problem'i tanımlar?",a:["NP-hard problem","Halting problem","P problemi","NP-complete problem"],correct:1,diff:"hard"},
 {q:"Hangi kuantum özelliği teleportasyona olanak tanır?",a:["Süperpozisyon","Tünel etkisi","Kuantum dolanıklığı","Decoherence"],correct:2,diff:"hard"},
 {q:"Hangi hücresel süreç otofaji olarak bilinir?",a:["Hücrenin kendi bileşenlerini sindirmesi","Hücre bölünmesi","Programlı hücre ölümü","Protein sentezi"],correct:0,diff:"hard"},
-{q:"Hangi matematiksel yapı 'yüzeyler üzerinde köprü sayma'yı inceler?",a:["Grafik Teorisi","Topoloji","Cebirsel Geometri","Diferansiyel Geometri"],correct:0,diff:"hard"},
-{q:"Hangi fiziksel kavram 'zamandaki yön asimetrisi'ni açıklar?",a:["CP İhlali","Zamana yansıma simetrisi","CPT teoremi","Parite korunumu"],correct:0,diff:"hard"},
-{q:"Hangi enzim RNA'yı parçalar?",a:["Ligaz","Helikaz","RNaz","DNaz"],correct:2,diff:"hard"},
-{q:"Hangi matematiksel teoremKöprüsberg Köprüleri problemini çözmüştür?",a:["Euler","Gauss","Fermat","Cantor"],correct:0,diff:"hard"},
-{q:"Hangi parçacık kütleli olmasına rağmen keşfedilmemiştir?",a:["Higgs Bozonu","Graviton","Top quark","Tau nötrinosu"],correct:1,diff:"hard"},
-{q:"Hangi moleküler mekanizma gen susturmasını sağlar?",a:["DNA metilasyonu","DNA amplifikasyonu","Translasyon","Replikasyon"],correct:0,diff:"hard"},
-{q:"Hangi matematiksel konsept 'sonsuz boyutlu uzayları' inceler?",a:["Hilbert Uzayı","Öklid Uzayı","Minkowski Uzayı","Riemannian manifold"],correct:0,diff:"hard"},
-{q:"Hangi fizik kanunu ısı motorlarının verimliliğini sınırlar?",a:["Newton Yasaları","Maxwell Denklemleri","Carnot Teoremi","Heisenberg İlkesi"],correct:2,diff:"hard"},
-{q:"Hangi hücresel yapı sinyal iletiminde kalsiyum depolar?",a:["Mitokondri","Çekirdek","Endoplazmik retikulum","Golgi aygıtı"],correct:2,diff:"hard"},
-{q:"Hangi matematiksel alan 'deformasyonlar altında korunan özellikleri' inceler?",a:["Analiz","Cebir","Topoloji","Geometri"],correct:2,diff:"hard"},
-{q:"Hangi kuantum etki 'parçacıkların yoktan yaratılıp yok olması'nı açıklar?",a:["Kuantum tünel etkisi","Casimir Etkisi","Sanal parçacıklar","Zeno Etkisi"],correct:2,diff:"hard"},
-{q:"Hangi biyokimyasal yol 6 karbonlu şekerden 2 karbonlu asetil-CoA üretir?",a:["Krebs Döngüsü","Beta Oksidasyon","Glikoliz","Pentoz fosfat yolu"],correct:2,diff:"hard"},
-{q:"Hangi matematiksel problem NP-complete kategorisindedir?",a:["Lineer programlama","Sıralama problemi","Boolean satisfiability (SAT)","Matris çarpımı"],correct:2,diff:"hard"},
 {q:"Hangi fiziksel kavram 'ışığın yerçekimi tarafından büküldüğü'nü açıklar?",a:["Özel Görelilik","Genel Görelilik","Kuantum Mekaniği","Elektromanyetizma"],correct:1,diff:"hard"},
-{q:"Hangi protein ailesi hücre iskeletini oluşturur?",a:["Enzimler","Reseptörler","Sitoiskelet proteinleri","Taşıyıcı proteinler"],correct:2,diff:"hard"},
-{q:"Hangi matematiksel konsept 'uzayın eğriliğini' ölçer?",a:["Metrik tensör","Riemann eğrilik tensörü","Christoffel sembolleri","Kovaryant türev"],correct:1,diff:"hard"},
 {q:"Hangi kuantum bilgisayar algoritması veritabanı aramasını hızlandırır?",a:["Shor Algoritması","Grover Algoritması","Deutsch Algoritması","Simon Algoritması"],correct:1,diff:"hard"},
-{q:"Hangi hücresel mekanizma 'oksidatif stres' yanıtını düzenler?",a:["Nrf2 yolu","mTOR yolu","MAPK kaskadı","JAK-STAT yolu"],correct:0,diff:"hard"},
-{q:"Hangi matematiksel dönüşüm karmaşık sayıları kullanır?",a:["Laplace","Z dönüşümü","Fourier","Hilbert"],correct:2,diff:"hard"},
-{q:"Hangi fizik kuramı 'karanlık enerji'yi açıklamaya çalışır?",a:["Kuantum Vakum Enerjisi","Sicim Teorisi","Döngüsel Görelilik","Büyük Birleşim Teorisi"],correct:0,diff:"hard"},
 ];
-
-// ─── Shop Items ───
-const SHOP_ITEMS = [
-  {id:'extra_joker',icon:'⚡',name:'Ekstra Joker',desc:'Oyuna +1 joker ile başla',price:2500,type:'joker'},
-  {id:'xp_boost',icon:'⭐',name:'XP Boost',desc:'Bir oyun boyunca 2x XP',price:4000,type:'boost'},
-  {id:'vip_badge',icon:'👑',name:'VIP Rozeti',desc:'Profilinde VIP rozeti',price:7500,type:'badge'},
-  {id:'legend_badge',icon:'🏆',name:'Efsane Rozeti',desc:'Efsane oyuncu unvanı',price:15000,type:'badge'},
-  {id:'gold_frame',icon:'🖼️',name:'Altın Çerçeve',desc:'Profil çerçevesi',price:5000,type:'frame'},
-  {id:'glow_name',icon:'✨',name:'Parlayan İsim',desc:'İsmin neon glow ile parlar',price:10000,type:'cosmetic'},
-  {id:'blue_name',icon:'💎',name:'Mavi Nick',desc:'Kullanıcı adın mavi renk',price:6000,type:'cosmetic'},
-  {id:'season_badge',icon:'🌟',name:'Sezon Rozeti',desc:'Bu sezonun özel rozeti',price:12500,type:'badge'},
-];
-
-// ─── TTS ───
-const TTS = {
-  synth: window.speechSynthesis,
-  selectedVoice: null,
-  allVoices: [],
-  enabled: true,
-  init() {
-    const load = () => {
-      this.allVoices = this.synth.getVoices();
-      const saved = localStorage.getItem('qz_tts_voice');
-      if (saved) this.selectedVoice = this.allVoices.find(v => v.name === saved) || null;
-      if (!this.selectedVoice) this.selectedVoice = this.allVoices.find(v => v.lang.startsWith('tr')) || this.allVoices[0] || null;
-    };
-    this.synth.onvoiceschanged = load;
-    load();
-    this.enabled = localStorage.getItem('qz_tts_enabled') !== 'false';
-  },
-  setVoice(name) {
-    const v = this.allVoices.find(v => v.name === name);
-    if (v) { this.selectedVoice = v; localStorage.setItem('qz_tts_voice', name); }
-  },
-  stop() { this.synth.cancel(); },
-  speak(text, rate=1, pitch=1) {
-    if (!this.enabled) return Promise.resolve();
-    return new Promise(resolve => {
-      this.stop();
-      const savedRate = parseFloat(localStorage.getItem('qz_tts_rate') || '0.9');
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = this.selectedVoice ? this.selectedVoice.lang : 'tr-TR';
-      u.rate = savedRate * rate;
-      u.pitch = pitch;
-      if (this.selectedVoice) u.voice = this.selectedVoice;
-      u.onend = resolve; u.onerror = resolve;
-      this.synth.speak(u);
-    });
-  },
-  async readQuestion(q, answers) {
-    G.inputLocked = true; updateAnswerState();
-    await this.speak(q, 0.9, 1.0);
-    await delay(200);
-    const letters = ['A','B','C','D'];
-    for (let i = 0; i < answers.length; i++) { await this.speak(`${letters[i]}... ${answers[i]}`, 0.9, 1.0); await delay(100); }
-    G.inputLocked = false; updateAnswerState();
-  },
-  async sayCorrect() {
-    const phrases = ['Harika bir cevap!','Mükemmel gidiyorsun!','Doğru cevap, devam edelim!','Muhteşem performans!','Bilgin etkileyici!'];
-    await this.speak(phrases[Math.floor(Math.random()*phrases.length)], 1.0, 1.0);
-  },
-  async sayWrong(correctAnswer) {
-    const phrases = ['Maalesef yanlış cevap.','Bu soruda hata yaptın.','Doğru cevaplayamadın.'];
-    await this.speak(phrases[Math.floor(Math.random()*phrases.length)], 0.95, 0.95);
-    await delay(200);
-    await this.speak(`Doğru cevap: ${correctAnswer}`, 0.95, 1.0);
-  }
-};
-
-// ─── BGM ───
-const BGM = {
-  ctx:null, gainNode:null, volume:0.12, playing:false,
-  init() {
-    try { this.ctx = new (window.AudioContext||window.webkitAudioContext)(); this.gainNode = this.ctx.createGain(); this.gainNode.gain.value = 0; this.gainNode.connect(this.ctx.destination); } catch(e){}
-  },
-  play() { if(!this.ctx||this.playing)return; this.playing=true; this.gainNode.gain.setTargetAtTime(this.volume,this.ctx.currentTime,1); this._loop(); },
-  stop() { if(!this.gainNode)return; this.gainNode.gain.setTargetAtTime(0,this.ctx.currentTime,0.5); this.playing=false; },
-  _loop() {
-    if(!this.playing||!this.ctx)return;
-    const now=this.ctx.currentTime,notes=[220,246.94,261.63,293.66,329.63,349.23,392,440],pattern=[0,2,4,5,7,5,4,2,0];
-    let t=now;
-    pattern.forEach(ni=>{const osc=this.ctx.createOscillator(),g=this.ctx.createGain();osc.connect(g);g.connect(this.gainNode);osc.frequency.value=notes[ni%notes.length];osc.type='sine';g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.4,t+0.05);g.gain.exponentialRampToValueAtTime(0.001,t+0.3);osc.start(t);osc.stop(t+0.35);t+=0.6;});
-    setTimeout(()=>this._loop(),(t-now)*1000);
-  },
-  correct() {
-    if(!this.ctx)return;const now=this.ctx.currentTime;
-    [523.25,659.25,783.99].forEach((f,i)=>{const o=this.ctx.createOscillator(),g=this.ctx.createGain();o.connect(g);g.connect(this.ctx.destination);o.frequency.value=f;o.type='triangle';const t=now+i*0.12;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.3,t+0.03);g.gain.exponentialRampToValueAtTime(0.001,t+0.4);o.start(t);o.stop(t+0.45);});
-  },
-  wrong() {
-    if(!this.ctx)return;const now=this.ctx.currentTime;
-    [220,196,175].forEach((f,i)=>{const o=this.ctx.createOscillator(),g=this.ctx.createGain();o.connect(g);g.connect(this.ctx.destination);o.frequency.value=f;o.type='sawtooth';const t=now+i*0.15;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.2,t+0.05);g.gain.exponentialRampToValueAtTime(0.001,t+0.5);o.start(t);o.stop(t+0.55);});
-  }
-};
-
-// ─── Utils ───
-const delay = ms => new Promise(r => setTimeout(r, ms));
-
-function toast(msg, type='info') {
-  const c = document.getElementById('toast-container');
-  const t = document.createElement('div');
-  t.className = `toast ${type}`; t.textContent = msg; c.appendChild(t);
-  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(30px)'; setTimeout(()=>t.remove(),400); }, 3000);
-}
-
-function showEffect(txt, cls) {
-  const o = document.getElementById('effect-overlay'), t = document.getElementById('effect-text');
-  t.textContent = txt; t.className = `effect-text ${cls}`;
-  o.classList.remove('hidden');
-  setTimeout(()=>o.classList.add('hidden'), 1700);
-}
-
-function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-function showScreen(name) {
-  ['auth','lobby','game'].forEach(s=>document.getElementById(s+'-screen').classList.add('hidden'));
-  document.getElementById(name+'-screen').classList.remove('hidden');
-}
-
-// ─── Auth username→email dönüşümü ───
-// Firebase Auth email ister, kullanıcı adı kullanıyoruz → fake email oluştur
-function toEmail(username) { return username.toLowerCase() + '@quizora.game'; }
-
-// ─── AUTH ───
-let authMode = 'login';
-function authTab(mode) {
-  authMode = mode;
-  document.querySelectorAll('.auth-tab').forEach((b,i) => b.classList.toggle('active',(i===0&&mode==='login')||(i===1&&mode==='register')));
-  document.getElementById('login-form').classList.toggle('hidden', mode!=='login');
-  document.getElementById('register-form').classList.toggle('hidden', mode!=='register');
-  document.getElementById('auth-err').textContent = '';
-}
-function setAuthErr(msg) { document.getElementById('auth-err').textContent = msg; }
-function checkStrength(p) {
-  let score=0;
-  if(p.length>=6)score++;if(p.length>=10)score++;if(/[A-Z]/.test(p))score++;if(/[0-9]/.test(p))score++;if(/[^A-Za-z0-9]/.test(p))score++;
-  const fill=document.getElementById('strength-fill');
-  const colors=['#ff3355','#ff8c00','#ffaa00','#00d4aa','#00ff88'];
-  fill.style.width=(score/5*100)+'%';fill.style.background=colors[score-1]||'#ff3355';
-}
-function validateUser(u) {
-  if(!u||u.length<3)return 'Kullanıcı adı en az 3 karakter olmalı.';
-  if(u.length>20)return 'Kullanıcı adı max 20 karakter.';
-  if(!/^[a-zA-Z0-9_]+$/.test(u))return 'Sadece harf, rakam ve _ kullanılabilir.';
-  return null;
-}
-
-async function doRegister() {
-  const u = document.getElementById('r-user').value.trim();
-  const p = document.getElementById('r-pass').value;
-  const p2 = document.getElementById('r-pass2').value;
-  const ue = validateUser(u);
-  if (ue) return setAuthErr(ue);
-  if (!p||p.length<6) return setAuthErr('Şifre en az 6 karakter olmalı.');
-  if (p !== p2) return setAuthErr('Şifreler eşleşmiyor.');
-
-  const { auth, db, createUserWithEmailAndPassword, doc, setDoc, serverTimestamp } = window._FB;
-  try {
-    const email = toEmail(u);
-    const cred = await createUserWithEmailAndPassword(auth, email, p);
-    const uid = cred.user.uid;
-
-    // Kullanıcı adı çakışma kontrolü (Firestore'da kontrol)
-    const { collection, query, getDocs } = window._FB;
-    const snap = await getDocs(collection(db, 'users'));
-    const taken = snap.docs.some(d => d.data().username && d.data().username.toLowerCase() === u.toLowerCase() && d.id !== uid);
-    if (taken) {
-      // Bu UID ile silme yapılamaz auth tarafında, kullanıcıya hata ver
-      setAuthErr('Bu kullanıcı adı zaten alınmış.');
-      return;
-    }
-
-    await setDoc(doc(db, 'users', uid), {
-      username: u,
-      xp: 0, coins: 0, wins: 0, losses: 0, games: 0,
-      items: [], joined: serverTimestamp()
-    });
-
-    setAuthErr('');
-    // onAuthStateChanged tetiklenecek ve enterLobby çağrılacak
-  } catch(e) {
-    if (e.code === 'auth/email-already-in-use') setAuthErr('Bu kullanıcı adı zaten alınmış.');
-    else setAuthErr('Hata: ' + e.message);
-  }
-}
-
-async function doLogin() {
-  const u = document.getElementById('l-user').value.trim();
-  const p = document.getElementById('l-pass').value;
-  if (!u||!p) return setAuthErr('Tüm alanları doldurun.');
-
-  const { auth, setPersistence, browserLocalPersistence, browserSessionPersistence, signInWithEmailAndPassword } = window._FB;
-  const remember = document.getElementById('l-remember').checked;
-
-  try {
-    await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
-    await signInWithEmailAndPassword(auth, toEmail(u), p);
-    setAuthErr('');
-    // onAuthStateChanged tetiklenecek
-  } catch(e) {
-    if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') setAuthErr('Kullanıcı adı veya şifre hatalı.');
-    else if (e.code === 'auth/wrong-password') setAuthErr('Şifre hatalı.');
-    else setAuthErr('Giriş hatası: ' + e.message);
-  }
-}
-
-async function doLogout() {
-  TTS.stop(); BGM.stop();
-  const { auth, signOut } = window._FB;
-  await signOut(auth);
-  // onAuthStateChanged tetiklenecek → showScreen('auth')
-}
-
-// ─── Lobby ───
-function enterLobby() {
-  showScreen('lobby');
-  updateLobbyUI();
-}
-
-function updateLobbyUI() {
-  const u = window._userData;
-  if (!u) return;
-  const lv = getLevelInfo(u.xp||0);
-  const pct = getXpPercent(u.xp||0);
-  document.getElementById('hdr-avatar').textContent = u.username[0].toUpperCase();
-  document.getElementById('hdr-name').textContent = u.username;
-  document.getElementById('hdr-level').textContent = `LVL ${lv.level} — ${lv.name}`;
-  document.getElementById('hdr-wallet').textContent = (u.coins||0).toLocaleString();
-  document.getElementById('s-games').textContent = u.games||0;
-  document.getElementById('s-wins').textContent = u.wins||0;
-  document.getElementById('s-xp').textContent = (u.xp||0).toLocaleString();
-  document.getElementById('s-money').textContent = (u.coins||0).toLocaleString();
-  document.getElementById('xp-level-display').textContent = `SEVİYE ${lv.level} — ${lv.name}`;
-  document.getElementById('xp-progress-text').textContent = `${(u.xp||0).toLocaleString()} / ${lv.max===Infinity?'∞':lv.max.toLocaleString()} XP`;
-  document.getElementById('xp-bar').style.width = pct + '%';
-  const adminBtn = document.getElementById('admin-btn');
-  if (adminBtn) adminBtn.style.display = u.username.toLowerCase() === 'ercanulger' ? 'block' : 'none';
-}
-
-// ─── Leaderboard (realtime) ───
-let _lbUnsub = null;
-function openLeaderboard() {
-  const { db, collection, query, orderBy, limit, onSnapshot } = window._FB;
-  const me = window._userData?.username?.toLowerCase();
-
-  // Realtime dinle
-  if (_lbUnsub) _lbUnsub();
-  const q = query(collection(db, 'users'), orderBy('xp','desc'), limit(20));
-  _lbUnsub = onSnapshot(q, (snap) => {
-    const users = snap.docs.map(d => d.data());
-    const medals = ['🥇','🥈','🥉'];
-    const list = document.getElementById('lb-list');
-    list.innerHTML = users.length === 0
-      ? '<div style="text-align:center;color:var(--text2);padding:20px">Henüz kayıtlı kullanıcı yok.</div>'
-      : users.map((u,i) => {
-          const iMe = u.username?.toLowerCase() === me;
-          const cls = i<3 ? 'top'+(i+1) : '';
-          const wr = (u.games||0) > 0 ? Math.round((u.wins||0)/(u.games||1)*100) : 0;
-          return `<div class="lb-row ${cls} ${iMe?'me':''}">
-            <div class="lb-rank">${i<3?medals[i]:'#'+(i+1)}</div>
-            <div class="lb-av">${(u.username||'?')[0].toUpperCase()}</div>
-            <div class="lb-name">${u.username||'?'}${iMe?' (sen)':''}</div>
-            <div style="text-align:right">
-              <div class="lb-xp">⭐ ${(u.xp||0).toLocaleString()}</div>
-              <div class="lb-wr">${wr}% WR | ${u.games||0} oyun</div>
-            </div>
-          </div>`;
-        }).join('');
-  });
-
-  openModal('modal-lb');
-}
-
-// modal kapanınca dinlemeyi durdur
-document.getElementById('modal-lb').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) { if (_lbUnsub) { _lbUnsub(); _lbUnsub = null; } closeModal('modal-lb'); }
-});
-
-// ─── Shop ───
-function openShop() {
-  const u = window._userData;
-  document.getElementById('shop-balance').textContent = (u.coins||0).toLocaleString();
-  const grid = document.getElementById('shop-grid');
-  grid.innerHTML = SHOP_ITEMS.map(item => {
-    const owned = (u.items||[]).includes(item.id);
-    return `<div class="shop-item ${owned?'owned':''}">
-      <div class="shop-icon">${item.icon}</div>
-      <div class="shop-name">${item.name}</div>
-      <div class="shop-desc">${item.desc}</div>
-      ${owned
-        ? '<div class="shop-owned">✓ SAHİPSİN</div>'
-        : `<button onclick="buyItem('${item.id}')" style="background:none;border:none;cursor:pointer;width:100%"><div class="shop-price">💰 ${item.price.toLocaleString()}</div></button>`
-      }
-    </div>`;
-  }).join('');
-  openModal('modal-shop');
-}
-
-async function buyItem(id) {
-  const u = window._userData;
-  const item = SHOP_ITEMS.find(i=>i.id===id);
-  if (!item) return;
-  if ((u.items||[]).includes(id)) return toast('Zaten sahipsin!','info');
-  if ((u.coins||0) < item.price) return toast('Yetersiz bakiye!','error');
-  const newCoins = (u.coins||0) - item.price;
-  const newItems = [...(u.items||[]), id];
-  await window._saveUserData({ coins: newCoins, items: newItems });
-  toast(`${item.icon} ${item.name} satın alındı!`,'gold');
-  openShop();
-  updateLobbyUI();
-}
-
-// ─── Profile ───
-function openProfile() {
-  const u = window._userData;
-  const lv = getLevelInfo(u.xp||0);
-  const pct = getXpPercent(u.xp||0);
-  document.getElementById('prof-title').textContent = u.username;
-  document.getElementById('prof-avatar').textContent = u.username[0].toUpperCase();
-  document.getElementById('prof-games').textContent = u.games||0;
-  document.getElementById('prof-wins').textContent = u.wins||0;
-  document.getElementById('prof-wr').textContent = (u.games||0)>0 ? Math.round((u.wins||0)/(u.games||1)*100)+'%' : '0%';
-  document.getElementById('prof-level').textContent = `SEVİYE ${lv.level} — ${lv.name}`;
-  document.getElementById('prof-xp-txt').textContent = `${(u.xp||0).toLocaleString()} / ${lv.max===Infinity?'∞':lv.max.toLocaleString()} XP`;
-  document.getElementById('prof-xp-bar').style.width = pct+'%';
-  const ownedItems = SHOP_ITEMS.filter(i=>(u.items||[]).includes(i.id));
-  document.getElementById('prof-items').textContent = ownedItems.length>0 ? 'Öğeler: '+ownedItems.map(i=>i.icon+i.name).join(', ') : 'Henüz mağaza öğesi yok.';
-  openModal('modal-profile');
-}
-
-// ─── Admin (Firestore'da questions koleksiyonu) ───
-function openAdmin() {
-  adminTab('coins');
-  openModal('modal-admin');
-  renderAdminUsers();
-}
-
-function adminTab(tab) {
-  document.getElementById('adm-panel-coins').classList.toggle('hidden', tab !== 'coins');
-  document.getElementById('adm-panel-questions').classList.toggle('hidden', tab !== 'questions');
-  document.getElementById('adm-tab-coins').classList.toggle('active', tab === 'coins');
-  document.getElementById('adm-tab-questions').classList.toggle('active', tab === 'questions');
-  if (tab === 'questions') renderAdminList();
-  if (tab === 'coins') renderAdminUsers();
-}
-
-// ─── Kullanıcı listesi + coin ekleme ───
-let _adminUserUnsub = null;
-
-async function renderAdminUsers() {
-  const { db, collection, query, orderBy, onSnapshot } = window._FB;
-  const el = document.getElementById('adm-user-list');
-  el.innerHTML = '<div style="text-align:center;color:var(--text2);padding:20px">Yükleniyor...</div>';
-
-  if (_adminUserUnsub) { _adminUserUnsub(); _adminUserUnsub = null; }
-
-  const q = query(collection(db, 'users'), orderBy('xp', 'desc'));
-  _adminUserUnsub = onSnapshot(q, (snap) => {
-    if (snap.empty) { el.innerHTML = '<div style="text-align:center;color:var(--text2);padding:20px">Henüz kullanıcı yok.</div>'; return; }
-    const myUid = window._currentUID;
-    el.innerHTML = snap.docs.map(d => {
-      const u = d.data();
-      const uid = d.id;
-      const isMe = uid === myUid;
-      return `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--glass);border:1px solid ${isMe?'rgba(0,195,255,0.3)':'var(--border)'};border-radius:12px;margin-bottom:8px;">
-        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;">${(u.username||'?')[0].toUpperCase()}</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-weight:700;font-size:0.88rem;color:${isMe?'var(--blue)':'var(--text)'};">${u.username||'?'}${isMe?' (sen)':''}</div>
-          <div style="font-size:0.72rem;color:var(--text2);">💰 ${(u.coins||0).toLocaleString()} coin &nbsp;·&nbsp; ⭐ ${(u.xp||0).toLocaleString()} XP &nbsp;·&nbsp; 🎮 ${u.games||0} oyun</div>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
-          <input type="number" id="coin-input-${uid}" placeholder="Miktar" min="1" style="width:80px;padding:6px 8px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.82rem;outline:none;">
-          <button onclick="adminAddCoin('${uid}','${u.username||''}','${u.coins||0}')" style="padding:6px 12px;background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;border-radius:8px;color:#000;font-weight:700;font-size:0.78rem;cursor:pointer;white-space:nowrap;">+ COIN</button>
-        </div>
-      </div>`;
-    }).join('');
-  });
-}
-
-async function adminAddCoin(uid, username, currentCoins) {
-  const input = document.getElementById('coin-input-' + uid);
-  const amount = parseInt(input?.value);
-  if (!amount || amount <= 0) return toast('Geçerli bir miktar girin!', 'error');
-
-  const { db, doc, updateDoc } = window._FB;
-  try {
-    const newCoins = parseInt(currentCoins) + amount;
-    await updateDoc(doc(db, 'users', uid), { coins: newCoins });
-
-    // Eğer bu kendi hesabımızsa local state güncelle
-    if (uid === window._currentUID && window._userData) {
-      window._userData.coins = newCoins;
-      updateLobbyUI();
-    }
-
-    if (input) input.value = '';
-    toast(`✅ ${username} hesabına ${amount.toLocaleString()} coin eklendi!`, 'gold');
-  } catch(e) {
-    toast('Hata: ' + e.message, 'error');
-  }
-}
-
-// Modal kapanınca unsub
-document.getElementById('modal-admin').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) {
-    if (_adminUserUnsub) { _adminUserUnsub(); _adminUserUnsub = null; }
-    closeModal('modal-admin');
-  }
-});
-
-async function renderAdminList() {
-  let qs = window._cachedQuestions || DEFAULT_QUESTIONS;
-  const el = document.getElementById('adm-q-list');
-  el.innerHTML = `<div class="section-title">Mevcut Sorular (${qs.length})</div>` +
-    [...qs].reverse().slice(0,10).map(q => `
-      <div class="admin-q-item">
-        <span style="flex:1;color:var(--text2)">${(q.q||'').substring(0,40)}...</span>
-        <span style="margin:0 8px;font-size:0.7rem;color:${q.diff==='easy'?'var(--green)':q.diff==='medium'?'var(--gold2)':'var(--red)'}">${q.diff}</span>
-        ${q.id && typeof q.id === 'string' ? `<button class="btn-del" onclick="adminDelQ('${q.id}')">SİL</button>` : ''}
-      </div>
-    `).join('');
-}
-
-async function adminAddQ() {
-  const q = document.getElementById('adm-q').value.trim();
-  const a = document.getElementById('adm-a').value.trim();
-  const b = document.getElementById('adm-b').value.trim();
-  const c = document.getElementById('adm-c').value.trim();
-  const d = document.getElementById('adm-d').value.trim();
-  const diff = document.getElementById('adm-diff').value;
-  if (!q||!a||!b||!c||!d) return toast('Tüm alanları doldurun!','error');
-
-  const { db, collection, addDoc, serverTimestamp } = window._FB;
-  try {
-    await addDoc(collection(db, 'questions'), {
-      q, a:[a,b,c,d], correct:0, diff,
-      createdAt: serverTimestamp()
-    });
-    toast('Soru eklendi!','success');
-    ['adm-q','adm-a','adm-b','adm-c','adm-d'].forEach(id=>document.getElementById(id).value='');
-    setTimeout(renderAdminList, 800);
-  } catch(e) {
-    toast('Hata: ' + e.message, 'error');
-  }
-}
-
-async function adminDelQ(id) {
-  if (!id || typeof id !== 'string') return;
-  const { db, doc, deleteDoc } = window._FB;
-  try {
-    await deleteDoc(doc(db, 'questions', id));
-    toast('Soru silindi.','info');
-    setTimeout(renderAdminList, 500);
-  } catch(e) {
-    toast('Hata: ' + e.message,'error');
-  }
-}
 
 // ─── Game State ───
 let G = {
   questions:[], current:0, answers:0,
   xpEarned:0, coinEarned:0, prizeTotal:0,
-  jokers:{fifty:false,audience:false,phone:false},
+  jokers:{fifty:false,audience:false,phone:false,double:false},
+  doubleSelected:[], doubleMode:false,
   timerInterval:null, timerSec:30, timerMax:30,
   inputLocked:true, barrierPassed:-1, xpBoostActive:false
 };
 
 function getGameQuestions() {
-  // Her zaman DEFAULT_QUESTIONS + Firebase sorularını birleştir
   const firebaseQs = (window._cachedQuestions && window._cachedQuestions.length > 0)
     ? window._cachedQuestions.filter(q => q.q && q.a && q.a.length === 4 && typeof q.correct === 'number' && q.diff)
     : [];
   const all = [...DEFAULT_QUESTIONS, ...firebaseQs];
-
   const easy = shuffle(all.filter(q=>q.diff==='easy'));
   const medium = shuffle(all.filter(q=>q.diff==='medium'));
   const hard = shuffle(all.filter(q=>q.diff==='hard'));
@@ -1525,10 +1626,11 @@ async function startGame() {
   BGM.init(); TTS.init();
   const u = window._userData;
   if (!u) return;
-  G.xpBoostActive = (u.items||[]).includes('xp_boost');
+  G.xpBoostActive = isXpBoostActive();
   G.questions = getGameQuestions();
   G.current=0; G.answers=0; G.xpEarned=0; G.coinEarned=0; G.prizeTotal=0;
-  G.jokers={fifty:false,audience:false,phone:false};
+  G.jokers={fifty:false,audience:false,phone:false,double:false};
+  G.doubleSelected=[]; G.doubleMode=false;
   G.barrierPassed=-1; G.inputLocked=true;
   clearTimer();
   showScreen('game');
@@ -1539,6 +1641,15 @@ async function startGame() {
   resetJokerButtons();
   renderBarriers();
   BGM.play();
+
+  // XP Boost indicator in game
+  const gameStatus = document.getElementById('game-status');
+  if (G.xpBoostActive) {
+    gameStatus.innerHTML = '<span class="xpboost-indicator">⚡ 2x XP AKTİF</span>';
+  } else {
+    gameStatus.textContent = 'Oyun başladı!';
+  }
+
   await delay(400);
   await loadQuestion();
 }
@@ -1555,6 +1666,7 @@ async function loadQuestion() {
   document.getElementById('g-prize').textContent=PRIZE_TABLE[qi].toLocaleString()+' ₺';
   document.getElementById('audience-result').innerHTML='';
   document.getElementById('phone-result').innerHTML='';
+  G.doubleSelected=[]; G.doubleMode=false;
   renderAnswers(q.a,-1,-1);
   renderBarriers();
   updateJokerBtns();
@@ -1577,6 +1689,7 @@ function renderAnswers(answers, correctIdx, wrongIdx) {
     let cls='';
     if(correctIdx>=0&&i===correctIdx)cls='correct';
     else if(wrongIdx>=0&&i===wrongIdx)cls='wrong';
+    if(G.doubleSelected.includes(i)&&cls==='')cls='double-selected';
     return `<button class="answer-btn ${cls}" data-idx="${i}" onclick="pickAnswer(${i})" ${G.inputLocked?'disabled':''}>
       <div class="answer-letter">${letters[i]}</div>
       <span style="color:#ffffff">${ans}</span>
@@ -1590,6 +1703,25 @@ function updateAnswerState() {
 
 async function pickAnswer(idx) {
   if (G.inputLocked) return;
+
+  // Double joker mode
+  if (G.doubleMode) {
+    if (G.doubleSelected.includes(idx)) {
+      G.doubleSelected = G.doubleSelected.filter(i=>i!==idx);
+      renderAnswers(G.questions[G.current].a, -1, -1);
+      return;
+    }
+    if (G.doubleSelected.length < 2) {
+      G.doubleSelected.push(idx);
+      renderAnswers(G.questions[G.current].a, -1, -1);
+    }
+    if (G.doubleSelected.length === 2) {
+      // Auto-submit double
+      await submitDoubleAnswer();
+    }
+    return;
+  }
+
   G.inputLocked=true; clearTimer();
   const q=G.questions[G.current];
   const correct=q.correct;
@@ -1609,6 +1741,36 @@ async function pickAnswer(idx) {
     await loadQuestion();
   } else {
     BGM.wrong();
+    showEffect('✗ YANLIŞ!','wrong-color');
+    setGameStatus('Yanlış cevap! Oyun bitti.','error');
+    await TTS.sayWrong(q.a[correct]);
+    await delay(800);
+    const keepPrize=G.barrierPassed>=0?PRIZE_TABLE[G.barrierPassed]:0;
+    await endGame(false, keepPrize);
+  }
+}
+
+async function submitDoubleAnswer() {
+  G.inputLocked=true; clearTimer();
+  const q=G.questions[G.current];
+  const correct=q.correct;
+  if (G.doubleSelected.includes(correct)) {
+    // Correct! But no prize multiplier
+    BGM.correct();
+    const xp=Math.floor(XP_TABLE[G.current]*0.5*(G.xpBoostActive?2:1)); // Half XP for double
+    const coin=Math.floor(COIN_TABLE[G.current]*0.5);
+    G.xpEarned+=xp; G.coinEarned+=coin; G.prizeTotal=PRIZE_TABLE[G.current]; G.answers++;
+    if (BARRIERS.includes(G.current)) G.barrierPassed=G.current;
+    document.getElementById('g-xp').textContent=`+${G.xpEarned}`;
+    renderAnswers(q.a, correct, -1);
+    showEffect(`✓ +${xp} XP`,'correct-color');
+    await TTS.sayCorrect();
+    G.current++;
+    await delay(600);
+    await loadQuestion();
+  } else {
+    BGM.wrong();
+    renderAnswers(q.a, correct, G.doubleSelected[0]);
     showEffect('✗ YANLIŞ!','wrong-color');
     setGameStatus('Yanlış cevap! Oyun bitti.','error');
     await TTS.sayWrong(q.a[correct]);
@@ -1660,13 +1822,40 @@ function renderBarriers() {
 
 function resetJokerButtons() {
   ['fifty','audience','phone'].forEach(j=>{ const btn=document.getElementById('j-'+j); btn.classList.remove('used'); btn.disabled=false; });
+  // Double joker
+  const doubleBtn = document.getElementById('j-double');
+  const u = window._userData;
+  if (u && (u.doubleJokerCount||0) > 0) {
+    doubleBtn.style.display='flex';
+    doubleBtn.classList.remove('used');
+    doubleBtn.disabled=false;
+    doubleBtn.title=`${u.doubleJokerCount}x joker`;
+  } else {
+    doubleBtn.style.display='none';
+  }
 }
+
 function updateJokerBtns() {
   ['fifty','audience','phone'].forEach(j=>{ const btn=document.getElementById('j-'+j); if(G.jokers[j]){btn.classList.add('used');btn.disabled=true;} });
+  const doubleBtn = document.getElementById('j-double');
+  if (G.jokers.double) { doubleBtn.classList.add('used'); doubleBtn.disabled=true; }
 }
 
 async function useJoker(type) {
   if(G.jokers[type]||G.inputLocked)return;
+
+  if (type === 'double') {
+    G.jokers.double=true; updateJokerBtns();
+    G.doubleMode=true; G.doubleSelected=[];
+    // Consume joker from DB
+    const newCount = Math.max(0, (window._userData?.doubleJokerCount||0) - 1);
+    await window._saveUserData({ doubleJokerCount: newCount });
+    setGameStatus('✌️ İki şık seç! Her ikisi de gösterilecek.', '');
+    toast('Çift Cevap Jokeri aktif! 2 şık seçin.', 'gold');
+    await TTS.speak('Çift cevap jokeri kullanıldı. İki şık seçin.', 0.95, 1.0);
+    return;
+  }
+
   G.jokers[type]=true; updateJokerBtns();
   const q=G.questions[G.current];
   if(type==='fifty'){
@@ -1689,7 +1878,6 @@ async function useJoker(type) {
     const phoneTexts=[
       `Hmm, bu soruyu hatırlıyorum... Sanırım cevap "${correct}" olmalı. %${confidence} eminimim.`,
       `Arkadaşım, bence cevap "${correct}". Ama %${confidence} emin olabiliyorum, karar senin.`,
-      `Hmm... çok kesin konuşmak istemiyorum ama "${correct}" gibi görünüyor, yüzde ${confidence}.`,
     ];
     const txt=phoneTexts[Math.floor(Math.random()*phoneTexts.length)];
     document.getElementById('phone-result').innerHTML=`<div class="phone-msg">📞 "${txt}"</div>`;
@@ -1727,32 +1915,26 @@ async function endGame(won, keepPrize=null) {
 async function withdrawGame() {
   if (G.inputLocked) return;
   if (G.current === 0) return toast('Henüz hiç soru cevaplanmadı!', 'info');
-
   const currentPrize = G.current > 0 ? PRIZE_TABLE[G.current - 1] : 0;
   if (currentPrize === 0) return toast('Henüz kazanılan para yok!', 'info');
 
-  if (!confirm(`${currentPrize.toLocaleString()} ₺ ile çekilmek istiyor musunuz?`)) return;
+  const confirmed = await showConfirmDialog(`${currentPrize.toLocaleString()} ₺ ile çekilmek istiyor musunuz?`);
+  if (!confirmed) return;
 
   clearTimer(); TTS.stop(); BGM.stop(); G.inputLocked = true;
   showEffect('💰 ÇEKİLDİ!', 'correct-color');
   setGameStatus('Tebrikler! Kazancınızla çekildiniz.', 'success');
-
   const xp = G.xpEarned;
   const coin = G.coinEarned + Math.floor(currentPrize / 1000);
-
   const u = window._userData;
   if (u) {
     await window._saveUserData({
-      xp: (u.xp||0) + xp,
-      coins: (u.coins||0) + coin,
-      games: (u.games||0) + 1,
-      wins: (u.wins||0) + 1
+      xp: (u.xp||0) + xp, coins: (u.coins||0) + coin,
+      games: (u.games||0) + 1, wins: (u.wins||0) + 1
     });
   }
-
   await delay(800);
   await TTS.speak(`Tebrikler! ${currentPrize.toLocaleString()} lira ile çekildiniz.`, 1.0, 1.0);
-
   const modal = document.getElementById('modal-gameover-inner');
   modal.className = 'modal win';
   document.getElementById('go-icon').textContent = '💰';
@@ -1765,8 +1947,29 @@ async function withdrawGame() {
   updateLobbyUI();
 }
 
+// Custom confirm dialog (replacing browser confirm)
+function showConfirmDialog(msg) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;';
+    overlay.innerHTML=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:28px;max-width:340px;width:100%;text-align:center;animation:modalPop 0.3s cubic-bezier(0.22,1,0.36,1);">
+      <div style="font-size:1.4rem;margin-bottom:12px">💰</div>
+      <div style="font-family:'Cinzel',serif;font-weight:700;font-size:1rem;margin-bottom:8px">ÇEKILME ONAYI</div>
+      <div style="color:var(--text2);font-size:0.88rem;margin-bottom:20px">${msg}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button id="confirm-no" style="padding:12px;background:var(--glass);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'Exo 2',sans-serif;font-weight:700;cursor:pointer;">İPTAL</button>
+        <button id="confirm-yes" style="padding:12px;background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;border-radius:12px;color:#000;font-family:'Cinzel',serif;font-weight:700;cursor:pointer;">ÇEKİL</button>
+      </div>
+    </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#confirm-yes').onclick = () => { overlay.remove(); resolve(true); };
+    overlay.querySelector('#confirm-no').onclick = () => { overlay.remove(); resolve(false); };
+  });
+}
+
 async function exitGame() {
-  if(!confirm('Oyundan çıkmak istiyor musunuz? İlerlemeniz kaydedilmeyecek.'))return;
+  const confirmed = await showConfirmDialog('Oyundan çıkmak istiyor musunuz? İlerlemeniz kaydedilmeyecek.');
+  if (!confirmed) return;
   clearTimer(); TTS.stop(); BGM.stop(); G.inputLocked=true;
   goLobby();
 }
@@ -1865,9 +2068,6 @@ document.addEventListener('keydown', e=>{
     if(map[e.key.toLowerCase()]!==undefined)pickAnswer(map[e.key.toLowerCase()]);
   }
 });
-
-// Loading screen başlangıçta göster; onAuthStateChanged kapatar
-document.getElementById('loading-status').textContent = 'BAĞLANIYOR...';
 </script>
 </body>
 </html>
