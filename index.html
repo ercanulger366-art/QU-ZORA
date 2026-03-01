@@ -602,7 +602,7 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit, onSnapshot, addDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyC5FaCS2m8Ko2O6Tqf6NkpV4wmg0yXqduA",
@@ -617,9 +617,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
-window._FB = { auth, db, storage, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, browserSessionPersistence, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit, onSnapshot, addDoc, deleteDoc, serverTimestamp, ref, uploadBytes, getDownloadURL };
+window._FB = { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, browserSessionPersistence, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit, onSnapshot, addDoc, deleteDoc, serverTimestamp };
 
 let _userDocUnsub = null;
 
@@ -991,49 +990,29 @@ function triggerPhotoUpload() {
 async function uploadProfilePhoto(input) {
   if (!input.files || !input.files[0]) return;
   const file = input.files[0];
-  if (file.size > 5 * 1024 * 1024) return toast('Fotoğraf 5MB\'den küçük olmalı!', 'error');
   if (!file.type.startsWith('image/')) return toast('Lütfen bir resim dosyası seçin!', 'error');
 
   toast('📷 Fotoğraf yükleniyor...', 'info');
   try {
-    const { storage, ref, uploadBytes, getDownloadURL } = window._FB;
+    // Canvas ile küçült ve base64'e çevir (Storage gerekmez)
+    const base64 = await imageToBase64(file, 128, 128);
 
-    // Dosyayı önce canvas üzerinden işle — CORS sorununu önler
-    const resized = await resizeImageToBlob(file, 256, 256);
+    // Firestore'a base64 olarak kaydet
+    await window._saveUserData({ photoURL: base64 });
 
-    const storageRef = ref(storage, `avatars/${window._currentUID}`);
-    const metadata = { contentType: 'image/jpeg', cacheControl: 'public,max-age=3600' };
-    await uploadBytes(storageRef, resized, metadata);
-
-    // Token olmadan URL al (public erişim için)
-    const downloadURL = await getDownloadURL(storageRef);
-    // Cache-bust ekle — tarayıcı eski versiyonu göstermesini önler
-    const bustURL = downloadURL.includes('?') 
-      ? downloadURL + '&t=' + Date.now() 
-      : downloadURL + '?t=' + Date.now();
-
-    // Firestore'a kaydet
-    await window._saveUserData({ photoURL: bustURL });
-
-    // UI'ı zorla güncelle
-    forceAvatarUpdate(bustURL);
+    // UI'ı anında güncelle
+    forceAvatarUpdate(base64);
 
     toast('✅ Fotoğraf güncellendi!', 'success');
-    // input'u resetle (aynı dosya tekrar seçilebilsin)
     input.value = '';
   } catch(e) {
-    console.error('Photo upload error:', e);
-    if (e.code === 'storage/unauthorized') {
-      toast('❌ Storage izin hatası! Firebase Console → Storage → Rules\'u güncelleyin.', 'error');
-      setTimeout(() => toast('📋 Rules: allow read, write: if request.auth != null;', 'info'), 2000);
-    } else {
-      toast('Hata: ' + (e.message || 'Fotoğraf yüklenemedi'), 'error');
-    }
+    console.error('Photo error:', e);
+    toast('Hata: ' + (e.message || 'Fotoğraf yüklenemedi'), 'error');
   }
 }
 
-// Resmi canvas'ta yeniden boyutlandır — CORS sorununu önler, boyutu küçültür
-function resizeImageToBlob(file, maxW, maxH) {
+// Resmi canvas'ta küçültüp base64 string döndür
+function imageToBase64(file, maxW, maxH) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
@@ -1050,9 +1029,9 @@ function resizeImageToBlob(file, maxW, maxH) {
       ctx.arc(w/2, h/2, Math.min(w,h)/2, 0, Math.PI*2);
       ctx.clip();
       ctx.drawImage(img, 0, 0, w, h);
-      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas toBlob failed')), 'image/jpeg', 0.88);
+      resolve(canvas.toDataURL('image/jpeg', 0.75));
     };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image load failed')); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Resim yüklenemedi')); };
     img.src = url;
   });
 }
