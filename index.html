@@ -206,7 +206,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
 .answer-btn.wrong{border-color:var(--red)!important;background:rgba(255,51,85,0.1)!important;animation:wrongShake 0.5s ease;}
 .answer-btn.wrong .answer-letter{background:var(--red);color:white;}
 .answer-btn.hidden-joker{opacity:0.2;pointer-events:none;}
-/* Double answer joker selected state */
 .answer-btn.double-selected{border-color:var(--gold)!important;background:rgba(255,215,0,0.08)!important;}
 .answer-btn.double-selected .answer-letter{background:var(--gold);color:#000;}
 @keyframes correctFlash{0%{box-shadow:none;}50%{box-shadow:0 0 40px rgba(0,255,136,0.6);}100%{box-shadow:none;}}
@@ -331,10 +330,28 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
 .admin-form textarea{width:100%;padding:12px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:0.9rem;resize:vertical;min-height:80px;outline:none;}
 .admin-form textarea:focus{border-color:var(--blue);}
 .admin-form select{width:100%;padding:12px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Exo 2',sans-serif;outline:none;}
-.admin-q-list{margin-top:16px;max-height:200px;overflow-y:auto;}
-.admin-q-item{display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--glass);border-radius:10px;margin-bottom:6px;font-size:0.82rem;}
-.btn-del{padding:4px 10px;background:rgba(255,51,85,0.1);border:1px solid rgba(255,51,85,0.3);border-radius:6px;color:var(--red);cursor:pointer;font-size:0.75rem;transition:all 0.2s;}
+.admin-q-list{margin-top:16px;max-height:300px;overflow-y:auto;}
+.admin-q-item{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--glass);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;font-size:0.82rem;gap:8px;}
+.admin-q-item:hover{border-color:var(--border2);}
+.admin-q-item .q-text-preview{flex:1;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.admin-q-actions{display:flex;gap:6px;flex-shrink:0;}
+.btn-del{padding:4px 10px;background:rgba(255,51,85,0.1);border:1px solid rgba(255,51,85,0.3);border-radius:6px;color:var(--red);cursor:pointer;font-size:0.75rem;transition:all 0.2s;font-weight:700;}
 .btn-del:hover{background:rgba(255,51,85,0.2);}
+.btn-edit{padding:4px 10px;background:rgba(0,195,255,0.1);border:1px solid rgba(0,195,255,0.3);border-radius:6px;color:var(--blue);cursor:pointer;font-size:0.75rem;transition:all 0.2s;font-weight:700;}
+.btn-edit:hover{background:rgba(0,195,255,0.2);}
+.q-source-badge{padding:2px 7px;border-radius:10px;font-size:0.65rem;font-weight:700;letter-spacing:1px;flex-shrink:0;}
+.q-source-badge.firebase{background:rgba(255,170,0,0.15);border:1px solid rgba(255,170,0,0.3);color:var(--gold2);}
+.q-source-badge.default{background:rgba(155,89,255,0.1);border:1px solid rgba(155,89,255,0.2);color:var(--purple);}
+.q-diff-badge-sm{padding:2px 7px;border-radius:10px;font-size:0.65rem;font-weight:700;flex-shrink:0;}
+.q-diff-badge-sm.easy{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
+.q-diff-badge-sm.medium{background:rgba(255,170,0,0.1);color:var(--gold2);border:1px solid rgba(255,170,0,0.2);}
+.q-diff-badge-sm.hard{background:rgba(255,51,85,0.1);color:var(--red);border:1px solid rgba(255,51,85,0.2);}
+.q-stats-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.q-stat-pill{padding:4px 12px;border-radius:20px;font-size:0.72rem;font-weight:700;background:var(--glass);border:1px solid var(--border);}
+.admin-search-bar{position:relative;margin-bottom:12px;}
+.admin-search-bar input{width:100%;padding:10px 14px 10px 36px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:0.88rem;outline:none;transition:all 0.3s;}
+.admin-search-bar input:focus{border-color:var(--blue);}
+.admin-search-bar::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:0.85rem;z-index:1;}
 
 /* VOICE */
 .voice-card{padding:12px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:all 0.2s;}
@@ -352,8 +369,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
 .section-title{font-family:'Cinzel',serif;font-size:0.85rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--text2);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
 
 /* ══════════ RESPONSIVE / MOBILE ══════════ */
-
-/* Tablet */
 @media(max-width:900px){
   .lobby-grid{grid-template-columns:1fr 1fr;}
   .lobby-main{grid-template-columns:1fr;}
@@ -361,8 +376,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
   .side-buttons{flex-direction:row;flex-wrap:wrap;}
   .btn-side{flex:1;min-width:120px;}
 }
-
-/* Mobile geniş */
 @media(max-width:700px){
   .lobby-grid{grid-template-columns:1fr 1fr;}
   .lobby-main{grid-template-columns:1fr;}
@@ -380,10 +393,7 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
   .lb-xp{font-size:0.85rem;}
   .lb-wr{display:none;}
 }
-
-/* Mobile dar */
 @media(max-width:480px){
-  /* Lobby */
   #lobby-screen{padding:10px;}
   .lobby-header{flex-wrap:wrap;padding:10px 12px;gap:8px;border-radius:12px;}
   .lobby-logo-text{font-size:1rem;letter-spacing:2px;}
@@ -405,8 +415,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
   .btn-play-sub{font-size:0.65rem;letter-spacing:2px;}
   .side-buttons{flex-direction:row;flex-wrap:wrap;gap:8px;}
   .btn-side{flex:1;min-width:calc(50% - 4px);padding:12px 8px;font-size:0.78rem;border-radius:10px;}
-
-  /* Game */
   #game-screen{padding:8px;gap:6px;}
   .game-top{flex-wrap:nowrap;gap:6px;justify-content:space-between;}
   .money-ladder{padding:8px 10px;font-size:0.82rem;gap:4px;}
@@ -418,7 +426,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
   .btn-exit{padding:6px 10px;font-size:0.7rem;}
   .barriers{display:none;}
   .question-area{padding:16px 14px;border-radius:14px;}
-  .q-num-label{font-size:0.65rem;}
   .q-text{font-size:0.95rem;line-height:1.6;}
   .answers-grid{grid-template-columns:1fr;gap:8px;margin-top:8px;}
   .answer-btn{padding:12px 14px;font-size:0.88rem;border-radius:12px;}
@@ -426,8 +433,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
   .jokers-bar{gap:6px;padding:0 2px;}
   .joker-btn{padding:8px 10px;font-size:0.72rem;letter-spacing:0;border-radius:10px;}
   .game-status{font-size:0.8rem;}
-
-  /* Modals */
   .modal-overlay{padding:10px;}
   .modal{padding:18px 12px;border-radius:14px;max-height:95vh;}
   .modal-title{font-size:1.1rem;letter-spacing:1px;}
@@ -455,8 +460,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
   .profile-stat-v{font-size:1rem;}
   .effect-text{font-size:2.2rem;}
 }
-
-/* Çok küçük ekranlar (320px) */
 @media(max-width:360px){
   .lobby-grid{grid-template-columns:1fr 1fr;}
   .stat-val{font-size:1rem;}
@@ -467,8 +470,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
   .shop-tab{font-size:0.6rem;}
   .modal-title{font-size:1rem;}
 }
-
-/* Landscape mobile */
 @media(max-height:500px) and (orientation:landscape){
   #game-screen{padding:6px;gap:4px;}
   .barriers{display:none;}
@@ -482,8 +483,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
   .game-score-panel{padding:6px 8px;}
   .modal{max-height:85vh;}
 }
-
-/* XP Boost indicator in game */
 .xpboost-indicator{display:inline-flex;align-items:center;gap:4px;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);border-radius:20px;padding:3px 10px;color:var(--green);font-size:0.72rem;font-weight:700;animation:boostPulse 2s ease-in-out infinite;}
 </style>
 </head>
@@ -547,7 +546,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
     <div class="hdr-user">
       <div id="hdr-xpboost" class="hdr-xpboost hidden">⚡ 2x XP <span id="hdr-boost-timer"></span></div>
       <div class="hdr-wallet">💰 <span id="hdr-wallet">0</span></div>
-      <!-- Avatar with frame -->
       <div class="avatar-container" id="hdr-avatar-container" onclick="openProfile()">
         <div class="avatar-inner" id="hdr-avatar">?</div>
       </div>
@@ -663,15 +661,9 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
       <button class="shop-tab" id="stab-effects" onclick="shopTab('effects')">✨ İSİM</button>
       <button class="shop-tab" id="stab-frames" onclick="shopTab('frames')">🖼️ ÇERÇEVE</button>
     </div>
-    <div id="shop-panel-items">
-      <div class="shop-grid" id="shop-grid-items"></div>
-    </div>
-    <div id="shop-panel-effects" class="hidden">
-      <div class="shop-grid" id="shop-grid-effects"></div>
-    </div>
-    <div id="shop-panel-frames" class="hidden">
-      <div class="shop-grid" id="shop-grid-frames"></div>
-    </div>
+    <div id="shop-panel-items"><div class="shop-grid" id="shop-grid-items"></div></div>
+    <div id="shop-panel-effects" class="hidden"><div class="shop-grid" id="shop-grid-effects"></div></div>
+    <div id="shop-panel-frames" class="hidden"><div class="shop-grid" id="shop-grid-frames"></div></div>
     <button class="btn-modal-full" onclick="closeModal('modal-shop')">KAPAT</button>
   </div>
 </div>
@@ -680,7 +672,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
 <div class="modal-overlay hidden" id="modal-profile">
   <div class="modal">
     <div class="modal-title" id="prof-title" style="color:var(--blue)">PROFİL</div>
-    <!-- Avatar big with frame -->
     <div style="text-align:center;margin-bottom:16px">
       <div class="avatar-big-container" id="prof-avatar-container">
         <div class="avatar-big-inner" id="prof-avatar" onclick="triggerPhotoUpload()" title="Fotoğraf yükle">?</div>
@@ -705,7 +696,7 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
 
 <!-- Admin -->
 <div class="modal-overlay hidden" id="modal-admin">
-  <div class="modal" style="max-width:560px">
+  <div class="modal" style="max-width:620px">
     <div class="modal-title" style="color:var(--blue)">⚙️ ADMİN PANELİ</div>
     <div class="auth-tabs" style="margin-bottom:20px">
       <button class="auth-tab active" id="adm-tab-coins" onclick="adminTab('coins')">💰 KULLANICI</button>
@@ -716,18 +707,65 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
       <div id="adm-user-list" style="max-height:420px;overflow-y:auto;"><div style="text-align:center;color:var(--text2);padding:20px">Yükleniyor...</div></div>
     </div>
     <div id="adm-panel-questions" class="hidden">
-      <div class="admin-form">
-        <div class="form-group"><label class="form-label">Soru Metni</label><textarea class="form-input" id="adm-q" placeholder="Soru metni..." style="min-height:60px;resize:vertical"></textarea></div>
-        <div class="form-group"><label class="form-label">A Şıkkı (Doğru cevap)</label><input class="form-input" id="adm-a" placeholder="Doğru cevap"></div>
-        <div class="form-group"><label class="form-label">B Şıkkı</label><input class="form-input" id="adm-b" placeholder="Yanlış şık"></div>
-        <div class="form-group"><label class="form-label">C Şıkkı</label><input class="form-input" id="adm-c" placeholder="Yanlış şık"></div>
-        <div class="form-group"><label class="form-label">D Şıkkı</label><input class="form-input" id="adm-d" placeholder="Yanlış şık"></div>
-        <div class="form-group"><label class="form-label">Zorluk</label><select class="form-input" id="adm-diff"><option value="easy">Kolay (1-5)</option><option value="medium">Orta (6-10)</option><option value="hard">Zor (11-15)</option></select></div>
-        <button class="btn-auth" onclick="adminAddQ()">SORU EKLE</button>
+      <!-- Add question form -->
+      <div style="background:rgba(0,195,255,0.04);border:1px solid rgba(0,195,255,0.12);border-radius:14px;padding:16px;margin-bottom:16px;">
+        <div class="section-title" style="margin-bottom:12px">➕ YENİ SORU EKLE</div>
+        <div class="admin-form">
+          <div class="form-group"><label class="form-label">Soru Metni</label><textarea class="form-input" id="adm-q" placeholder="Soru metni..." style="min-height:60px;resize:vertical"></textarea></div>
+          <div class="form-group"><label class="form-label">A Şıkkı (Doğru cevap)</label><input class="form-input" id="adm-a" placeholder="Doğru cevap"></div>
+          <div class="form-group"><label class="form-label">B Şıkkı</label><input class="form-input" id="adm-b" placeholder="Yanlış şık"></div>
+          <div class="form-group"><label class="form-label">C Şıkkı</label><input class="form-input" id="adm-c" placeholder="Yanlış şık"></div>
+          <div class="form-group"><label class="form-label">D Şıkkı</label><input class="form-input" id="adm-d" placeholder="Yanlış şık"></div>
+          <div class="form-group"><label class="form-label">Zorluk</label><select class="form-input" id="adm-diff"><option value="easy">Kolay (1-5)</option><option value="medium">Orta (6-10)</option><option value="hard">Zor (11-15)</option></select></div>
+          <button class="btn-auth" onclick="adminAddQ()">SORU EKLE</button>
+        </div>
       </div>
-      <div class="admin-q-list" id="adm-q-list"></div>
+
+      <!-- Question list -->
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:16px;">
+        <div id="adm-q-stats" class="q-stats-bar"></div>
+        <div class="admin-search-bar"><input type="text" id="adm-q-search" placeholder="Soru ara..." oninput="filterAdminQuestions(this.value)"></div>
+        <div class="admin-q-list" id="adm-q-list" style="max-height:350px;overflow-y:auto;"></div>
+      </div>
     </div>
     <button class="btn-modal-full" onclick="closeModal('modal-admin')">KAPAT</button>
+  </div>
+</div>
+
+<!-- Edit Question Modal -->
+<div class="modal-overlay hidden" id="modal-edit-question" style="z-index:1100">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-title" style="color:var(--gold)">✏️ SORUYU DÜZENLE</div>
+    <div class="modal-sub">Firebase'deki soru düzenleniyor</div>
+    <input type="hidden" id="edit-q-id">
+    <div class="admin-form">
+      <div class="form-group"><label class="form-label">Soru Metni</label><textarea class="form-input" id="edit-q-text" style="min-height:80px;resize:vertical"></textarea></div>
+      <div class="form-group"><label class="form-label">A Şıkkı</label><input class="form-input" id="edit-q-a0" placeholder="Şık A"></div>
+      <div class="form-group"><label class="form-label">B Şıkkı</label><input class="form-input" id="edit-q-a1" placeholder="Şık B"></div>
+      <div class="form-group"><label class="form-label">C Şıkkı</label><input class="form-input" id="edit-q-a2" placeholder="Şık C"></div>
+      <div class="form-group"><label class="form-label">D Şıkkı</label><input class="form-input" id="edit-q-a3" placeholder="Şık D"></div>
+      <div class="form-group">
+        <label class="form-label">Doğru Şık</label>
+        <select class="form-input" id="edit-q-correct">
+          <option value="0">A Şıkkı (ilk)</option>
+          <option value="1">B Şıkkı (ikinci)</option>
+          <option value="2">C Şıkkı (üçüncü)</option>
+          <option value="3">D Şıkkı (dördüncü)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Zorluk</label>
+        <select class="form-input" id="edit-q-diff">
+          <option value="easy">Kolay</option>
+          <option value="medium">Orta</option>
+          <option value="hard">Zor</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px">
+      <button class="btn-modal-secondary" onclick="closeModal('modal-edit-question')">İPTAL</button>
+      <button class="btn-modal-primary" onclick="adminSaveQ()">💾 KAYDET</button>
+    </div>
   </div>
 </div>
 
@@ -736,7 +774,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit, onSnapshot, addDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyC5FaCS2m8Ko2O6Tqf6NkpV4wmg0yXqduA",
@@ -788,6 +825,10 @@ window._listenQuestions = function() {
   const q = query(collection(db, 'questions'));
   return onSnapshot(q, (snap) => {
     window._cachedQuestions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Refresh admin list if open
+    if (!document.getElementById('adm-panel-questions').classList.contains('hidden')) {
+      renderAdminList();
+    }
   });
 };
 window._listenQuestions();
@@ -795,12 +836,13 @@ window._listenQuestions();
 
 <script>
 // =====================================================================
-// QUIZORA — FULL GAME ENGINE v2.0
+// QUIZORA — FULL GAME ENGINE v2.1 (Enhanced Admin + Mixed Questions)
 // =====================================================================
 
 window._userData = null;
 window._currentUID = null;
 window._cachedQuestions = null;
+window._adminQFilter = '';
 
 window._loadUserData = async function(uid) {
   const { db, doc, getDoc } = window._FB;
@@ -854,7 +896,7 @@ const PRIZE_TABLE = [100,200,300,500,1000,2000,4000,8000,16000,32000,64000,12500
 const COIN_TABLE = [10,15,20,30,50,80,120,180,250,350,500,700,1000,1500,2500];
 const BARRIERS = [4,9];
 
-// ─── Name Effects Definition ───
+// ─── Name Effects ───
 const NAME_EFFECTS = [
   {id:'ne_gradient', name:'🌈 Gradient', desc:'Gökkuşağı renk geçişi', price:10000, cssClass:'ne-gradient', preview:'<span class="ne-gradient name-effect-preview">ÖRNEKİSİM</span>'},
   {id:'ne_neon', name:'💚 Neon Yeşil', desc:'Neon glow efekti', price:10000, cssClass:'ne-neon', preview:'<span class="ne-neon name-effect-preview">ÖRNEKİSİM</span>'},
@@ -866,7 +908,7 @@ const NAME_EFFECTS = [
   {id:'ne_gold', name:'🥇 Altın', desc:'Altın parlaklık geçişi', price:10000, cssClass:'ne-gold', preview:'<span class="ne-gold name-effect-preview">ÖRNEKİSİM</span>'},
 ];
 
-// ─── Profile Frames Definition ───
+// ─── Profile Frames ───
 const PROFILE_FRAMES = [
   {id:'pf_gold', name:'🥇 Altın Çerçeve', desc:'Dönen altın çerçeve', price:20000, frameClass:'frame-gold', preview:'frame-gold'},
   {id:'pf_neon', name:'💫 Neon Çerçeve', desc:'Neon ışıklı çerçeve', price:20000, frameClass:'frame-neon', preview:'frame-neon'},
@@ -884,26 +926,23 @@ const SHOP_ITEMS = [
   {id:'season_badge', icon:'🌟', name:'Sezon Rozeti', desc:'Bu sezonun özel rozeti', price:12500, type:'badge'},
 ];
 
-// ─── XP Boost Helpers ───
+// ─── XP Boost ───
 function isXpBoostActive() {
   const u = window._userData;
   if (!u || !u.xpBoostUntil) return false;
   return Date.now() < u.xpBoostUntil;
 }
-
 function getXpBoostTimeLeft() {
   const u = window._userData;
   if (!u || !u.xpBoostUntil) return 0;
   return Math.max(0, u.xpBoostUntil - Date.now());
 }
-
 function formatBoostTimer(ms) {
   if (ms <= 0) return '';
   const h = Math.floor(ms / 3600000);
   const m = Math.floor((ms % 3600000) / 60000);
   return h > 0 ? `${h}s ${m}d` : `${m}d`;
 }
-
 let _boostTimerInterval = null;
 function startBoostTimer() {
   if (_boostTimerInterval) clearInterval(_boostTimerInterval);
@@ -921,11 +960,10 @@ function startBoostTimer() {
   }, 1000);
 }
 
-// ─── Apply Name Effect to element ───
+// ─── Apply Name Effect ───
 function applyNameEffect(el, username, effect) {
   if (!el) return;
   const eff = NAME_EFFECTS.find(e => e.id === effect);
-  // Clear old classes
   NAME_EFFECTS.forEach(e => el.classList.remove(e.cssClass));
   el.textContent = username;
   if (eff) el.classList.add(eff.cssClass);
@@ -933,23 +971,12 @@ function applyNameEffect(el, username, effect) {
 
 // ─── Apply Avatar Frame ───
 function applyFrame(container, frameId) {
-  // Remove old frame classes
   PROFILE_FRAMES.forEach(f => container.classList.remove(f.frameClass));
   container.classList.remove('has-frame');
   if (frameId) {
     const fr = PROFILE_FRAMES.find(f => f.id === frameId);
-    if (fr) {
-      container.classList.add('has-frame', fr.frameClass);
-    }
+    if (fr) container.classList.add('has-frame', fr.frameClass);
   }
-}
-
-// ─── Get avatar inner HTML ───
-function getAvatarHTML(u, size='small') {
-  if (u && u.photoURL) {
-    return `<img src="${u.photoURL}" alt="avatar">`;
-  }
-  return (u && u.username) ? u.username[0].toUpperCase() : '?';
 }
 
 // ─── TTS ───
@@ -1116,36 +1143,23 @@ async function doLogout() {
   await signOut(auth);
 }
 
-// ─── Profile Photo Upload ───
-function triggerPhotoUpload() {
-  document.getElementById('photo-upload-input').click();
-}
-
+// ─── Profile Photo ───
+function triggerPhotoUpload() { document.getElementById('photo-upload-input').click(); }
 async function uploadProfilePhoto(input) {
   if (!input.files || !input.files[0]) return;
   const file = input.files[0];
   if (!file.type.startsWith('image/')) return toast('Lütfen bir resim dosyası seçin!', 'error');
-
   toast('📷 Fotoğraf yükleniyor...', 'info');
   try {
-    // Canvas ile küçült ve base64'e çevir (Storage gerekmez)
     const base64 = await imageToBase64(file, 128, 128);
-
-    // Firestore'a base64 olarak kaydet
     await window._saveUserData({ photoURL: base64 });
-
-    // UI'ı anında güncelle
     forceAvatarUpdate(base64);
-
     toast('✅ Fotoğraf güncellendi!', 'success');
     input.value = '';
   } catch(e) {
-    console.error('Photo error:', e);
     toast('Hata: ' + (e.message || 'Fotoğraf yüklenemedi'), 'error');
   }
 }
-
-// Resmi canvas'ta küçültüp base64 string döndür
 function imageToBase64(file, maxW, maxH) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -1158,10 +1172,7 @@ function imageToBase64(file, maxW, maxH) {
       if (ratio < 1) { w = Math.round(w * ratio); h = Math.round(h * ratio); }
       canvas.width = w; canvas.height = h;
       const ctx = canvas.getContext('2d');
-      // Dairesel kırpma
-      ctx.beginPath();
-      ctx.arc(w/2, h/2, Math.min(w,h)/2, 0, Math.PI*2);
-      ctx.clip();
+      ctx.beginPath(); ctx.arc(w/2, h/2, Math.min(w,h)/2, 0, Math.PI*2); ctx.clip();
       ctx.drawImage(img, 0, 0, w, h);
       resolve(canvas.toDataURL('image/jpeg', 0.75));
     };
@@ -1169,19 +1180,11 @@ function imageToBase64(file, maxW, maxH) {
     img.src = url;
   });
 }
-
-// Tüm avatar elementlerini anında güncelle (Firestore snapshot beklemeden)
 function forceAvatarUpdate(photoURL) {
-  // Header avatar
   const avatarInner = document.getElementById('hdr-avatar');
-  if (avatarInner) {
-    avatarInner.innerHTML = `<img src="${photoURL}" alt="avatar" crossorigin="anonymous" onerror="this.parentElement.textContent=window._userData?.username?.[0]?.toUpperCase()||'?'">`;
-  }
-  // Profile modal avatar
+  if (avatarInner) avatarInner.innerHTML = `<img src="${photoURL}" alt="avatar" crossorigin="anonymous">`;
   const profInner = document.getElementById('prof-avatar');
-  if (profInner) {
-    profInner.innerHTML = `<img src="${photoURL}" alt="avatar" crossorigin="anonymous" onerror="this.parentElement.textContent=window._userData?.username?.[0]?.toUpperCase()||'?'">`;
-  }
+  if (profInner) profInner.innerHTML = `<img src="${photoURL}" alt="avatar" crossorigin="anonymous">`;
 }
 
 // ─── Lobby ───
@@ -1196,8 +1199,6 @@ function updateLobbyUI() {
   if (!u) return;
   const lv = getLevelInfo(u.xp||0);
   const pct = getXpPercent(u.xp||0);
-
-  // Avatar
   const avatarContainer = document.getElementById('hdr-avatar-container');
   const avatarInner = document.getElementById('hdr-avatar');
   if (u.photoURL) {
@@ -1206,11 +1207,8 @@ function updateLobbyUI() {
     avatarInner.textContent = u.username[0].toUpperCase();
   }
   applyFrame(avatarContainer, u.activeFrame);
-
-  // Name with effect
   const nameEl = document.getElementById('hdr-name');
   applyNameEffect(nameEl, u.username, u.activeNameEffect);
-
   document.getElementById('hdr-level').textContent = `LVL ${lv.level} — ${lv.name}`;
   document.getElementById('hdr-wallet').textContent = (u.coins||0).toLocaleString();
   document.getElementById('s-games').textContent = u.games||0;
@@ -1220,11 +1218,8 @@ function updateLobbyUI() {
   document.getElementById('xp-level-display').textContent = `SEVİYE ${lv.level} — ${lv.name}`;
   document.getElementById('xp-progress-text').textContent = `${(u.xp||0).toLocaleString()} / ${lv.max===Infinity?'∞':lv.max.toLocaleString()} XP`;
   document.getElementById('xp-bar').style.width = pct + '%';
-
   const adminBtn = document.getElementById('admin-btn');
   if (adminBtn) adminBtn.style.display = u.username.toLowerCase() === 'ercanulger' ? 'block' : 'none';
-
-  // XP Boost indicator
   const boostEl = document.getElementById('hdr-xpboost');
   const boostTimer = document.getElementById('hdr-boost-timer');
   if (isXpBoostActive()) {
@@ -1253,23 +1248,12 @@ function openLeaderboard() {
           const iMe = u.username?.toLowerCase() === me;
           const cls = i<3 ? 'top'+(i+1) : '';
           const wr = (u.games||0) > 0 ? Math.round((u.wins||0)/(u.games||1)*100) : 0;
-
-          // Frame class
-          const frameCls = u.activeFrame
-            ? PROFILE_FRAMES.find(f=>f.id===u.activeFrame)?.frameClass || ''
-            : '';
+          const frameCls = u.activeFrame ? PROFILE_FRAMES.find(f=>f.id===u.activeFrame)?.frameClass || '' : '';
           const hasFrame = frameCls ? 'has-frame' : '';
-
-          // Name effect
-          const nameEff = u.activeNameEffect
-            ? NAME_EFFECTS.find(e=>e.id===u.activeNameEffect)?.cssClass || ''
-            : '';
-
-          // Avatar content
+          const nameEff = u.activeNameEffect ? NAME_EFFECTS.find(e=>e.id===u.activeNameEffect)?.cssClass || '' : '';
           const avContent = u.photoURL
-            ? `<img src="${u.photoURL}" alt="avatar" crossorigin="anonymous" onerror="this.style.display='none';this.parentElement.textContent='${(u.username||'?')[0].toUpperCase()}'">` 
+            ? `<img src="${u.photoURL}" alt="avatar" crossorigin="anonymous" onerror="this.style.display='none'">` 
             : (u.username||'?')[0].toUpperCase();
-
           return `<div class="lb-row ${cls} ${iMe?'me':''}">
             <div class="lb-rank">${i<3?medals[i]:'#'+(i+1)}</div>
             <div class="lb-av-container ${hasFrame} ${frameCls}">
@@ -1279,7 +1263,6 @@ function openLeaderboard() {
               <span class="${nameEff}">${u.username||'?'}${iMe?' (sen)':''}</span>
               ${u.items&&u.items.includes('vip_badge')?'<span style="color:var(--gold);font-size:0.7rem;margin-left:4px">👑</span>':''}
               ${u.items&&u.items.includes('legend_badge')?'<span style="color:var(--red);font-size:0.7rem;margin-left:2px">🏆</span>':''}
-              ${isXpBoostActiveFor(u)?'<span class="xpboost-indicator" style="margin-left:6px;font-size:0.65rem">⚡2x</span>':''}
             </div>
             <div style="text-align:right">
               <div class="lb-xp">⭐ ${(u.xp||0).toLocaleString()}</div>
@@ -1291,13 +1274,8 @@ function openLeaderboard() {
   openModal('modal-lb');
 }
 
-function isXpBoostActiveFor(u) {
-  return u && u.xpBoostUntil && Date.now() < u.xpBoostUntil;
-}
-
 // ─── Shop ───
 let _currentShopTab = 'items';
-
 function shopTab(tab) {
   _currentShopTab = tab;
   ['items','effects','frames'].forEach(t => {
@@ -1306,13 +1284,11 @@ function shopTab(tab) {
   });
   renderShopTab(tab);
 }
-
 function openShop() {
   document.getElementById('shop-balance').textContent = (window._userData?.coins||0).toLocaleString();
   shopTab('items');
   openModal('modal-shop');
 }
-
 function renderShopTab(tab) {
   const u = window._userData;
   if (tab === 'items') {
@@ -1322,12 +1298,10 @@ function renderShopTab(tab) {
       const isBoost = item.type === 'boost24';
       const isConsumable = item.type === 'consumable';
       const boostActive = isBoost && isXpBoostActive();
-
       let actionHTML = '';
       if (isBoost && boostActive) {
         actionHTML = `<div class="shop-active-badge">⚡ AKTİF — ${formatBoostTimer(getXpBoostTimeLeft())}</div>`;
       } else if (isConsumable) {
-        // Double joker: can always buy
         const hasJoker = (u.doubleJokerCount || 0) > 0;
         actionHTML = hasJoker
           ? `<div style="margin-top:4px"><div style="color:var(--green);font-size:0.78rem">✓ ${u.doubleJokerCount}x joker var</div><button onclick="buyShopItem('${item.id}')" style="background:none;border:none;cursor:pointer;width:100%;margin-top:4px"><div class="shop-price">💰 ${item.price.toLocaleString()}</div></button></div>`
@@ -1337,7 +1311,6 @@ function renderShopTab(tab) {
       } else {
         actionHTML = `<button onclick="buyShopItem('${item.id}')" style="background:none;border:none;cursor:pointer;width:100%"><div class="shop-price">💰 ${item.price.toLocaleString()}</div></button>`;
       }
-
       return `<div class="shop-item ${owned&&!isConsumable?'owned':''}">
         <div class="shop-icon">${item.icon}</div>
         <div class="shop-name">${item.name}</div>
@@ -1346,7 +1319,6 @@ function renderShopTab(tab) {
       </div>`;
     }).join('');
   }
-
   if (tab === 'effects') {
     const grid = document.getElementById('shop-grid-effects');
     const activeEff = u.activeNameEffect;
@@ -1354,22 +1326,12 @@ function renderShopTab(tab) {
       const owned = (u.items||[]).includes(item.id);
       const isActive = activeEff === item.id;
       let actionHTML = '';
-      if (!owned) {
-        actionHTML = `<button onclick="buyShopItem('${item.id}')" style="background:none;border:none;cursor:pointer;width:100%"><div class="shop-price">💰 ${item.price.toLocaleString()}</div></button>`;
-      } else if (isActive) {
-        actionHTML = `<div class="shop-btn-row"><div class="shop-active-badge">✓ AKTİF</div><button class="shop-btn-deactivate" onclick="deactivateEffect()">KAPAT</button></div>`;
-      } else {
-        actionHTML = `<div class="shop-btn-row"><div class="shop-owned">✓ Sahipsin</div><button class="shop-btn-activate" onclick="activateEffect('${item.id}')">AKTİFLEŞTİR</button></div>`;
-      }
-      return `<div class="shop-item ${owned?'owned':''} ${isActive?'active-effect':''}">
-        ${item.preview}
-        <div class="shop-name">${item.name}</div>
-        <div class="shop-desc">${item.desc}</div>
-        ${actionHTML}
-      </div>`;
+      if (!owned) actionHTML = `<button onclick="buyShopItem('${item.id}')" style="background:none;border:none;cursor:pointer;width:100%"><div class="shop-price">💰 ${item.price.toLocaleString()}</div></button>`;
+      else if (isActive) actionHTML = `<div class="shop-btn-row"><div class="shop-active-badge">✓ AKTİF</div><button class="shop-btn-deactivate" onclick="deactivateEffect()">KAPAT</button></div>`;
+      else actionHTML = `<div class="shop-btn-row"><div class="shop-owned">✓ Sahipsin</div><button class="shop-btn-activate" onclick="activateEffect('${item.id}')">AKTİFLEŞTİR</button></div>`;
+      return `<div class="shop-item ${owned?'owned':''} ${isActive?'active-effect':''}">${item.preview}<div class="shop-name">${item.name}</div><div class="shop-desc">${item.desc}</div>${actionHTML}</div>`;
     }).join('');
   }
-
   if (tab === 'frames') {
     const grid = document.getElementById('shop-grid-frames');
     const activeFr = u.activeFrame;
@@ -1377,21 +1339,11 @@ function renderShopTab(tab) {
       const owned = (u.items||[]).includes(item.id);
       const isActive = activeFr === item.id;
       let actionHTML = '';
-      if (!owned) {
-        actionHTML = `<button onclick="buyShopItem('${item.id}')" style="background:none;border:none;cursor:pointer;width:100%"><div class="shop-price">💰 ${item.price.toLocaleString()}</div></button>`;
-      } else if (isActive) {
-        actionHTML = `<div class="shop-btn-row"><div class="shop-active-badge">✓ AKTİF</div><button class="shop-btn-deactivate" onclick="deactivateFrame()">KAPAT</button></div>`;
-      } else {
-        actionHTML = `<div class="shop-btn-row"><div class="shop-owned">✓ Sahipsin</div><button class="shop-btn-activate" onclick="activateFrame('${item.id}')">AKTİFLEŞTİR</button></div>`;
-      }
-      // Frame preview
+      if (!owned) actionHTML = `<button onclick="buyShopItem('${item.id}')" style="background:none;border:none;cursor:pointer;width:100%"><div class="shop-price">💰 ${item.price.toLocaleString()}</div></button>`;
+      else if (isActive) actionHTML = `<div class="shop-btn-row"><div class="shop-active-badge">✓ AKTİF</div><button class="shop-btn-deactivate" onclick="deactivateFrame()">KAPAT</button></div>`;
+      else actionHTML = `<div class="shop-btn-row"><div class="shop-owned">✓ Sahipsin</div><button class="shop-btn-activate" onclick="activateFrame('${item.id}')">AKTİFLEŞTİR</button></div>`;
       const preview = `<div class="frame-preview has-frame ${item.frameClass}"><div class="frame-preview-inner">😊</div></div>`;
-      return `<div class="shop-item ${owned?'owned':''} ${isActive?'active-effect':''}">
-        ${preview}
-        <div class="shop-name">${item.name}</div>
-        <div class="shop-desc">${item.desc}</div>
-        ${actionHTML}
-      </div>`;
+      return `<div class="shop-item ${owned?'owned':''} ${isActive?'active-effect':''}">${preview}<div class="shop-name">${item.name}</div><div class="shop-desc">${item.desc}</div>${actionHTML}</div>`;
     }).join('');
   }
 }
@@ -1401,68 +1353,33 @@ async function buyShopItem(id) {
   const item = [...SHOP_ITEMS, ...NAME_EFFECTS, ...PROFILE_FRAMES].find(i=>i.id===id);
   if (!item) return;
   if ((u.coins||0) < item.price) return toast('Yetersiz bakiye!', 'error');
-
-  // Consumable: double joker
   if (item.type === 'consumable') {
     const newCoins = (u.coins||0) - item.price;
     const newCount = (u.doubleJokerCount || 0) + 1;
     await window._saveUserData({ coins: newCoins, doubleJokerCount: newCount });
     toast(`✌️ Çift Cevap Jokeri satın alındı! (${newCount}x)`, 'gold');
-    renderShopTab(_currentShopTab);
-    updateLobbyUI();
-    return;
+    renderShopTab(_currentShopTab); updateLobbyUI(); return;
   }
-
-  // XP Boost 24h
   if (item.type === 'boost24') {
     if (isXpBoostActive()) return toast('Boost zaten aktif!', 'info');
     const newCoins = (u.coins||0) - item.price;
     const boostUntil = Date.now() + 24 * 60 * 60 * 1000;
     await window._saveUserData({ coins: newCoins, xpBoostUntil: boostUntil });
     toast('⚡ 24 Saatlik 2x XP Boost aktif!', 'gold');
-    startBoostTimer();
-    renderShopTab(_currentShopTab);
-    updateLobbyUI();
-    return;
+    startBoostTimer(); renderShopTab(_currentShopTab); updateLobbyUI(); return;
   }
-
-  // One-time purchase items
   if ((u.items||[]).includes(id)) return toast('Zaten sahipsin!', 'info');
   const newCoins = (u.coins||0) - item.price;
   const newItems = [...(u.items||[]), id];
   await window._saveUserData({ coins: newCoins, items: newItems });
   toast(`${item.icon||'✨'} ${item.name} satın alındı!`, 'gold');
-  renderShopTab(_currentShopTab);
-  updateLobbyUI();
+  renderShopTab(_currentShopTab); updateLobbyUI();
 }
 
-async function activateEffect(id) {
-  await window._saveUserData({ activeNameEffect: id });
-  toast('✨ İsim efekti aktifleştirildi!', 'success');
-  renderShopTab('effects');
-  updateLobbyUI();
-}
-
-async function deactivateEffect() {
-  await window._saveUserData({ activeNameEffect: null });
-  toast('İsim efekti kapatıldı.', 'info');
-  renderShopTab('effects');
-  updateLobbyUI();
-}
-
-async function activateFrame(id) {
-  await window._saveUserData({ activeFrame: id });
-  toast('🖼️ Çerçeve aktifleştirildi!', 'success');
-  renderShopTab('frames');
-  updateLobbyUI();
-}
-
-async function deactivateFrame() {
-  await window._saveUserData({ activeFrame: null });
-  toast('Çerçeve kapatıldı.', 'info');
-  renderShopTab('frames');
-  updateLobbyUI();
-}
+async function activateEffect(id) { await window._saveUserData({ activeNameEffect: id }); toast('✨ İsim efekti aktifleştirildi!', 'success'); renderShopTab('effects'); updateLobbyUI(); }
+async function deactivateEffect() { await window._saveUserData({ activeNameEffect: null }); toast('İsim efekti kapatıldı.', 'info'); renderShopTab('effects'); updateLobbyUI(); }
+async function activateFrame(id) { await window._saveUserData({ activeFrame: id }); toast('🖼️ Çerçeve aktifleştirildi!', 'success'); renderShopTab('frames'); updateLobbyUI(); }
+async function deactivateFrame() { await window._saveUserData({ activeFrame: null }); toast('Çerçeve kapatıldı.', 'info'); renderShopTab('frames'); updateLobbyUI(); }
 
 // ─── Profile ───
 function openProfile() {
@@ -1470,25 +1387,17 @@ function openProfile() {
   const lv = getLevelInfo(u.xp||0);
   const pct = getXpPercent(u.xp||0);
   document.getElementById('prof-title').textContent = u.username;
-
-  // Avatar + frame
   const container = document.getElementById('prof-avatar-container');
   const inner = document.getElementById('prof-avatar');
-  if (u.photoURL) {
-    inner.innerHTML = `<img src="${u.photoURL}" alt="avatar" crossorigin="anonymous" onerror="this.parentElement.textContent='${u.username[0].toUpperCase()}'">`;
-  } else {
-    inner.textContent = u.username[0].toUpperCase();
-  }
+  if (u.photoURL) inner.innerHTML = `<img src="${u.photoURL}" alt="avatar" crossorigin="anonymous">`;
+  else inner.textContent = u.username[0].toUpperCase();
   applyFrame(container, u.activeFrame);
-
   document.getElementById('prof-games').textContent = u.games||0;
   document.getElementById('prof-wins').textContent = u.wins||0;
   document.getElementById('prof-wr').textContent = (u.games||0)>0 ? Math.round((u.wins||0)/(u.games||1)*100)+'%' : '0%';
   document.getElementById('prof-level').textContent = `SEVİYE ${lv.level} — ${lv.name}`;
   document.getElementById('prof-xp-txt').textContent = `${(u.xp||0).toLocaleString()} / ${lv.max===Infinity?'∞':lv.max.toLocaleString()} XP`;
   document.getElementById('prof-xp-bar').style.width = pct+'%';
-
-  // Cosmetics info
   const ownedEffects = NAME_EFFECTS.filter(e=>(u.items||[]).includes(e.id));
   const ownedFrames = PROFILE_FRAMES.filter(f=>(u.items||[]).includes(f.id));
   const activeEff = ownedEffects.find(e=>e.id===u.activeNameEffect);
@@ -1498,7 +1407,6 @@ function openProfile() {
   if (activeFr) cosText += `🖼️ Çerçeve: ${activeFr.name}`;
   if (!cosText) cosText = 'Aktif kozmetik yok';
   document.getElementById('prof-cosmetics').textContent = cosText;
-
   openModal('modal-profile');
 }
 
@@ -1532,7 +1440,7 @@ async function renderAdminUsers() {
       const u = d.data(); const uid = d.id; const isMe = uid === myUid;
       return `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--glass);border:1px solid ${isMe?'rgba(0,195,255,0.3)':'var(--border)'};border-radius:12px;margin-bottom:8px;">
         <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;overflow:hidden;">
-          ${u.photoURL ? `<img src="${u.photoURL}" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.style.display='none'">` : (u.username||'?')[0].toUpperCase()}
+          ${u.photoURL ? `<img src="${u.photoURL}" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : (u.username||'?')[0].toUpperCase()}
         </div>
         <div style="flex:1;min-width:0;">
           <div style="font-weight:700;font-size:0.88rem;color:${isMe?'var(--blue)':'var(--text)'};">${u.username||'?'}${isMe?' (sen)':''}</div>
@@ -1565,16 +1473,126 @@ document.getElementById('modal-admin').addEventListener('click', (e) => {
   if (e.target === e.currentTarget) { if (_adminUserUnsub) { _adminUserUnsub(); _adminUserUnsub = null; } closeModal('modal-admin'); }
 });
 
-async function renderAdminList() {
-  let qs = window._cachedQuestions || DEFAULT_QUESTIONS;
+// ─── ENHANCED ADMIN QUESTION MANAGEMENT ───
+
+// All questions combined (firebase + default), filtered by search
+let _allAdminQuestions = [];
+
+function renderAdminList() {
+  const firebaseQs = (window._cachedQuestions || []).filter(q => q.q && q.a && q.a.length === 4 && typeof q.correct === 'number');
+  const defaultQs = DEFAULT_QUESTIONS.map((q, i) => ({ ...q, _isDefault: true, _defaultIdx: i }));
+  
+  // Merge: Firebase first, then defaults
+  _allAdminQuestions = [
+    ...firebaseQs.map(q => ({ ...q, _source: 'firebase' })),
+    ...defaultQs.map(q => ({ ...q, _source: 'default' }))
+  ];
+
+  // Stats
+  const totalFB = firebaseQs.length;
+  const totalDef = DEFAULT_QUESTIONS.length;
+  const easyCount = _allAdminQuestions.filter(q=>q.diff==='easy').length;
+  const medCount = _allAdminQuestions.filter(q=>q.diff==='medium').length;
+  const hardCount = _allAdminQuestions.filter(q=>q.diff==='hard').length;
+
+  document.getElementById('adm-q-stats').innerHTML = `
+    <div class="q-stat-pill" style="color:var(--gold2)">📦 Firebase: ${totalFB}</div>
+    <div class="q-stat-pill" style="color:var(--purple)">🔒 Varsayılan: ${totalDef}</div>
+    <div class="q-stat-pill" style="color:var(--green)">Kolay: ${easyCount}</div>
+    <div class="q-stat-pill" style="color:var(--gold2)">Orta: ${medCount}</div>
+    <div class="q-stat-pill" style="color:var(--red)">Zor: ${hardCount}</div>
+    <div class="q-stat-pill">Toplam: ${_allAdminQuestions.length}</div>
+  `;
+
+  filterAdminQuestions(window._adminQFilter || '');
+}
+
+function filterAdminQuestions(searchText) {
+  window._adminQFilter = searchText;
+  const lower = searchText.toLowerCase();
+  const filtered = lower
+    ? _allAdminQuestions.filter(q => (q.q||'').toLowerCase().includes(lower) || (q.a||[]).some(a=>a.toLowerCase().includes(lower)))
+    : _allAdminQuestions;
+
   const el = document.getElementById('adm-q-list');
-  el.innerHTML = `<div class="section-title">Mevcut Sorular (${qs.length})</div>` +
-    [...qs].reverse().slice(0,10).map(q => `
-      <div class="admin-q-item">
-        <span style="flex:1;color:var(--text2)">${(q.q||'').substring(0,40)}...</span>
-        <span style="margin:0 8px;font-size:0.7rem;color:${q.diff==='easy'?'var(--green)':q.diff==='medium'?'var(--gold2)':'var(--red)'}">${q.diff}</span>
-        ${q.id && typeof q.id === 'string' ? `<button class="btn-del" onclick="adminDelQ('${q.id}')">SİL</button>` : ''}
-      </div>`).join('');
+  
+  if (filtered.length === 0) {
+    el.innerHTML = `<div style="text-align:center;color:var(--text2);padding:20px;font-size:0.85rem">${searchText ? '🔍 Sonuç bulunamadı.' : 'Henüz soru yok.'}</div>`;
+    return;
+  }
+
+  const diffLabel = { easy: 'KOLAY', medium: 'ORTA', hard: 'ZOR' };
+  const diffClass = { easy: 'easy', medium: 'medium', hard: 'hard' };
+
+  el.innerHTML = filtered.map((q, i) => {
+    const isFirebase = q._source === 'firebase';
+    const correctAnswer = q.a && q.a[q.correct] ? q.a[q.correct] : '—';
+    const previewText = (q.q || '').substring(0, 55) + ((q.q||'').length > 55 ? '...' : '');
+    
+    return `<div class="admin-q-item">
+      <div style="flex:1;min-width:0;">
+        <div class="q-text-preview" title="${(q.q||'').replace(/"/g,'&quot;')}">${previewText}</div>
+        <div style="margin-top:4px;display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+          <span class="q-source-badge ${isFirebase?'firebase':'default'}">${isFirebase?'☁️ Firebase':'🔒 Varsayılan'}</span>
+          <span class="q-diff-badge-sm ${diffClass[q.diff]||'easy'}">${diffLabel[q.diff]||'?'}</span>
+          <span style="font-size:0.68rem;color:var(--text3);">✓ ${correctAnswer.substring(0,20)}</span>
+        </div>
+      </div>
+      <div class="admin-q-actions">
+        ${isFirebase ? `<button class="btn-edit" onclick="adminEditQ('${q.id}')">✏️</button>` : ''}
+        ${isFirebase ? `<button class="btn-del" onclick="adminDelQ('${q.id}')">🗑️</button>` : ''}
+        ${!isFirebase ? `<span style="font-size:0.68rem;color:var(--text3);padding:4px 6px;">#${i+1}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Open edit modal for a Firebase question
+function adminEditQ(id) {
+  const q = (window._cachedQuestions || []).find(q => q.id === id);
+  if (!q) return toast('Soru bulunamadı!', 'error');
+  
+  document.getElementById('edit-q-id').value = id;
+  document.getElementById('edit-q-text').value = q.q || '';
+  document.getElementById('edit-q-a0').value = q.a?.[0] || '';
+  document.getElementById('edit-q-a1').value = q.a?.[1] || '';
+  document.getElementById('edit-q-a2').value = q.a?.[2] || '';
+  document.getElementById('edit-q-a3').value = q.a?.[3] || '';
+  document.getElementById('edit-q-correct').value = q.correct ?? 0;
+  document.getElementById('edit-q-diff').value = q.diff || 'easy';
+  
+  openModal('modal-edit-question');
+}
+
+// Save edited question to Firebase
+async function adminSaveQ() {
+  const id = document.getElementById('edit-q-id').value;
+  if (!id) return toast('Soru ID bulunamadı!', 'error');
+  
+  const qText = document.getElementById('edit-q-text').value.trim();
+  const a0 = document.getElementById('edit-q-a0').value.trim();
+  const a1 = document.getElementById('edit-q-a1').value.trim();
+  const a2 = document.getElementById('edit-q-a2').value.trim();
+  const a3 = document.getElementById('edit-q-a3').value.trim();
+  const correct = parseInt(document.getElementById('edit-q-correct').value);
+  const diff = document.getElementById('edit-q-diff').value;
+  
+  if (!qText || !a0 || !a1 || !a2 || !a3) return toast('Tüm alanları doldurun!', 'error');
+  
+  const { db, doc, updateDoc } = window._FB;
+  try {
+    await updateDoc(doc(db, 'questions', id), {
+      q: qText,
+      a: [a0, a1, a2, a3],
+      correct,
+      diff
+    });
+    toast('✅ Soru güncellendi!', 'success');
+    closeModal('modal-edit-question');
+    setTimeout(renderAdminList, 400);
+  } catch(e) {
+    toast('Hata: ' + e.message, 'error');
+  }
 }
 
 async function adminAddQ() {
@@ -1590,18 +1608,23 @@ async function adminAddQ() {
     await addDoc(collection(db, 'questions'), { q, a:[a,b,c,d], correct:0, diff, createdAt: serverTimestamp() });
     toast('Soru eklendi!','success');
     ['adm-q','adm-a','adm-b','adm-c','adm-d'].forEach(id=>document.getElementById(id).value='');
-    setTimeout(renderAdminList, 800);
+    setTimeout(renderAdminList, 600);
   } catch(e) { toast('Hata: ' + e.message, 'error'); }
 }
 
 async function adminDelQ(id) {
   if (!id || typeof id !== 'string') return;
+  const confirmed = await showConfirmDialog('Bu soruyu silmek istediğinizden emin misiniz?');
+  if (!confirmed) return;
   const { db, doc, deleteDoc } = window._FB;
-  try { await deleteDoc(doc(db, 'questions', id)); toast('Soru silindi.','info'); setTimeout(renderAdminList, 500); }
-  catch(e) { toast('Hata: ' + e.message,'error'); }
+  try {
+    await deleteDoc(doc(db, 'questions', id));
+    toast('Soru silindi.','info');
+    setTimeout(renderAdminList, 400);
+  } catch(e) { toast('Hata: ' + e.message,'error'); }
 }
 
-// ─── DEFAULT QUESTIONS (450 adet - orijinal) ───
+// ─── DEFAULT QUESTIONS ───
 const DEFAULT_QUESTIONS = [
 {q:"Türkiye'nin başkenti hangisidir?",a:["Ankara","İstanbul","İzmir","Bursa"],correct:0,diff:"easy"},
 {q:"Güneş sistemimizdeki en büyük gezegen hangisidir?",a:["Satürn","Neptün","Jüpiter","Uranüs"],correct:2,diff:"easy"},
@@ -1716,7 +1739,6 @@ const DEFAULT_QUESTIONS = [
 {q:"Hangi ülke 1954 FIFA Dünya Kupası'nı kazandı?",a:["İtalya","Macaristan","Brezilya","Batı Almanya"],correct:3,diff:"medium"},
 {q:"Hangi ülke 1950 FIFA Dünya Kupası'nı kazandı?",a:["Brezilya","İngiltere","Uruguay","Arjantin"],correct:2,diff:"medium"},
 {q:"Hangi ülke ilk dünya kupasını kazandı (1930)?",a:["Arjantin","Brezilya","Uruguay","ABD"],correct:2,diff:"medium"},
-// HARD
 {q:"Higgs Bozonu hangi yılda deneysel olarak doğrulandı?",a:["2010","2012","2014","2008"],correct:1,diff:"hard"},
 {q:"Fibonacci dizisinde 144'ten sonra gelen sayı nedir?",a:["233","221","256","200"],correct:0,diff:"hard"},
 {q:"İlk bilgisayar programcısı olarak kabul edilen kişi kimdir?",a:["Alan Turing","Ada Lovelace","Charles Babbage","Grace Hopper"],correct:1,diff:"hard"},
@@ -1728,7 +1750,7 @@ const DEFAULT_QUESTIONS = [
 {q:"CRISPR-Cas9 teknolojisi neyi mümkün kılmaktadır?",a:["Protein sentezi","Gen düzenleme","RNA sentezi","Hücre bölünmesi"],correct:1,diff:"hard"},
 {q:"Hangi matematikçi 'İnkompletness Teoremi'ni kanıtlamıştır?",a:["Hilbert","Turing","Gödel","Cantor"],correct:2,diff:"hard"},
 {q:"Hangi fizik deneyi ışığın dalga ve parçacık özelliğini gösterir?",a:["Compton Saçılması","Fotoelektrik Etki","Çift Yarık Deneyi","Michelson-Morley"],correct:2,diff:"hard"},
-{q:"Euler'in kimlik formülü (e^iπ + 1 = 0) hangi sayıları içerir?",a:["e, i, π, 0, 1","e, i, π, 2, 1","e, i, π, 0, 2","√2, i, π, 0, 1"],correct:0,diff:"hard"},
+{q:"Euler'in kimlik formülü hangi sayıları içerir?",a:["e, i, π, 0, 1","e, i, π, 2, 1","e, i, π, 0, 2","√2, i, π, 0, 1"],correct:0,diff:"hard"},
 {q:"Nash Dengesi hangi alanda kullanılır?",a:["Fizik","Oyun teorisi","Kimya","Biyoloji"],correct:1,diff:"hard"},
 {q:"Holografik prensip neyi öne sürer?",a:["Evrenin 3 boyutlu olduğunu","Evrenin 2 boyutlu yüzey üzerinde kodlandığını","Karadeliklerin sonsuz yoğunlukta olduğunu","Zaman yolculuğunun mümkün olduğunu"],correct:1,diff:"hard"},
 {q:"Protein katlama problemi hangi alanda kritik öneme sahiptir?",a:["Fizik","Astronomi","Biyoinformatik","Kimya mühendisliği"],correct:2,diff:"hard"},
@@ -1769,24 +1791,42 @@ let G = {
   inputLocked:true, barrierPassed:-1, xpBoostActive:false
 };
 
+// ─── FIXED: getGameQuestions — Merges DEFAULT + Firebase, picks 5+5+5 randomly ───
 function getGameQuestions() {
-  const firebaseQs = (window._cachedQuestions && window._cachedQuestions.length > 0)
-    ? window._cachedQuestions.filter(q => q.q && q.a && q.a.length === 4 && typeof q.correct === 'number' && q.diff)
-    : [];
-  const all = [...DEFAULT_QUESTIONS, ...firebaseQs];
-  const easy = shuffle(all.filter(q=>q.diff==='easy'));
-  const medium = shuffle(all.filter(q=>q.diff==='medium'));
-  const hard = shuffle(all.filter(q=>q.diff==='hard'));
-  const result = [...easy.slice(0,5),...medium.slice(0,5),...hard.slice(0,5)];
-  while (result.length < 15) {
-    const pool = [...easy,...medium,...hard];
-    if(pool.length===0) break;
-    result.push(pool[result.length % pool.length]);
+  // Valid Firebase questions
+  const firebaseQs = (window._cachedQuestions || []).filter(q =>
+    q.q && q.a && q.a.length === 4 && typeof q.correct === 'number' && q.diff
+  );
+
+  // Combine all questions
+  const allEasy   = shuffle([...DEFAULT_QUESTIONS.filter(q=>q.diff==='easy'),   ...firebaseQs.filter(q=>q.diff==='easy')]);
+  const allMedium = shuffle([...DEFAULT_QUESTIONS.filter(q=>q.diff==='medium'), ...firebaseQs.filter(q=>q.diff==='medium')]);
+  const allHard   = shuffle([...DEFAULT_QUESTIONS.filter(q=>q.diff==='hard'),   ...firebaseQs.filter(q=>q.diff==='hard')]);
+
+  // Pick 5 from each category
+  let result = [
+    ...allEasy.slice(0, 5),
+    ...allMedium.slice(0, 5),
+    ...allHard.slice(0, 5)
+  ];
+
+  // Fill remaining slots if any category is short
+  if (result.length < 15) {
+    const all = shuffle([...allEasy, ...allMedium, ...allHard]);
+    const used = new Set(result.map(q => q.q));
+    for (const q of all) {
+      if (result.length >= 15) break;
+      if (!used.has(q.q)) { result.push(q); used.add(q.q); }
+    }
   }
-  return result.slice(0,15).map(q=>{
+
+  result = result.slice(0, 15);
+
+  // Shuffle answer positions for each question
+  return result.map(q => {
     const correct = q.a[q.correct];
     const shuffled = shuffle([...q.a]);
-    return {...q, a:shuffled, correct:shuffled.indexOf(correct)};
+    return { ...q, a: shuffled, correct: shuffled.indexOf(correct) };
   });
 }
 
@@ -1816,15 +1856,12 @@ async function startGame() {
   resetJokerButtons();
   renderBarriers();
   BGM.play();
-
-  // XP Boost indicator in game
   const gameStatus = document.getElementById('game-status');
   if (G.xpBoostActive) {
     gameStatus.innerHTML = '<span class="xpboost-indicator">⚡ 2x XP AKTİF</span>';
   } else {
     gameStatus.textContent = 'Oyun başladı!';
   }
-
   await delay(400);
   await loadQuestion();
 }
@@ -1878,25 +1915,17 @@ function updateAnswerState() {
 
 async function pickAnswer(idx) {
   if (G.inputLocked) return;
-
-  // Double joker mode
   if (G.doubleMode) {
     if (G.doubleSelected.includes(idx)) {
       G.doubleSelected = G.doubleSelected.filter(i=>i!==idx);
       renderAnswers(G.questions[G.current].a, -1, -1);
       return;
     }
-    if (G.doubleSelected.length < 2) {
-      G.doubleSelected.push(idx);
-      renderAnswers(G.questions[G.current].a, -1, -1);
-    }
-    if (G.doubleSelected.length === 2) {
-      // Auto-submit double
-      await submitDoubleAnswer();
-    }
+    if (G.doubleSelected.length < 2) G.doubleSelected.push(idx);
+    renderAnswers(G.questions[G.current].a, -1, -1);
+    if (G.doubleSelected.length === 2) await submitDoubleAnswer();
     return;
   }
-
   G.inputLocked=true; clearTimer();
   const q=G.questions[G.current];
   const correct=q.correct;
@@ -1930,9 +1959,8 @@ async function submitDoubleAnswer() {
   const q=G.questions[G.current];
   const correct=q.correct;
   if (G.doubleSelected.includes(correct)) {
-    // Correct! But no prize multiplier
     BGM.correct();
-    const xp=Math.floor(XP_TABLE[G.current]*0.5*(G.xpBoostActive?2:1)); // Half XP for double
+    const xp=Math.floor(XP_TABLE[G.current]*0.5*(G.xpBoostActive?2:1));
     const coin=Math.floor(COIN_TABLE[G.current]*0.5);
     G.xpEarned+=xp; G.coinEarned+=coin; G.prizeTotal=PRIZE_TABLE[G.current]; G.answers++;
     if (BARRIERS.includes(G.current)) G.barrierPassed=G.current;
@@ -1997,13 +2025,10 @@ function renderBarriers() {
 
 function resetJokerButtons() {
   ['fifty','audience','phone'].forEach(j=>{ const btn=document.getElementById('j-'+j); btn.classList.remove('used'); btn.disabled=false; });
-  // Double joker
   const doubleBtn = document.getElementById('j-double');
   const u = window._userData;
   if (u && (u.doubleJokerCount||0) > 0) {
-    doubleBtn.style.display='flex';
-    doubleBtn.classList.remove('used');
-    doubleBtn.disabled=false;
+    doubleBtn.style.display='flex'; doubleBtn.classList.remove('used'); doubleBtn.disabled=false;
     doubleBtn.title=`${u.doubleJokerCount}x joker`;
   } else {
     doubleBtn.style.display='none';
@@ -2018,11 +2043,9 @@ function updateJokerBtns() {
 
 async function useJoker(type) {
   if(G.jokers[type]||G.inputLocked)return;
-
   if (type === 'double') {
     G.jokers.double=true; updateJokerBtns();
     G.doubleMode=true; G.doubleSelected=[];
-    // Consume joker from DB
     const newCount = Math.max(0, (window._userData?.doubleJokerCount||0) - 1);
     await window._saveUserData({ doubleJokerCount: newCount });
     setGameStatus('✌️ İki şık seç! Her ikisi de gösterilecek.', '');
@@ -2030,7 +2053,6 @@ async function useJoker(type) {
     await TTS.speak('Çift cevap jokeri kullanıldı. İki şık seçin.', 0.95, 1.0);
     return;
   }
-
   G.jokers[type]=true; updateJokerBtns();
   const q=G.questions[G.current];
   if(type==='fifty'){
@@ -2093,10 +2115,8 @@ async function withdrawGame() {
   if (G.current === 0) return toast('Henüz hiç soru cevaplanmadı!', 'info');
   const currentPrize = G.current > 0 ? PRIZE_TABLE[G.current - 1] : 0;
   if (currentPrize === 0) return toast('Henüz kazanılan para yok!', 'info');
-
   const confirmed = await showConfirmDialog(`${currentPrize.toLocaleString()} ₺ ile çekilmek istiyor musunuz?`);
   if (!confirmed) return;
-
   clearTimer(); TTS.stop(); BGM.stop(); G.inputLocked = true;
   showEffect('💰 ÇEKİLDİ!', 'correct-color');
   setGameStatus('Tebrikler! Kazancınızla çekildiniz.', 'success');
@@ -2123,18 +2143,17 @@ async function withdrawGame() {
   updateLobbyUI();
 }
 
-// Custom confirm dialog (replacing browser confirm)
 function showConfirmDialog(msg) {
   return new Promise(resolve => {
     const overlay = document.createElement('div');
     overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;';
     overlay.innerHTML=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:28px;max-width:340px;width:100%;text-align:center;animation:modalPop 0.3s cubic-bezier(0.22,1,0.36,1);">
-      <div style="font-size:1.4rem;margin-bottom:12px">💰</div>
-      <div style="font-family:'Cinzel',serif;font-weight:700;font-size:1rem;margin-bottom:8px">ÇEKILME ONAYI</div>
+      <div style="font-size:1.4rem;margin-bottom:12px">⚠️</div>
+      <div style="font-family:'Cinzel',serif;font-weight:700;font-size:1rem;margin-bottom:8px">ONAY</div>
       <div style="color:var(--text2);font-size:0.88rem;margin-bottom:20px">${msg}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <button id="confirm-no" style="padding:12px;background:var(--glass);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'Exo 2',sans-serif;font-weight:700;cursor:pointer;">İPTAL</button>
-        <button id="confirm-yes" style="padding:12px;background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;border-radius:12px;color:#000;font-family:'Cinzel',serif;font-weight:700;cursor:pointer;">ÇEKİL</button>
+        <button id="confirm-yes" style="padding:12px;background:linear-gradient(135deg,var(--blue2),var(--purple2));border:none;border-radius:12px;color:#fff;font-family:'Cinzel',serif;font-weight:700;cursor:pointer;">EVET</button>
       </div>
     </div>`;
     document.body.appendChild(overlay);
