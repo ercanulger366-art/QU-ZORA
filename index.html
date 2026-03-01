@@ -954,22 +954,9 @@ function getAvatarHTML(u, size='small') {
 
 // ─── TTS ───
 const TTS = {
-  // ── Hugging Face MMS-TTS (birincil) ──
-  HF_TOKEN: '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',
-  HF_MODEL: 'facebook/mms-tts-tur',
-  HF_URL: 'https://api-inference.huggingface.co/models/facebook/mms-tts-tur',
-
-  // ── Web Speech (fallback) ──
   synth: window.speechSynthesis,
-  selectedVoice: null, allVoices: [],
-
-  enabled: true,
-  useHF: true,          // HF aktif mi
-  hfAvailable: null,    // null=bilinmiyor, true=çalışıyor, false=çalışmıyor
-  currentAudio: null,   // oynatılan ses elementi
-
+  selectedVoice: null, allVoices: [], enabled: true,
   init() {
-    // Web Speech fallback için sesleri yükle
     const load = () => {
       this.allVoices = this.synth.getVoices();
       const saved = localStorage.getItem('qz_tts_voice');
@@ -978,70 +965,13 @@ const TTS = {
     };
     this.synth.onvoiceschanged = load; load();
     this.enabled = localStorage.getItem('qz_tts_enabled') !== 'false';
-    this.useHF = localStorage.getItem('qz_tts_hf') !== 'false';
-    // Başlangıçta HF'yi test et
-    if (this.useHF) this._testHF();
   },
-
-  async _testHF() {
-    try {
-      const blob = await this._hfFetch('Merhaba.');
-      if (blob) { this.hfAvailable = true; console.log('✅ HF TTS hazır'); }
-      else { this.hfAvailable = false; }
-    } catch(e) { this.hfAvailable = false; console.warn('⚠️ HF TTS bağlanamadı, Web Speech kullanılıyor'); }
-  },
-
-  async _hfFetch(text) {
-    const resp = await fetch(this.HF_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${this.HF_TOKEN}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ inputs: text })
-    });
-    if (!resp.ok) { throw new Error(`HF API: ${resp.status}`); }
-    const blob = await resp.blob();
-    if (blob.size < 100) throw new Error('Boş ses verisi');
-    return blob;
-  },
-
-  stop() {
-    // HF sesini durdur
-    if (this.currentAudio) {
-      this.currentAudio.pause();
-      this.currentAudio.src = '';
-      this.currentAudio = null;
-    }
-    // Web Speech'i durdur
-    this.synth.cancel();
-  },
-
-  // Hugging Face ile konuş
-  async _speakHF(text) {
-    return new Promise(async (resolve) => {
-      try {
-        const blob = await this._hfFetch(text);
-        this.hfAvailable = true;
-        const url = URL.createObjectURL(blob);
-        const audio = new Audio(url);
-        this.currentAudio = audio;
-        audio.onended = () => { URL.revokeObjectURL(url); this.currentAudio = null; resolve(); };
-        audio.onerror = () => { URL.revokeObjectURL(url); this.currentAudio = null; resolve(); };
-        await audio.play();
-      } catch(e) {
-        console.warn('HF TTS hatası, Web Speech fallback:', e.message);
-        this.hfAvailable = false;
-        await this._speakWS(text);
-        resolve();
-      }
-    });
-  },
-
-  // Web Speech ile konuş (fallback)
-  _speakWS(text, rate=0.9, pitch=1) {
+  setVoice(name) { const v = this.allVoices.find(v => v.name === name); if (v) { this.selectedVoice = v; localStorage.setItem('qz_tts_voice', name); } },
+  stop() { this.synth.cancel(); },
+  speak(text, rate=1, pitch=1) {
+    if (!this.enabled) return Promise.resolve();
     return new Promise(resolve => {
-      this.synth.cancel();
+      this.stop();
       const savedRate = parseFloat(localStorage.getItem('qz_tts_rate') || '0.9');
       const u = new SpeechSynthesisUtterance(text);
       u.lang = this.selectedVoice ? this.selectedVoice.lang : 'tr-TR';
@@ -1051,43 +981,21 @@ const TTS = {
       this.synth.speak(u);
     });
   },
-
-  // Ana speak fonksiyonu — HF önce, başarısız olursa Web Speech
-  async speak(text, rate=1, pitch=1) {
-    if (!this.enabled) return;
-    this.stop();
-    if (this.useHF && this.hfAvailable !== false) {
-      await this._speakHF(text);
-    } else {
-      await this._speakWS(text, rate, pitch);
-    }
-  },
-
   async readQuestion(q, answers) {
     G.inputLocked = true; updateAnswerState();
-    await this.speak(q); await delay(300);
+    await this.speak(q, 0.9, 1.0); await delay(200);
     const labels = ['Şık a', 'Şık be', 'Şık se', 'Şık de'];
-    for (let i = 0; i < answers.length; i++) {
-      await this.speak(`${labels[i]}... ${answers[i]}`);
-      await delay(150);
-    }
+    for (let i = 0; i < answers.length; i++) { await this.speak(`${labels[i]}... ${answers[i]}`, 0.9, 1.0); await delay(100); }
     G.inputLocked = false; updateAnswerState();
   },
-
   async sayCorrect() {
     const phrases = ['Harika bir cevap!','Mükemmel gidiyorsun!','Doğru cevap, devam edelim!','Muhteşem performans!'];
-    await this.speak(phrases[Math.floor(Math.random()*phrases.length)]);
+    await this.speak(phrases[Math.floor(Math.random()*phrases.length)], 1.0, 1.0);
   },
-
   async sayWrong(correctAnswer) {
-    await this.speak('Maalesef yanlış cevap.');
+    await this.speak('Maalesef yanlış cevap.', 0.95, 0.95);
     await delay(200);
-    await this.speak(`Doğru cevap: ${correctAnswer}`);
-  },
-
-  setVoice(name) {
-    const v = this.allVoices.find(v => v.name === name);
-    if (v) { this.selectedVoice = v; localStorage.setItem('qz_tts_voice', name); }
+    await this.speak(`Doğru cevap: ${correctAnswer}`, 0.95, 1.0);
   }
 };
 
@@ -2257,54 +2165,25 @@ function openVoiceSettings() {
   const trVoices=voices.filter(v=>v.lang.startsWith('tr'));
   const otherVoices=voices.filter(v=>!v.lang.startsWith('tr'));
   const currentName=TTS.selectedVoice?TTS.selectedVoice.name:'';
-  const hfStatus = TTS.hfAvailable === true ? '✅ Bağlı' : TTS.hfAvailable === false ? '❌ Bağlanamadı' : '⏳ Test ediliyor...';
-  let html=`
-  <div style="background:rgba(0,195,255,0.06);border:1px solid rgba(0,195,255,0.2);border-radius:12px;padding:14px;margin-bottom:16px">
-    <div style="font-size:0.72rem;color:var(--blue);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">🤖 HUGGİNG FACE TTS (Profesyonel Ses)</div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <div>
-        <div style="font-size:0.85rem;font-weight:700">facebook/mms-tts-tur</div>
-        <div style="font-size:0.72rem;color:var(--text2)">Durum: ${hfStatus}</div>
-      </div>
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-        <input type="checkbox" id="hf-toggle" ${TTS.useHF?'checked':''} onchange="toggleHF(this.checked)" style="accent-color:var(--blue);width:16px;height:16px">
-        <span style="font-size:0.82rem">${TTS.useHF?'Açık':'Kapalı'}</span>
-      </label>
-    </div>
-    <div style="font-size:0.7rem;color:var(--text2)">Kapalıysa cihazın sesi kullanılır (fallback)</div>
-  </div>
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-    <div style="font-size:0.8rem;color:var(--text2)">Tüm Sesi Kapat:</div>
+  let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div style="font-size:0.8rem;color:var(--text2)">Ses Aktif:</div>
     <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
       <input type="checkbox" id="tts-toggle" ${TTS.enabled?'checked':''} onchange="toggleTTS(this.checked)" style="accent-color:var(--blue);width:16px;height:16px">
       <span style="font-size:0.85rem">${TTS.enabled?'Açık':'Kapalı'}</span>
     </label>
   </div>
-  <div style="margin-bottom:8px;font-size:0.75rem;color:var(--text2);letter-spacing:2px">SES HIZI (Fallback)</div>
+  <div style="margin-bottom:8px;font-size:0.75rem;color:var(--text2);letter-spacing:2px">SES HIZI</div>
   <input type="range" id="tts-rate" min="0.5" max="1.8" step="0.1" value="${localStorage.getItem('qz_tts_rate')||0.9}"
     oninput="document.getElementById('tts-rate-val').textContent=this.value"
     style="width:100%;accent-color:var(--blue);margin-bottom:4px">
   <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text2);margin-bottom:16px">
     <span>Yavaş</span><span id="tts-rate-val">${localStorage.getItem('qz_tts_rate')||0.9}</span><span>Hızlı</span>
-  </div>
-  <div style="margin-bottom:8px;font-size:0.72rem;color:var(--text2);letter-spacing:2px">📱 CİHAZ SESLERİ (Fallback)</div>`;
-  if(trVoices.length>0){html+=`<div style="margin-bottom:8px;font-size:0.72rem;color:var(--green);letter-spacing:2px">🇹🇷 TÜRKÇE (${trVoices.length})</div>`;html+=trVoices.map(v=>voiceCard(v,currentName)).join('');}
-  if(otherVoices.length>0){html+=`<div style="margin:14px 0 8px;font-size:0.72rem;color:var(--text2);letter-spacing:2px">🌍 DİĞER (${otherVoices.length})</div>`;html+=otherVoices.map(v=>voiceCard(v,currentName)).join('');}
+  </div>`;
+  if(trVoices.length>0){html+=`<div style="margin-bottom:8px;font-size:0.75rem;color:var(--green);letter-spacing:2px">🇹🇷 TÜRKÇE SESLER (${trVoices.length})</div>`;html+=trVoices.map(v=>voiceCard(v,currentName)).join('');}
+  if(otherVoices.length>0){html+=`<div style="margin:14px 0 8px;font-size:0.75rem;color:var(--text2);letter-spacing:2px">🌍 DİĞER SESLER (${otherVoices.length})</div>`;html+=otherVoices.map(v=>voiceCard(v,currentName)).join('');}
   if(voices.length===0)html+=`<div style="text-align:center;color:var(--text2);padding:20px">Ses bulunamadı.</div>`;
   document.getElementById('voice-list').innerHTML=html;
   openModal('modal-voice');
-}
-
-function toggleHF(val) {
-  TTS.useHF = val;
-  localStorage.setItem('qz_tts_hf', val);
-  if (val && TTS.hfAvailable === false) {
-    TTS.hfAvailable = null;
-    TTS._testHF();
-    toast('🤖 Hugging Face TTS test ediliyor...', 'info');
-  }
-  const label = document.querySelector('#hf-toggle + span');
-  if (label) label.textContent = val ? 'Açık' : 'Kapalı';
 }
 
 function voiceCard(v,currentName){
