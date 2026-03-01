@@ -702,6 +702,51 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
       <div class="xp-bar-bg"><div class="xp-bar-fill" id="prof-xp-bar" style="width:0%"></div></div>
     </div>
     <div id="prof-cosmetics" style="font-size:0.82rem;color:var(--text2);text-align:center;margin-bottom:16px"></div>
+
+    <!-- Account Info -->
+    <div style="background:rgba(0,195,255,0.04);border:1px solid rgba(0,195,255,0.1);border-radius:14px;padding:16px;margin-bottom:12px;">
+      <div class="section-title" style="margin-bottom:12px;font-size:0.75rem;">🔐 HESAP BİLGİLERİ</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-size:0.75rem;color:var(--text2);letter-spacing:1px;">KULLANICI ADI</div>
+        <div style="font-weight:700;color:var(--blue);font-size:0.9rem;" id="prof-username-display">—</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:0.75rem;color:var(--text2);letter-spacing:1px;">ŞİFRE</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="font-weight:700;color:var(--text2);font-size:0.9rem;letter-spacing:3px;" id="prof-pass-dots">••••••••</div>
+          <button onclick="toggleChangePassword()" style="padding:4px 10px;background:rgba(155,89,255,0.1);border:1px solid rgba(155,89,255,0.3);border-radius:8px;color:var(--purple);font-size:0.72rem;font-weight:700;cursor:pointer;transition:all 0.2s;" id="btn-change-pass">DEĞİŞTİR</button>
+        </div>
+      </div>
+
+      <!-- Change password form (hidden by default) -->
+      <div id="change-pass-form" style="display:none;margin-top:14px;border-top:1px solid var(--border);padding-top:14px;">
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label" style="font-size:0.68rem;">MEVCUT ŞİFRE</label>
+          <div style="position:relative;">
+            <input class="form-input" id="cp-current" type="password" placeholder="Mevcut şifreniz" style="padding-right:44px;font-size:0.9rem;">
+            <button onclick="togglePassVis('cp-current',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text2);font-size:0.85rem;">👁️</button>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label" style="font-size:0.68rem;">YENİ ŞİFRE</label>
+          <div style="position:relative;">
+            <input class="form-input" id="cp-new" type="password" placeholder="En az 6 karakter" style="padding-right:44px;font-size:0.9rem;" oninput="checkStrength(this.value)">
+            <button onclick="togglePassVis('cp-new',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text2);font-size:0.85rem;">👁️</button>
+          </div>
+          <div class="strength-bar" style="margin-top:5px;"><div class="strength-fill" id="strength-fill-cp"></div></div>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label" style="font-size:0.68rem;">YENİ ŞİFRE TEKRAR</label>
+          <input class="form-input" id="cp-confirm" type="password" placeholder="Şifreyi tekrar girin" style="font-size:0.9rem;">
+        </div>
+        <div id="cp-error" style="color:var(--red);font-size:0.78rem;margin-bottom:10px;min-height:16px;font-weight:600;"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <button onclick="toggleChangePassword()" style="padding:10px;background:var(--glass);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;">İPTAL</button>
+          <button onclick="doChangePassword()" style="padding:10px;background:linear-gradient(135deg,var(--blue2),var(--purple2));border:none;border-radius:10px;color:#fff;font-family:'Cinzel',serif;font-size:0.82rem;font-weight:700;cursor:pointer;letter-spacing:1px;">KAYDET</button>
+        </div>
+      </div>
+    </div>
+
     <button class="btn-modal-full" onclick="closeModal('modal-profile')">KAPAT</button>
   </div>
 </div>
@@ -1090,13 +1135,6 @@ function authTab(mode) {
   document.getElementById('auth-err').textContent = '';
 }
 function setAuthErr(msg) { document.getElementById('auth-err').textContent = msg; }
-function checkStrength(p) {
-  let score=0;
-  if(p.length>=6)score++;if(p.length>=10)score++;if(/[A-Z]/.test(p))score++;if(/[0-9]/.test(p))score++;if(/[^A-Za-z0-9]/.test(p))score++;
-  const fill=document.getElementById('strength-fill');
-  const colors=['#ff3355','#ff8c00','#ffaa00','#00d4aa','#00ff88'];
-  fill.style.width=(score/5*100)+'%';fill.style.background=colors[score-1]||'#ff3355';
-}
 function validateUser(u) {
   if(!u||u.length<3)return 'Kullanıcı adı en az 3 karakter olmalı.';
   if(u.length>20)return 'Kullanıcı adı max 20 karakter.';
@@ -1419,7 +1457,101 @@ function openProfile() {
   if (activeFr) cosText += `🖼️ Çerçeve: ${activeFr.name}`;
   if (!cosText) cosText = 'Aktif kozmetik yok';
   document.getElementById('prof-cosmetics').textContent = cosText;
+
+  // Account info
+  const unEl = document.getElementById('prof-username-display');
+  if (unEl) unEl.textContent = u.username || '—';
+  // Reset change password form
+  const cpForm = document.getElementById('change-pass-form');
+  if (cpForm) cpForm.style.display = 'none';
+  ['cp-current','cp-new','cp-confirm'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  const cpErr = document.getElementById('cp-error');
+  if (cpErr) cpErr.textContent = '';
+  const sfill = document.getElementById('strength-fill-cp');
+  if (sfill) { sfill.style.width = '0%'; }
+
   openModal('modal-profile');
+}
+
+// ─── Change Password helpers ───
+function toggleChangePassword() {
+  const form = document.getElementById('change-pass-form');
+  const btn = document.getElementById('btn-change-pass');
+  const isOpen = form.style.display !== 'none';
+  form.style.display = isOpen ? 'none' : 'block';
+  btn.textContent = isOpen ? 'DEĞİŞTİR' : 'İPTAL';
+  if (!isOpen) {
+    ['cp-current','cp-new','cp-confirm'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+    const cpErr = document.getElementById('cp-error');
+    if (cpErr) cpErr.textContent = '';
+  }
+}
+
+function togglePassVis(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁️'; }
+}
+
+function checkStrength(p) {
+  let score = 0;
+  if(p.length>=6) score++;
+  if(p.length>=10) score++;
+  if(/[A-Z]/.test(p)) score++;
+  if(/[0-9]/.test(p)) score++;
+  if(/[^A-Za-z0-9]/.test(p)) score++;
+  const colors = ['#ff3355','#ff8c00','#ffaa00','#00d4aa','#00ff88'];
+  // Update both strength bars if they exist
+  ['strength-fill','strength-fill-cp'].forEach(id => {
+    const fill = document.getElementById(id);
+    if (fill) { fill.style.width=(score/5*100)+'%'; fill.style.background=colors[score-1]||'#ff3355'; }
+  });
+}
+
+async function doChangePassword() {
+  const current = document.getElementById('cp-current')?.value;
+  const newPass  = document.getElementById('cp-new')?.value;
+  const confirm  = document.getElementById('cp-confirm')?.value;
+  const errEl    = document.getElementById('cp-error');
+
+  const setErr = msg => { if(errEl) errEl.textContent = msg; };
+  setErr('');
+
+  if (!current) return setErr('Mevcut şifrenizi girin.');
+  if (!newPass || newPass.length < 6) return setErr('Yeni şifre en az 6 karakter olmalı.');
+  if (newPass !== confirm) return setErr('Şifreler eşleşmiyor.');
+  if (current === newPass) return setErr('Yeni şifre mevcut şifreden farklı olmalı.');
+
+  const { auth, signInWithEmailAndPassword, updatePassword } = window._FB;
+  // Need to import updatePassword — use firebase compat approach via re-auth
+  try {
+    const user = auth.currentUser;
+    if (!user) return setErr('Oturum bulunamadı, tekrar giriş yapın.');
+    const email = user.email;
+
+    // Re-authenticate first
+    const { EmailAuthProvider, reauthenticateWithCredential } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+    const credential = EmailAuthProvider.credential(email, current);
+    await reauthenticateWithCredential(user, credential);
+
+    // Now update password
+    const { updatePassword: upd } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+    await upd(user, newPass);
+
+    toast('✅ Şifreniz başarıyla değiştirildi!', 'success');
+    toggleChangePassword();
+  } catch(e) {
+    if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+      setErr('Mevcut şifre hatalı.');
+    } else if (e.code === 'auth/weak-password') {
+      setErr('Şifre çok zayıf, daha güçlü bir şifre seçin.');
+    } else if (e.code === 'auth/too-many-requests') {
+      setErr('Çok fazla deneme. Lütfen bekleyin.');
+    } else {
+      setErr('Hata: ' + (e.message || 'Bilinmeyen hata'));
+    }
+  }
 }
 
 // ─── Admin ───
