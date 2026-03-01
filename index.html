@@ -2,7 +2,11 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#05050f">
 <title>Quizora — Yarışma Platformu</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -145,7 +149,7 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
 .xp-bar-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--blue2),var(--purple));transition:width 1s cubic-bezier(0.22,1,0.36,1);position:relative;overflow:hidden;}
 .xp-bar-fill::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);animation:xpShimmer 2s infinite;}
 @keyframes xpShimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
-.lobby-main{display:grid;grid-template-columns:2fr 1fr;gap:16px;}
+.lobby-main{display:grid;grid-template-columns:2fr 1fr;gap:16px;}@media(max-width:600px){.lobby-main{grid-template-columns:1fr;}}
 @media(max-width:700px){.lobby-main{grid-template-columns:1fr;}}
 .btn-play{padding:28px;background:linear-gradient(135deg,var(--blue2),var(--purple2));border:none;border-radius:18px;color:white;font-family:'Cinzel',serif;font-size:1.4rem;font-weight:900;letter-spacing:3px;cursor:pointer;transition:all 0.3s;box-shadow:0 0 40px rgba(0,128,255,0.4);position:relative;overflow:hidden;width:100%;}
 .btn-play::before{content:'';position:absolute;inset:0;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent);animation:playShine 2.5s infinite;}
@@ -193,7 +197,6 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
 .q-diff.hard{background:rgba(255,51,85,0.1);color:var(--red);border:1px solid rgba(255,51,85,0.2);}
 .q-text{font-size:1.15rem;font-weight:600;color:#ffffff;line-height:1.7;text-align:center;text-shadow:0 0 20px rgba(255,255,255,0.1);}
 .answers-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
-@media(max-width:600px){.answers-grid{grid-template-columns:1fr;}}
 .answer-btn{padding:16px 20px;background:rgba(0,0,0,0.4);border:2px solid rgba(255,255,255,0.08);border-radius:14px;color:#ffffff;font-family:'Exo 2',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.25s;text-align:left;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;}
 .answer-btn:not(:disabled):hover{border-color:var(--blue);background:rgba(0,195,255,0.08);transform:translateX(4px);box-shadow:0 0 20px rgba(0,195,255,0.15);}
 .answer-btn:disabled{cursor:not-allowed;}
@@ -302,7 +305,7 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
 .name-effect-preview{font-family:'Cinzel',serif;font-weight:700;font-size:1rem;margin-bottom:6px;display:inline-block;}
 
 /* TOAST */
-.toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:calc(100vw - 40px);}
 .toast{padding:12px 20px;border-radius:12px;font-weight:600;font-size:0.88rem;backdrop-filter:blur(20px);border:1px solid var(--border);animation:toastIn 0.4s cubic-bezier(0.22,1,0.36,1);max-width:300px;}
 .toast.success{background:rgba(0,255,136,0.15);border-color:rgba(0,255,136,0.3);color:var(--green);}
 .toast.error{background:rgba(255,51,85,0.15);border-color:rgba(255,51,85,0.3);color:var(--red);}
@@ -347,7 +350,138 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
 @keyframes loadBar{0%{width:0%;margin-left:0;}50%{width:60%;margin-left:20%;}100%{width:0%;margin-left:100%;}}
 .loading-status{font-size:0.8rem;color:var(--text2);letter-spacing:3px;}
 .section-title{font-family:'Cinzel',serif;font-size:0.85rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--text2);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
-@media(max-width:480px){.game-top{flex-wrap:wrap;gap:8px;}.barriers{display:none;}.q-text{font-size:1rem;}.modal{padding:22px 16px;}.modal-title{font-size:1.2rem;}}
+
+/* ══════════ RESPONSIVE / MOBILE ══════════ */
+
+/* Tablet */
+@media(max-width:900px){
+  .lobby-grid{grid-template-columns:1fr 1fr;}
+  .lobby-main{grid-template-columns:1fr;}
+  .btn-play{padding:22px;}
+  .side-buttons{flex-direction:row;flex-wrap:wrap;}
+  .btn-side{flex:1;min-width:120px;}
+}
+
+/* Mobile geniş */
+@media(max-width:700px){
+  .lobby-grid{grid-template-columns:1fr 1fr;}
+  .lobby-main{grid-template-columns:1fr;}
+  .lobby-header{padding:10px 14px;gap:8px;}
+  .lobby-logo-text{font-size:1rem;}
+  .hdr-wallet{font-size:0.78rem;padding:4px 8px;}
+  .hdr-xpboost{font-size:0.7rem;padding:4px 8px;}
+  .hdr-name{font-size:0.85rem;}
+  .hdr-level{font-size:0.68rem;}
+  .stat-val{font-size:1.3rem;}
+  .modal{padding:20px 14px;border-radius:16px;}
+  .modal-title{font-size:1.2rem;}
+  .shop-tabs{gap:2px;}
+  .shop-tab{font-size:0.68rem;padding:7px 4px;letter-spacing:0;}
+  .lb-xp{font-size:0.85rem;}
+  .lb-wr{display:none;}
+}
+
+/* Mobile dar */
+@media(max-width:480px){
+  /* Lobby */
+  #lobby-screen{padding:10px;}
+  .lobby-header{flex-wrap:wrap;padding:10px 12px;gap:8px;border-radius:12px;}
+  .lobby-logo-text{font-size:1rem;letter-spacing:2px;}
+  .hdr-user{gap:8px;}
+  .hdr-wallet{padding:4px 8px;font-size:0.75rem;}
+  .hdr-xpboost{padding:4px 8px;font-size:0.68rem;}
+  .hdr-name{font-size:0.82rem;}
+  .hdr-level{font-size:0.65rem;}
+  .btn-logout{padding:6px 10px;font-size:0.7rem;}
+  .lobby-grid{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+  .stat-card{padding:12px 8px;}
+  .stat-icon{font-size:1.4rem;margin-bottom:4px;}
+  .stat-val{font-size:1.1rem;}
+  .stat-lbl{font-size:0.62rem;}
+  .xp-section{padding:12px 14px;margin-bottom:12px;}
+  .xp-level{font-size:0.85rem;}
+  .xp-text{font-size:0.72rem;}
+  .btn-play{padding:18px 12px;font-size:1.1rem;border-radius:14px;}
+  .btn-play-sub{font-size:0.65rem;letter-spacing:2px;}
+  .side-buttons{flex-direction:row;flex-wrap:wrap;gap:8px;}
+  .btn-side{flex:1;min-width:calc(50% - 4px);padding:12px 8px;font-size:0.78rem;border-radius:10px;}
+
+  /* Game */
+  #game-screen{padding:8px;gap:6px;}
+  .game-top{flex-wrap:nowrap;gap:6px;justify-content:space-between;}
+  .money-ladder{padding:8px 10px;font-size:0.82rem;gap:4px;}
+  .timer-circle{width:48px;height:48px;font-size:0.9rem;}
+  .timer-lbl{font-size:0.55rem;}
+  .game-score-panel{padding:7px 10px;gap:10px;}
+  .gscore-lbl{font-size:0.55rem;}
+  .gscore-val{font-size:0.9rem;}
+  .btn-exit{padding:6px 10px;font-size:0.7rem;}
+  .barriers{display:none;}
+  .question-area{padding:16px 14px;border-radius:14px;}
+  .q-num-label{font-size:0.65rem;}
+  .q-text{font-size:0.95rem;line-height:1.6;}
+  .answers-grid{grid-template-columns:1fr;gap:8px;margin-top:8px;}
+  .answer-btn{padding:12px 14px;font-size:0.88rem;border-radius:12px;}
+  .answer-letter{min-width:28px;height:28px;font-size:0.78rem;}
+  .jokers-bar{gap:6px;padding:0 2px;}
+  .joker-btn{padding:8px 10px;font-size:0.72rem;letter-spacing:0;border-radius:10px;}
+  .game-status{font-size:0.8rem;}
+
+  /* Modals */
+  .modal-overlay{padding:10px;}
+  .modal{padding:18px 12px;border-radius:14px;max-height:95vh;}
+  .modal-title{font-size:1.1rem;letter-spacing:1px;}
+  .modal-sub{font-size:0.72rem;margin-bottom:16px;}
+  .modal-scores{gap:8px;margin-bottom:14px;}
+  .modal-sc{padding:12px 8px;}
+  .modal-sc-val{font-size:1.4rem;}
+  .modal-btns{gap:8px;}
+  .btn-modal-primary,.btn-modal-secondary{padding:11px;font-size:0.8rem;}
+  .shop-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .shop-item{padding:12px 8px;}
+  .shop-name{font-size:0.78rem;}
+  .shop-desc{font-size:0.65rem;}
+  .auth-card{padding:20px 16px;}
+  .form-input{padding:11px 13px;font-size:0.9rem;}
+  .lb-row{padding:10px 12px;gap:8px;}
+  .lb-name{font-size:0.82rem;}
+  .lb-xp{font-size:0.82rem;}
+  .lb-av-container{width:30px;height:30px;}
+  .lb-av-inner{width:30px;height:30px;font-size:0.75rem;}
+  .toast{max-width:calc(100vw - 40px);font-size:0.8rem;padding:10px 14px;}
+  .toast-container{top:10px;right:10px;}
+  .profile-stat-row{gap:6px;}
+  .profile-stat{padding:10px 6px;}
+  .profile-stat-v{font-size:1rem;}
+  .effect-text{font-size:2.2rem;}
+}
+
+/* Çok küçük ekranlar (320px) */
+@media(max-width:360px){
+  .lobby-grid{grid-template-columns:1fr 1fr;}
+  .stat-val{font-size:1rem;}
+  .btn-side{font-size:0.7rem;padding:10px 6px;}
+  .joker-btn{font-size:0.65rem;padding:7px 8px;}
+  .answer-btn{padding:10px 12px;font-size:0.82rem;}
+  .q-text{font-size:0.88rem;}
+  .shop-tab{font-size:0.6rem;}
+  .modal-title{font-size:1rem;}
+}
+
+/* Landscape mobile */
+@media(max-height:500px) and (orientation:landscape){
+  #game-screen{padding:6px;gap:4px;}
+  .barriers{display:none;}
+  .question-area{padding:10px 14px;}
+  .q-text{font-size:0.9rem;}
+  .answers-grid{grid-template-columns:1fr 1fr;gap:6px;}
+  .answer-btn{padding:8px 12px;font-size:0.82rem;}
+  .jokers-bar{gap:5px;}
+  .joker-btn{padding:6px 8px;font-size:0.7rem;}
+  .timer-circle{width:40px;height:40px;font-size:0.8rem;}
+  .game-score-panel{padding:6px 8px;}
+  .modal{max-height:85vh;}
+}
 
 /* XP Boost indicator in game */
 .xpboost-indicator{display:inline-flex;align-items:center;gap:4px;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);border-radius:20px;padding:3px 10px;color:var(--green);font-size:0.72rem;font-weight:700;animation:boostPulse 2s ease-in-out infinite;}
@@ -850,8 +984,8 @@ const TTS = {
   async readQuestion(q, answers) {
     G.inputLocked = true; updateAnswerState();
     await this.speak(q, 0.9, 1.0); await delay(200);
-    const letters = ['A','B','C','D'];
-    for (let i = 0; i < answers.length; i++) { await this.speak(`${letters[i]}... ${answers[i]}`, 0.9, 1.0); await delay(100); }
+    const labels = ['Şık a', 'Şık be', 'Şık se', 'Şık de'];
+    for (let i = 0; i < answers.length; i++) { await this.speak(`${labels[i]}... ${answers[i]}`, 0.9, 1.0); await delay(100); }
     G.inputLocked = false; updateAnswerState();
   },
   async sayCorrect() {
@@ -1910,9 +2044,10 @@ async function useJoker(type) {
     const total=votes.reduce((a,b)=>a+b,0);
     const pcts=votes.map(v=>Math.round(v/total*100));
     const letters=['A','B','C','D'];
+    const ttsLabels=['a','be','se','de'];
     document.getElementById('audience-result').innerHTML=`<div class="audience-chart">${pcts.map((p,i)=>`<div class="aud-bar-wrap"><div class="aud-pct">${p}%</div><div class="aud-bar-bg"><div class="aud-bar-fill" style="height:${p}%"></div></div><div class="aud-label">${letters[i]}</div></div>`).join('')}</div>`;
     toast('Seyirci jokeri kullanıldı!','info');
-    await TTS.speak(`Seyirci oyu kullanıldı. En yüksek oy: ${letters[pcts.indexOf(Math.max(...pcts))]} şıkkı, yüzde ${Math.max(...pcts)}.`,0.9,1.0);
+    await TTS.speak(`Seyirci oyu kullanıldı. En yüksek oy: şık ${ttsLabels[pcts.indexOf(Math.max(...pcts))]}, yüzde ${Math.max(...pcts)}.`,0.9,1.0);
   } else if(type==='phone'){
     const correct=q.a[q.correct];
     const confidence=60+Math.floor(Math.random()*30);
